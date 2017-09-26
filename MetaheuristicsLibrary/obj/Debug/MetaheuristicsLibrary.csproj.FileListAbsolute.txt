@@ -1,0 +1,5 @@
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\bin\Debug\MetaheuristicsLibrary.dll
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\bin\Debug\MetaheuristicsLibrary.pdb
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.dll
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.pdb
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.csprojResolveAssemblyReference.cache

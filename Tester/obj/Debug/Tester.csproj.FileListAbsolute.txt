@@ -1,0 +1,8 @@
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\obj\Debug\Tester.csprojResolveAssemblyReference.cache
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\bin\Debug\Tester.exe.config
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\bin\Debug\Tester.exe
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\bin\Debug\Tester.pdb
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\obj\Debug\Tester.exe
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\obj\Debug\Tester.pdb
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\bin\Debug\MetaheuristicsLibrary.dll
+c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Tester\bin\Debug\MetaheuristicsLibrary.pdb
