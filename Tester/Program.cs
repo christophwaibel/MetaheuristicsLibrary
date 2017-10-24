@@ -8,6 +8,8 @@ using MetaheuristicsLibrary;
 using MetaheuristicsLibrary.TestFunctions;
 using MetaheuristicsLibrary.SolversMO;
 using MetaheuristicsLibrary.SolversSO;
+using MetaheuristicsLibrary.Misc;
+using System.IO;
 
 namespace Tester
 {
@@ -174,7 +176,28 @@ namespace Tester
 
         }
 
+        static void rndMain(string[] args)
+        {
+            List<string> log = new List<string>();
+            RandomDistributions rnd = new RandomDistributions(0);
+            for (int i = 0; i < 5000; i++)
+            {
+                log.Add(Convert.ToString(rnd.NextGaussian(0, 0.3)));
+            }
+            Console.ReadKey();
 
+
+            string fileName = @"C:\_CHRIS\rnd.txt";
+            using (FileStream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write))
+            using (StreamWriter sw = new StreamWriter(fs))
+            {
+                for (int i = 0; i < log.Count; i++)
+                {
+                    sw.WriteLine(log[i]);
+                }
+            }
+
+        }
 
         /// <summary>
         /// Testing a SO solver from MetaheuristicsLibrary.SovlersSO
@@ -182,14 +205,14 @@ namespace Tester
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            int dvar = 2;
+            int dvar = 4;
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             bool[] xint = new bool[dvar];
             for (int i = 0; i < dvar; i++)
             {
-                lb[i] = 0;
-                ub[i] = 100;
+                lb[i] = -32.768;
+                ub[i] = 32.768;
                 xint[i] = false;
             }
 
@@ -201,31 +224,52 @@ namespace Tester
             //Console.ReadLine();
 
 
-            Dictionary<string, object> settings = new Dictionary<string, object>();
-            settings.Add("maxgen", 100);
-            settings.Add("popsize", 50);
-            settings.Add("pcross", 0.7);
-            settings.Add("pmut", 0.3);
-            settings.Add("d", 0.1);
-            settings.Add("r", 0.1);
-            settings.Add("k", 6);
-            //double[][] x0 = new double[50][];
-            //double[] fx0 = new double[50];
-            //for (int i = 0; i < x0.Length; i++)
-            //{
-            //    x0[i] = new double[dvar];
-            //    for (int u = 0; u < x0[i].Length; u++)
-            //    {
-            //        x0[i][u] = i * u;
-            //    }
-            //    fx0[i] = i;
-            //}
-            //SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.L_Ackley, 1, settings, x0, fx0);
-            SimpleGA ga = new SimpleGA(lb, ub, xint, 1000, Testfunctions.L_Ackley, 1, settings);
-            //SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.stupid, 1, settings);
-            ga.solve();
-            Console.WriteLine(ga.get_fxoptimum().ToString());
-            Console.ReadLine();
+            //Dictionary<string, object> settings = new Dictionary<string, object>();
+            //settings.Add("maxgen", 100);
+            //settings.Add("popsize", 50);
+            //settings.Add("pcross", 0.7);
+            //settings.Add("pmut", 0.3);
+            //settings.Add("d", 0.1);
+            //settings.Add("r", 0.1);
+            //settings.Add("k", 6);
+            ////double[][] x0 = new double[50][];
+            ////double[] fx0 = new double[50];
+            ////for (int i = 0; i < x0.Length; i++)
+            ////{
+            ////    x0[i] = new double[dvar];
+            ////    for (int u = 0; u < x0[i].Length; u++)
+            ////    {
+            ////        x0[i][u] = i * u;
+            ////    }
+            ////    fx0[i] = i;
+            ////}
+            ////SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.L_Ackley, 1, settings, x0, fx0);
+            //SimpleGA ga = new SimpleGA(lb, ub, xint, 10000, Testfunctions.L_Ackley, 5, settings);
+            ////SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.stupid, 1, settings);
+            //ga.solve();
+            //Console.WriteLine(ga.get_fxoptimum().ToString());
+            //Console.ReadLine();
+
+
+
+
+            Dictionary<string, object> settingsES = new Dictionary<string, object>();
+            settingsES.Add("x0sampling", 0);
+            settingsES.Add("roh", 2);
+            settingsES.Add("popsize", 20);
+            settingsES.Add("lambda", 20);
+            settingsES.Add("stepsize0", 0.4);
+            settingsES.Add("stepsize", 0.3);
+            //double[][] x0 = new double[1][];
+            //x0[0] = new double[dvar];
+            //x0[0][0] = 50;
+            //x0[0][1] = 50;
+            SimpleES es = new SimpleES(lb, ub, xint, 1000, Testfunctions.L_Ackley, 5, settingsES);
+            es.solve();
+            Console.WriteLine(es.get_fxoptimum());
+            Console.ReadKey();
+
+
         }
 
         /// <summary>
