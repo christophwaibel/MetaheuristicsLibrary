@@ -29,7 +29,11 @@ namespace MetaheuristicsLibrary.SolversSO
         /// <summary>
         /// Maximum function evaluations.
         /// </summary>
-        public int itermax { get; private set; }
+        public int evalmax { get; private set; }
+        /// <summary>
+        /// current count of function evaluation calls
+        /// </summary>
+        public int evalcount { get; protected set; }
         /// <summary>
         /// Evaluation function.
         /// </summary>
@@ -51,15 +55,16 @@ namespace MetaheuristicsLibrary.SolversSO
         /// <param name="lb"></param>
         /// <param name="ub"></param>
         /// <param name="xinteger">indicate, which variable is integer</param>
-        /// <param name="itermax"></param>
+        /// <param name="evalmax"></param>
         /// <param name="evalfnc"></param>
         /// <param name="seed"></param>
-        public SO_Solver(double[] lb, double[] ub, bool[] xint, int itermax, Func<double[], double> evalfnc, int seed)
+        public SO_Solver(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed)
         {
             this.lb = lb;
             this.ub = ub;
             this.xint = xint;
-            this.itermax = itermax;
+            this.evalcount = 0;
+            this.evalmax = evalmax;
             this.evalfnc = evalfnc;
             this.n = lb.Length;
             this.rnd = new RandomDistributions(seed);
@@ -144,11 +149,11 @@ namespace MetaheuristicsLibrary.SolversSO
         /// <param name="lb">Lower bound for each variable.</param>
         /// <param name="ub">Upper bound for each variable.</param>
         /// <param name="stepsize">Stepsize.</param>
-        /// <param name="itermax">Maximum iterations.</param>
+        /// <param name="evalmax">Maximum iterations.</param>
         /// <param name="evalfnc">Evaluation function.</param>
         /// <param name="seed">Seed for random number generator.</param>
-        public Hillclimber(double[] lb, double[] ub, bool[] xint, int itermax, Func<double[], double> evalfnc, int seed, double stepsize, double[] x0 = null) :
-            base(lb, ub, xint, itermax, evalfnc, seed)
+        public Hillclimber(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, double stepsize, double[] x0 = null) :
+            base(lb, ub, xint, evalmax, evalfnc, seed)
         {
             this.stepsize = stepsize;
 
@@ -180,7 +185,7 @@ namespace MetaheuristicsLibrary.SolversSO
             }
             this.fx = evalfnc(this.x);
 
-            for (int t = 0; t < itermax; t++)
+            for (base.evalcount = 0; base.evalcount < evalmax; base.evalcount++)
             {
                 this.xtest = new double[n];
                 for (int i = 0; i < n; i++)
@@ -232,7 +237,7 @@ namespace MetaheuristicsLibrary.SolversSO
 
     /// <summary>
     /// Simple Genetic Algorithm
-    /// Goldberg...
+    /// Goldberg (1989). Genetic Algorithms in search, optimization and machine learning.
     /// </summary>
     public class SimpleGA : SO_Solver
     {
@@ -248,10 +253,6 @@ namespace MetaheuristicsLibrary.SolversSO
         /// Maximum generations
         /// </summary>
         public int maxgen { get; private set; }
-        /// <summary>
-        /// current count of function evaluation calls
-        /// </summary>
-        public int currentiter { get; private set; }
         /// <summary>
         /// length of bitstring
         /// </summary>
@@ -322,14 +323,14 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         /// <param name="lb"></param>
         /// <param name="ub"></param>
-        /// <param name="itermax"></param>
+        /// <param name="evalmax"></param>
         /// <param name="evalfnc"></param>
         /// <param name="seed"></param>
         /// <param name="settings">Dictionary. Should contain: population size ("popsize", int), crossover probability ("pcross", double), mutation probability ("pmut", double).</param>
         /// <param name="x0">Decision variables of initial population</param>
         /// <param name="fx0">Cost values of initial population</param>
-        public SimpleGA(double[] lb, double[] ub, bool[] xint, int itermax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
-            : base(lb, ub, xint, itermax, evalfnc, seed)
+        public SimpleGA(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
+            : base(lb, ub, xint, evalmax, evalfnc, seed)
         {
             this.x0 = x0 ?? new double[0][];
 
@@ -371,7 +372,6 @@ namespace MetaheuristicsLibrary.SolversSO
             if (settings.ContainsKey("popsize"))
             {
                 popsize = Convert.ToInt32(settings["popsize"]);
-                if (popsize > 100) popsize = 100;
             }
             else
             {
@@ -450,18 +450,27 @@ namespace MetaheuristicsLibrary.SolversSO
                     x_new[nOffspring] = child1;
                     x_new[nOffspring + 1] = child2;
                     fx_new[nOffspring] = evalfnc(child1);
-                    this.currentiter++;
+                    base.evalcount++;
                     if (CheckIfNaN(fx_new[nOffspring]))
                     {
                         return;
                     }
+                    if (fx_new[nOffspring] < base.fxopt)
+                    {
+                        base.fxopt = fx_new[nOffspring];
+                        x_new[nOffspring].CopyTo(base.xopt, 0);
+                    }
                     fx_new[nOffspring + 1] = evalfnc(child2);
-                    this.currentiter++;
+                    base.evalcount++;
                     if (CheckIfNaN(fx_new[nOffspring + 1]))
                     {
                         return;
                     }
-
+                    if (fx_new[nOffspring + 1] < base.fxopt)
+                    {
+                        base.fxopt = fx_new[nOffspring + 1];
+                        x_new[nOffspring + 1].CopyTo(base.xopt, 0);
+                    }
 
                     nOffspring += 2;
                 } while (nOffspring < this.popsize);
@@ -472,11 +481,11 @@ namespace MetaheuristicsLibrary.SolversSO
 
 
                 //get the best
-                storeCurrentBest();
+                //storeCurrentBest();
 
 
                 gen++;
-            } while (gen < maxgen && currentiter < itermax);
+            } while (gen < maxgen && base.evalcount < evalmax);
         }
 
 
@@ -525,7 +534,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     _xpop[p] = new double[base.n];
                     this.x0.CopyTo(_xpop[p], 0);
                     this.fx0[p] = base.evalfnc(this.x0[p]);
-                    this.currentiter++;
+                    base.evalcount++;
                 }
                 this.x0 = new double[this.popsize][];   //i'm doing this, because x0.Length at initialisation could be < popsize
                 _xpop.CopyTo(this.x0, 0);               
@@ -547,7 +556,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     }
                 }
                 this.fx0[p] = base.evalfnc(this.x0[p]);
-                this.currentiter++;
+                base.evalcount++;
             }
 
 
@@ -736,30 +745,30 @@ namespace MetaheuristicsLibrary.SolversSO
     /// </summary>
     public class SimpleES : SO_Solver
     {
-        /*
-         * (mu/roh ,+ lambda) - ES
-         * 
-         * Begin
-         * g:=0;
-         * initialize(Pop0:={(x0_i,s0_i,fx0_i), i=1,...,mu}
-         * Repeat
-         *  For l:=1 to lambda Do Begin
-         *      Fl := marriage(Pg, roh);
-         *      sl := s_recombination(Fl);
-         *      yl := y_recombination(Fl);
-         *      stildel := s_mutation(sl);
-         *      ytildel := y_mutation(yl, stildel);
-         *      Ftildel := F(ytildel);
-         *   End;
-         *   P0g := {(ytildel, stildel, Ftildel), l=1,...,lambda};
-         *   Case selection_type Of
-         *      (mu , lambda) : Pg+1 := selection(P0g, mu);
-         *      (mu + lambda) : Pg+1 := selection(P0g, Pg, mu);
-         *   End;
-         *   g := g+1;
-         * Until termination_condition
-         * End
-        */
+        
+          //(mu/roh ,+ lambda) - ES
+          
+          //Begin
+          //g:=0;
+          //initialize(Pop0:={(x0_i,s0_i,fx0_i), i=1,...,mu}
+          //Repeat
+          // For l:=1 to lambda Do Begin
+          //     Fl := marriage(Pg, roh);
+          //     sl := s_recombination(Fl);
+          //     yl := y_recombination(Fl);
+          //     stildel := s_mutation(sl);
+          //     ytildel := y_mutation(yl, stildel);
+          //     Ftildel := F(ytildel);
+          //  End;
+          //  P0g := {(ytildel, stildel, Ftildel), l=1,...,lambda};
+          //  Case selection_type Of
+          //     (mu , lambda) : Pg+1 := selection(P0g, mu);
+          //     (mu + lambda) : Pg+1 := selection(P0g, Pg, mu);
+          //  End;
+          //  g := g+1;
+          //Until termination_condition
+          //End
+        
 
 
 
@@ -772,27 +781,14 @@ namespace MetaheuristicsLibrary.SolversSO
         /// Current generation
         /// </summary>
         public int gen { get; private set; }
-        /// <summary>
-        /// Maximum generations
-        /// </summary>
-        public int maxgen { get; private set; }
-        /// <summary>
-        /// current count of function evaluation calls
-        /// </summary>
-        public int currentiter { get; private set; }
+
+
         /// <summary>
         /// length of bitstring
         /// </summary>
         private int[] lchrom;
 
-        /// <summary>
-        /// cost values of previous population
-        /// </summary>
-        private double[] fx_pop_old;
-        /// <summary>
-        /// decision variables of previous population
-        /// </summary>
-        private double[][] x_pop_old;
+
         /// <summary>
         /// cost values of new population
         /// </summary>
@@ -807,38 +803,100 @@ namespace MetaheuristicsLibrary.SolversSO
         private double[] fx0;
 
         /// <summary>
-        /// strategy parameters. step-size.
+        /// strategy parameters. step-size. s0 is initial step size
         /// </summary>
-        private double[] s, s0;
+        private double[][] s;
+        private double [] s0;
+
+        /// <summary>
+        /// learning rate
+        /// </summary>
+        private double tau0, tau, tauc;
 
         /// <summary>
         /// mu = parents, lambda = offspring, roh = mixing number
         /// </summary>
-        private int mu, lambda, roh;
-
+        private int lambda, roh;
+        
+        /// <summary>
+        /// initiale population, sampling mode. 0=uniform sampling; 1=gaussian sampling around a base point.
+        /// </summary>
         private int x0samplingmode;
 
-        public SimpleES(double[] lb, double[] ub, bool[] xint, int itermax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
-            : base(lb, ub, xint, itermax, evalfnc, seed)
+        /// <summary>
+        /// mutation probability per discrete variable x.
+        /// </summary>
+        private double pmut_int;
+
+        public SimpleES(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
+            : base(lb, ub, xint, evalmax, evalfnc, seed)
         {
             this.x0 = x0 ?? new double[0][];
 
+            this.gen = 0;
 
 
-            if (settings.ContainsKey("stepsize"))
-            {
-                for (int i = 0; i < base.n; i++)
-                {
-                    this.s[i] = Convert.ToDouble(settings["stepsize"]);
-                }
-            }
+            //popsize. same as mu
+            if (settings.ContainsKey("popsize"))
+                this.popsize = Convert.ToInt16(settings["popsize"]);
             else
+                this.popsize = 20;
+
+
+
+            this.s = new double[this.popsize][];
+            for (int p = 0; p < this.popsize; p++)
             {
-                for (int i = 0; i < base.n; i++)
-                {
-                    this.s[i] = 1.0;
-                }
+                this.s[p] = new double[base.n];
+                if (settings.ContainsKey("stepsize"))
+                    for (int i = 0; i < base.n; i++)
+                        this.s[p][i] = Convert.ToDouble(settings["stepsize"]);
+                else
+                    for (int i = 0; i < base.n; i++)
+                        this.s[p][i] = 0.5;
             }
+
+            this.s0 = new double[base.n];
+            if (settings.ContainsKey("stepsize0"))
+                for (int i = 0; i < base.n; i++)
+                    this.s0[i] = Convert.ToDouble(settings["stepsize0"]);
+            else
+                for (int i = 0; i < base.n; i++)
+                    this.s0[i] = 0.5;
+
+
+            //learning rate tau
+            if (settings.ContainsKey("tauc"))
+                this.tauc = Convert.ToDouble(settings["tauc"]);
+            else
+                this.tauc = 1;
+
+            this.tau = this.tauc / (Math.Sqrt(2 * Math.Sqrt(base.n)));
+            this.tau0 = this.tauc / (Math.Sqrt(2 * base.n));
+
+
+            if (settings.ContainsKey("pmut_int"))
+                this.pmut_int = Convert.ToDouble(settings["pmut_int"]);
+            else
+                this.pmut_int = 0.5;
+
+
+
+
+            //offspring
+            if (settings.ContainsKey("lambda"))
+                this.lambda = Convert.ToInt16(settings["lambda"]);
+            else
+                this.lambda = this.popsize;
+
+
+            //mixing nr., i.e. how many parents involved in creating one offspring. roh=1 is only mutation.
+            if (settings.ContainsKey("roh"))
+                this.roh = Convert.ToInt16(settings["roh"]);
+            else
+                this.roh = 2;
+            if (this.roh > this.popsize) this.roh = this.popsize;
+
 
             if (settings.ContainsKey("x0sampling"))
             {
@@ -868,9 +926,9 @@ namespace MetaheuristicsLibrary.SolversSO
                 for (int p = 0; p < this.x0.Length; p++)
                 {
                     _xpop[p] = new double[base.n];
-                    this.x0.CopyTo(_xpop[p], 0);
+                    this.x0[p].CopyTo(_xpop[p], 0);
                     this.fx0[p] = base.evalfnc(this.x0[p]);
-                    this.currentiter++;
+                    this.evalcount++;
                 }
                 this.x0 = new double[this.popsize][];   //i'm doing this, because x0.Length at initialisation could be < popsize
                 _xpop.CopyTo(this.x0, 0);
@@ -889,7 +947,7 @@ namespace MetaheuristicsLibrary.SolversSO
             {
                 for (int i = 0; i < base.n; i++)
                 {
-                    xbasepoint[i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i];
+                    xbasepoint[i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i]; //if no x0 exists, uniform sampling
                     if (base.xint[i])
                     {
                         xbasepoint[i] = Math.Round(xbasepoint[i], 0);
@@ -898,10 +956,10 @@ namespace MetaheuristicsLibrary.SolversSO
             }
             for (int p = existing_p; p < this.popsize; p++)
             {
+                this.x0[p] = new double[base.n];
                 if (this.x0samplingmode == 0)
                 {
                     // uniform sampling withing the search domain
-                    this.x0[p] = new double[base.n];
                     for (int i = 0; i < base.n; i++)
                     {
                         this.x0[p][i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i];
@@ -916,7 +974,8 @@ namespace MetaheuristicsLibrary.SolversSO
                     //gaussian sampling around a point
                     for (int i = 0; i < base.n; i++)
                     {
-                        this.x0[p][i] = base.rnd.NextGaussianNorm(0, this.s0[i]) * xbasepoint[i];
+                        this.x0[p][i] = (base.rnd.NextGaussian(0, this.s0[i]) * (base.ub[i] - base.lb[i])) + xbasepoint[i];
+                        //this.x0[p][i] = (base.rnd.NextGaussian(0, this.s0[i]) * (base.ub[i] - base.lb[i])) + xbasepoint[i];
                         if (base.xint[i])
                         {
                             this.x0[p][i] = Math.Round(this.x0[p][i], 0);
@@ -925,7 +984,7 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
                 this.checkBounds(ref this.x0[p], base.lb, base.ub);
                 this.fx0[p] = base.evalfnc(this.x0[p]);
-                this.currentiter++;
+                this.evalcount++;
             }
 
             //get the best
@@ -937,12 +996,225 @@ namespace MetaheuristicsLibrary.SolversSO
                     this.x0[p].CopyTo(base.xopt, 0);
                 }
             }
+
+            this.x_pop = new double[this.popsize][];
+            this.x0.CopyTo(this.x_pop, 0);
+            this.fx_pop = new double[this.popsize];
+            this.fx0.CopyTo(this.fx_pop, 0);
         }
 
 
         public override void solve()
         {
-            throw new NotImplementedException();
+            this.initialize();
+
+            //Begin
+            //g:=0;     dont need generations, im using eval count
+            while (base.evalcount < base.evalmax)
+            {
+                int[] int_family;
+                double [][] s_new = new double [this.lambda][];                    
+                double [][] x_new = new double [this.lambda][];
+                double[] fx_new = new double[this.lambda];
+                for (int l = 0; l < this.lambda; l++)
+                {
+                    this.marriage(out int_family, this.popsize, this.roh);
+                    this.s_recombination(out s_new[l], this.s, int_family);   
+                    this.x_recombination(out x_new[l], this.x_pop, int_family);   //interm. recomb. for R, or coordinate-wise recomb for N
+                    this.s_mutation(ref s_new[l], this.tau);
+                    this.x_mutation(ref x_new[l], s_new[l], this.tau);
+                    fx_new[l] = base.evalfnc(x_new[l]);
+                    base.evalcount++;
+                    if (this.CheckIfNaN(fx_new[l]))
+                    {
+                        if (fx_new[l] < base.fxopt)
+                        {
+                            base.fxopt = fx_new[l];
+                            x_new[l].CopyTo(base.xopt, 0);
+                            return;
+                        }
+                    }
+                }
+                double[][] x_sel;
+                double[] fx_sel;
+                double[][] s_sel;
+                this.selection(out x_sel, out fx_sel, out s_sel, this.x_pop, this.fx_pop, this.s, x_new, fx_new, s_new);
+                x_sel.CopyTo(this.x_pop,0);
+                fx_sel.CopyTo(this.fx_pop,0);
+                s_sel.CopyTo(this.s, 0); 
+                this.storeCurrentBest();
+                Console.WriteLine("eval: {0} with fx: {1}", base.evalcount, base.get_fxoptimum());
+            }
+            
+
+            //initialize(Pop0:={(x0_i,s0_i,fx0_i), i=1,...,mu}
+            //Repeat
+            // For l:=1 to lambda Do Begin
+            //     Fl := marriage(Pg, roh);
+            //     sl := s_recombination(Fl);
+            //     yl := y_recombination(Fl);
+            //     stildel := s_mutation(sl);                   // s
+            //     ytildel := y_mutation(yl, stildel);          // x
+            //     Ftildel := F(ytildel);                       // F(x)
+            //  End;
+            //  P0g := {(ytildel, stildel, Ftildel), l=1,...,lambda};
+            //  Case selection_type Of
+            //     (mu , lambda) : Pg+1 := selection(P0g, mu);
+            //     (mu + lambda) : Pg+1 := selection(P0g, Pg, mu);
+            //  End;
+            //  g := g+1;
+            //Until termination_condition
+            //End
+        }
+
+
+        /// <summary>
+        /// pure random selection. No fitness-proportionate selection.
+        /// </summary>
+        /// <param name="_xfamily"></param>
+        /// <param name="_sfamily"></param>
+        /// <param name="_xpop"></param>
+        /// <param name="_spop"></param>
+        /// <param name="_roh"></param>
+        private void marriage(out int[] _intfamily, int _popsize, int _roh)
+        {
+            _intfamily = new int[this.roh];
+
+            bool[] selected = new bool[_popsize];
+            for (int i = 0; i < this.roh; i++)
+            {
+                bool found = false;
+                int sel = 0;
+                while (!found)
+                {
+                    sel = rnd.Next(_popsize);
+                    if (!selected[sel])
+                    {
+                        selected[sel] = true;
+                        found = true;
+                    }
+                }
+                _intfamily[i] = sel;
+            }
+  
+        }
+
+        private void s_recombination(out double[] _s_new, double[][] _s, int[] _intfamily)
+        {
+            int _roh = _intfamily.Length;
+            _s_new = new double[base.n];
+            for (int i = 0; i < base.n; i++)
+            {
+                for (int u = 0; u < _roh; u++) //length of roh, mixing number
+                {
+                    _s_new[i] += _s[_intfamily[u]][i];
+                }
+                _s_new[i] /= _roh;
+            }
+        }
+
+        /// <summary>
+        /// intermediate recombination for Real-valued. coordinate-wise random selection for discrete parameters.
+        /// </summary>
+        /// <param name="_x_new"></param>
+        /// <param name="_intfamily"></param>
+        private void x_recombination(out double [] _x_new, double [][] _xpop, int [] _intfamily)
+        {
+            int _roh = _intfamily.Length;
+            _x_new = new double[base.n];
+            for (int i = 0; i < base.n; i++)
+            {
+                if (base.xint[i])   //integer
+                {
+                    _x_new[i] = _xpop[_intfamily[rnd.Next(roh)]][i];
+                }
+                else                //real
+                {
+                    for (int u = 0; u < _roh; u++) //length of roh, mixing number
+                    {
+                        _x_new[i] += _xpop[_intfamily[u]][i];
+                    }
+                    _x_new[i] /= _roh;
+                }
+            }
+        }
+
+
+        private void s_mutation(ref double[] _snew, double _tau)
+        {
+            double tau0exp = Math.Exp(this.tau0 * rnd.NextGaussian(0, 1));
+            for (int i = 0; i < base.n; i++)
+            {
+                _snew[i] = tau0exp * _snew[i] * Math.Exp(this.tau * rnd.NextGaussian(0, 1));
+            }
+        }
+
+        private void x_mutation(ref double[] _xnew, double[] _snew, double _tau)
+        {
+            for (int i = 0; i < base.n; i++)
+            {
+                if (base.xint[i])
+                {
+                    if (rnd.NextDouble() < this.pmut_int)
+                    {
+                        _xnew[i] = Convert.ToDouble(rnd.Next(Convert.ToInt16(base.lb[i]), Convert.ToInt16(base.ub[i])));
+                    }
+                }
+                else
+                {
+                    _xnew[i] = _xnew[i] + (_snew[i] * rnd.NextGaussian(0, 1));
+                }
+            }
+            this.checkBounds(ref _xnew, base.lb, base.ub);
+        }
+
+        private void selection(out double [][] _x_sel, out double [] _fx_sel, out double [][] _s_sel,
+            double[][] _x_old, double[] _fx_old, double [][] _s_old, double[][] _x_new, double[] _fx_new, double [][] _s_new)
+        {
+            int popsize = _x_old.Length;
+            int lambda = _x_new.Length;
+
+            double[][] _x_merged = new double[popsize + lambda][];
+            double[] _fx_merged = new double[popsize + lambda];
+            double[][] _s_merged = new double[popsize + lambda][];
+            _x_old.CopyTo(_x_merged, 0);
+            _x_new.CopyTo(_x_merged, popsize);
+            _fx_old.CopyTo(_fx_merged, 0);
+            _fx_new.CopyTo(_fx_merged, popsize);
+            _s_old.CopyTo(_s_merged, 0);
+            _s_new.CopyTo(_s_merged, popsize);
+
+            _x_old = new double[popsize][];
+            _fx_old = new double[popsize];
+            _s_old = new double[popsize][];
+            double[][][] _xands = new double[popsize + lambda][][];
+            for (int i = 0; i < _xands.Length; i++)
+                _xands[i] = new double[2][];
+
+            for (int i = 0; i < popsize + lambda; i++)
+            {
+                _xands[i][0] = new double[_x_merged[0].Length];
+                _xands[i][1] = new double[_s_merged[0].Length];
+                _x_merged[i].CopyTo(_xands[i][0], 0);
+                _s_merged[i].CopyTo(_xands[i][1], 0);
+            }
+
+            //rank according to fitness
+            Array.Sort(_fx_merged, _xands);
+
+            _x_sel = new double[popsize][];
+            _fx_sel = new double[popsize];
+            _s_sel = new double[popsize][];
+            for (int i = 0; i < popsize; i++)
+            {
+                _x_sel[i] = new double[_x_merged[0].Length];
+                _xands[i][0].CopyTo(_x_sel[i], 0);
+                
+                _fx_sel[i] = _fx_merged[i];
+
+                _s_sel[i] = new double[_s_merged[0].Length];
+                _xands[i][1].CopyTo(_s_sel[i],0);
+            }
         }
 
         protected override void storeCurrentBest()
