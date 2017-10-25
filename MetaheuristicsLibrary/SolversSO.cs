@@ -234,6 +234,35 @@ namespace MetaheuristicsLibrary.SolversSO
     }
 
 
+    
+    public class SimplePSO : SO_Solver
+    {
+
+        double[][] x0;
+
+        public SimplePSO(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
+            : base(lb, ub, xint, evalmax, evalfnc, seed)
+        {
+            this.x0 = x0 ?? new double[0][];
+
+        }
+
+        public override void solve()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void storeCurrentBest()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override bool CheckIfNaN(double fxtest)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
     /// <summary>
     /// Simple Genetic Algorithm
@@ -477,11 +506,6 @@ namespace MetaheuristicsLibrary.SolversSO
 
                 x_new.CopyTo(this.x_pop, 0);
                 fx_new.CopyTo(this.fx_pop, 0);
-
-
-
-                //get the best
-                //storeCurrentBest();
 
 
                 gen++;
@@ -777,17 +801,7 @@ namespace MetaheuristicsLibrary.SolversSO
         /// Population size
         /// </summary>
         public int popsize { get; private set; }
-        /// <summary>
-        /// Current generation
-        /// </summary>
-        public int gen { get; private set; }
-
-
-        /// <summary>
-        /// length of bitstring
-        /// </summary>
-        private int[] lchrom;
-
+     
 
         /// <summary>
         /// cost values of new population
@@ -803,9 +817,12 @@ namespace MetaheuristicsLibrary.SolversSO
         private double[] fx0;
 
         /// <summary>
-        /// strategy parameters. step-size. s0 is initial step size
+        /// strategy parameters. step-size.
         /// </summary>
         private double[][] s;
+        /// <summary>
+        /// step-size s0 only used at initial sampling
+        /// </summary>
         private double [] s0;
 
         /// <summary>
@@ -833,8 +850,6 @@ namespace MetaheuristicsLibrary.SolversSO
         {
             this.x0 = x0 ?? new double[0][];
 
-            this.gen = 0;
-
 
             //popsize. same as mu
             if (settings.ContainsKey("popsize"))
@@ -843,7 +858,23 @@ namespace MetaheuristicsLibrary.SolversSO
                 this.popsize = 20;
 
 
+            //offspring
+            if (settings.ContainsKey("lambda"))
+                this.lambda = Convert.ToInt16(settings["lambda"]);
+            else
+                this.lambda = this.popsize;
 
+
+            //mixing nr., i.e. how many parents involved in creating one offspring. roh=1 is only mutation.
+            if (settings.ContainsKey("roh"))
+                this.roh = Convert.ToInt16(settings["roh"]);
+            else
+                this.roh = 2;
+            if (this.roh > this.popsize) this.roh = this.popsize;
+
+
+
+            //stepsize s
             this.s = new double[this.popsize][];
             for (int p = 0; p < this.popsize; p++)
             {
@@ -856,6 +887,7 @@ namespace MetaheuristicsLibrary.SolversSO
                         this.s[p][i] = 0.5;
             }
 
+            //initial stepsize s0
             this.s0 = new double[base.n];
             if (settings.ContainsKey("stepsize0"))
                 for (int i = 0; i < base.n; i++)
@@ -875,6 +907,7 @@ namespace MetaheuristicsLibrary.SolversSO
             this.tau0 = this.tauc / (Math.Sqrt(2 * base.n));
 
 
+            //mutation probability, only for integer
             if (settings.ContainsKey("pmut_int"))
                 this.pmut_int = Convert.ToDouble(settings["pmut_int"]);
             else
@@ -883,19 +916,9 @@ namespace MetaheuristicsLibrary.SolversSO
 
 
 
-            //offspring
-            if (settings.ContainsKey("lambda"))
-                this.lambda = Convert.ToInt16(settings["lambda"]);
-            else
-                this.lambda = this.popsize;
 
 
-            //mixing nr., i.e. how many parents involved in creating one offspring. roh=1 is only mutation.
-            if (settings.ContainsKey("roh"))
-                this.roh = Convert.ToInt16(settings["roh"]);
-            else
-                this.roh = 2;
-            if (this.roh > this.popsize) this.roh = this.popsize;
+
 
 
             if (settings.ContainsKey("x0sampling"))
@@ -1043,28 +1066,8 @@ namespace MetaheuristicsLibrary.SolversSO
                 fx_sel.CopyTo(this.fx_pop,0);
                 s_sel.CopyTo(this.s, 0); 
                 this.storeCurrentBest();
-                Console.WriteLine("eval: {0} with fx: {1}", base.evalcount, base.get_fxoptimum());
+                //Console.WriteLine("eval: {0} with fx: {1}", base.evalcount, base.get_fxoptimum());
             }
-            
-
-            //initialize(Pop0:={(x0_i,s0_i,fx0_i), i=1,...,mu}
-            //Repeat
-            // For l:=1 to lambda Do Begin
-            //     Fl := marriage(Pg, roh);
-            //     sl := s_recombination(Fl);
-            //     yl := y_recombination(Fl);
-            //     stildel := s_mutation(sl);                   // s
-            //     ytildel := y_mutation(yl, stildel);          // x
-            //     Ftildel := F(ytildel);                       // F(x)
-            //  End;
-            //  P0g := {(ytildel, stildel, Ftildel), l=1,...,lambda};
-            //  Case selection_type Of
-            //     (mu , lambda) : Pg+1 := selection(P0g, mu);
-            //     (mu + lambda) : Pg+1 := selection(P0g, Pg, mu);
-            //  End;
-            //  g := g+1;
-            //Until termination_condition
-            //End
         }
 
 
@@ -1251,6 +1254,8 @@ namespace MetaheuristicsLibrary.SolversSO
             }
         }
     }
+
+
 
 
     /// <summary>
@@ -1469,23 +1474,6 @@ namespace MetaheuristicsLibrary.SolversSO
     /// </summary>
     public class SimpleDE : SO_Solver
     {
-
-        public override void solve()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-
-
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class SimplePSO : SO_Solver
-    {
-
 
         public override void solve()
         {
