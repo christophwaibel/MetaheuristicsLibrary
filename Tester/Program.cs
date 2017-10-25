@@ -205,7 +205,7 @@ namespace Tester
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            int dvar = 4;
+            int dvar = 10;
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             bool[] xint = new bool[dvar];
@@ -244,7 +244,7 @@ namespace Tester
             ////    fx0[i] = i;
             ////}
             ////SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.L_Ackley, 1, settings, x0, fx0);
-            //SimpleGA ga = new SimpleGA(lb, ub, xint, 10000, Testfunctions.L_Ackley, 5, settings);
+            //SimpleGA ga = new SimpleGA(lb, ub, xint, 1000, Testfunctions.L_Ackley, 9, settings);
             ////SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.stupid, 1, settings);
             //ga.solve();
             //Console.WriteLine(ga.get_fxoptimum().ToString());
@@ -252,19 +252,21 @@ namespace Tester
 
 
 
-
+            
             Dictionary<string, object> settingsES = new Dictionary<string, object>();
-            settingsES.Add("x0sampling", 0);
-            settingsES.Add("roh", 2);
-            settingsES.Add("popsize", 20);
-            settingsES.Add("lambda", 20);
-            settingsES.Add("stepsize0", 0.4);
-            settingsES.Add("stepsize", 0.3);
+            settingsES.Add("popsize", 100);          // ∈ {2,...,200}
+            settingsES.Add("lambda",100);            // ∈ {1,...,200}
+            settingsES.Add("roh", 100);               // ∈ {1,...,popsize}  . in hyperoptimization, express as percentage of lambda
+            settingsES.Add("x0sampling", 0);        // ∈ {0,1}  0=uniform, 1=gaussian
+            settingsES.Add("stepsize0", 1);       // ∈ [0.01, 10]
+            settingsES.Add("stepsize", 2);        // ∈ [0.01, 10]
+            settingsES.Add("tauc", 0.4);              // ∈ [0.01, 10]
+            //settingsES.Add("pmut_int", 0.1);        // ∈ [0.01, 0.99]
             //double[][] x0 = new double[1][];
             //x0[0] = new double[dvar];
             //x0[0][0] = 50;
             //x0[0][1] = 50;
-            SimpleES es = new SimpleES(lb, ub, xint, 1000, Testfunctions.L_Ackley, 5, settingsES);
+            SimpleES es = new SimpleES(lb, ub, xint, 1100, Testfunctions.L_Ackley, 6, settingsES);
             es.solve();
             Console.WriteLine(es.get_fxoptimum());
             Console.ReadKey();
