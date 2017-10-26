@@ -108,7 +108,20 @@ namespace MetaheuristicsLibrary.SolversSO
             return this.fxopt;
         }
 
-
+        /// <summary>
+        /// checking bounds
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="_lb"></param>
+        /// <param name="_ub"></param>
+        protected void checkBounds(ref double[] x, double[] _lb, double[] _ub)
+        {
+            for (int i = 0; i < this.n; i++)
+            {
+                if (x[i] < _lb[i]) x[i] = _lb[i];
+                else if (x[i] > _ub[i]) x[i] = _ub[i];
+            }
+        }
 
 
 
@@ -234,22 +247,237 @@ namespace MetaheuristicsLibrary.SolversSO
     }
 
 
-    
-    public class SimplePSO : SO_Solver
+
+
+    /// <summary>
+    /// Particle Swarm Optimizer (PSO), which uses multiple neighbouring particle vectors for updating velocity.
+    /// The canonical PSO only considers 2 vectors for updating: a particle's own best and the global / local best particle.
+    /// Source:     Mendes R., Kennedy J., Neves J. (2004). Fully Informed Particle Swarm: Simpler, Maybe Better.
+    /// 2nd Source: Poli R., Kennedy J., Blackwell T. (2007). Particle swarm optimization - An overview.
+    /// </summary>
+    public class FIPSO : SO_Solver
     {
+        //Poli wt al. (2007), eqt. 5
+        //
+        //v_i <- χ (v_i + 1/K (Σ_n∈K (U(0,ϕ) ⨂ (x_n,i,best - x_i) ) ) )
+        //x_i <- x_i + v_i
+        //
+        // with: 
+        // x_n,i,best   = best foud so far of neighbour n of particle i
+        // K            = number of neighbours
+        // χ            = constriction coefficient, typically 0.7298
+        // ϕ            = 4.1?
 
-        double[][] x0;
 
-        public SimplePSO(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
+
+
+        /// <summary>
+        /// cost values of new population
+        /// </summary>
+        public double[] fx_pop { get; private set; }
+        /// <summary>
+        /// decision variables of new population
+        /// </summary>
+        public double[][] x_pop { get; private set; }
+
+        private double[][] x0;
+        private double[] fx0;
+
+        /// <summary>
+        /// population size
+        /// </summary>
+        private int popsize;
+        /// <summary>
+        /// constriction coefficient. typically 0.7298
+        /// </summary>
+        private double chi;
+        /// <summary>
+        /// upper bound for random number
+        /// </summary>
+        private double phi;
+        /// <summary>
+        /// velocities
+        /// </summary>
+        private double[][] v;
+
+        /// <summary>
+        /// best solution vector found so far, per particle
+        /// </summary>
+        private double[][] px_best;
+        /// <summary>
+        /// best cost value found so far, per particle
+        /// </summary>
+        private double[] pfx_best;
+        /// <summary>
+        /// Per particle, 4 indices of neighbours. excluding own best. cp. Mendes et al. (2004).
+        /// </summary>
+        private int[][] indK;
+
+        /// <summary>
+        /// 0 = uniform, 1= gaussian
+        /// </summary>
+        private int x0samplingmode;
+
+        /// <summary>
+        /// initial stepsize, in case of gaussian initial sampling
+        /// </summary>
+        private double[] s0;
+
+
+        /// <summary>
+        /// using von Neumann topology.
+        /// </summary>
+        /// <param name="lb"></param>
+        /// <param name="ub"></param>
+        /// <param name="xint"></param>
+        /// <param name="evalmax"></param>
+        /// <param name="evalfnc"></param>
+        /// <param name="seed"></param>
+        /// <param name="settings"></param>
+        /// <param name="x0"></param>
+        public FIPSO(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
             : base(lb, ub, xint, evalmax, evalfnc, seed)
         {
             this.x0 = x0 ?? new double[0][];
 
+            this.popsize = 24;
         }
 
         public override void solve()
         {
-            throw new NotImplementedException();
+            this.initializeNeighbourhood();
+
+        }
+
+
+        /// <summary>
+        /// von Neumann topology, excluding own particle
+        /// </summary>
+        private void initializeNeighbourhood()
+        {
+            double sqrtPop = Math.Sqrt(this.popsize);  
+            int cols = (int)Math.Floor(sqrtPop);
+            int rows = (int)Math.Round((Convert.ToDouble(this.popsize) / Convert.ToDouble(cols)),0);
+            this.popsize = cols * rows;         //making sure popsize can be divided into a cols*rows matrix
+
+            this.indK = new int[this.popsize][];
+            for (int i = 0; i < this.popsize; i++)
+                this.indK[i] = new int[4];
+
+            int count = 0;
+            for (int i = 0; i < cols; i++)
+            {
+                for (int j = 0; j < rows; j++)
+                {
+                    this.indK[count][0] = count - cols;
+                    this.indK[count][1] = count - 1;
+                    this.indK[count][2] = count + 1;
+                    this.indK[count][3] = count + cols;
+
+                    if ((count + 1) % cols == 0) this.indK[count][2] = count - cols + 1;
+                    else if ((count + 1) % cols == 1) this.indK[count][1] = count + cols - 1;
+
+                    if (count - cols < 0) this.indK[count][0] = count + this.popsize - cols ;
+                    if (count + cols > this.popsize - 1) this.indK[count][3] = count - this.popsize + cols;
+
+                    count++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// sampling initial population x0
+        /// </summary>
+        private void initialSample()
+        {
+            base.fxopt = double.MaxValue;
+            base.xopt = new double[base.n];
+
+            int existing_p = this.x0.Length;
+            this.fx0 = new double[this.popsize];
+            bool x0exists = false;
+            if (this.x0.Length > 0)
+            {
+                x0exists = true;
+                double[][] _xpop = new double[this.popsize][];
+                for (int p = 0; p < this.x0.Length; p++)
+                {
+                    _xpop[p] = new double[base.n];
+                    this.x0[p].CopyTo(_xpop[p], 0);
+                    this.fx0[p] = base.evalfnc(this.x0[p]);
+                    this.evalcount++;
+                }
+                this.x0 = new double[this.popsize][];   //i'm doing this, because x0.Length at initialisation could be < popsize
+                _xpop.CopyTo(this.x0, 0);
+            }
+            else
+            {
+                this.x0 = new double[this.popsize][];
+            }
+
+            double[] xbasepoint = new double[base.n];
+            if (x0exists)
+            {
+                this.x0[0].CopyTo(xbasepoint, 0);       //always take the first entry, no matter if more than 1 has been inputted
+            }
+            else
+            {
+                for (int i = 0; i < base.n; i++)
+                {
+                    xbasepoint[i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i]; //if no x0 exists, uniform sampling
+                    if (base.xint[i])
+                    {
+                        xbasepoint[i] = Math.Round(xbasepoint[i], 0);
+                    }
+                }
+            }
+            for (int p = existing_p; p < this.popsize; p++)
+            {
+                this.x0[p] = new double[base.n];
+                if (this.x0samplingmode == 0)
+                {
+                    // uniform sampling withing the search domain
+                    for (int i = 0; i < base.n; i++)
+                    {
+                        this.x0[p][i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i];
+                        if (base.xint[i])
+                        {
+                            this.x0[p][i] = Math.Round(this.x0[p][i], 0);
+                        }
+                    }
+                }
+                else
+                {
+                    //gaussian sampling around a point
+                    for (int i = 0; i < base.n; i++)
+                    {
+                        this.x0[p][i] = (base.rnd.NextGaussian(0, this.s0[i]) * (base.ub[i] - base.lb[i])) + xbasepoint[i];
+                        //this.x0[p][i] = (base.rnd.NextGaussian(0, this.s0[i]) * (base.ub[i] - base.lb[i])) + xbasepoint[i];
+                        if (base.xint[i])
+                        {
+                            this.x0[p][i] = Math.Round(this.x0[p][i], 0);
+                        }
+                    }
+                }
+                this.checkBounds(ref this.x0[p], base.lb, base.ub);
+                this.fx0[p] = base.evalfnc(this.x0[p]);
+                this.evalcount++;
+            }
+
+            //get the best
+            for (int p = 0; p < this.popsize; p++)
+            {
+                if (this.fx0[p] < base.fxopt)
+                {
+                    base.fxopt = this.fx0[p];
+                    this.x0[p].CopyTo(base.xopt, 0);
+                }
+            }
+
+            this.x_pop = new double[this.popsize][];
+            this.x0.CopyTo(this.x_pop, 0);
+            this.fx_pop = new double[this.popsize];
+            this.fx0.CopyTo(this.fx_pop, 0);
         }
 
         protected override void storeCurrentBest()
@@ -261,6 +489,8 @@ namespace MetaheuristicsLibrary.SolversSO
         {
             throw new NotImplementedException();
         }
+
+
     }
 
 
@@ -740,24 +970,12 @@ namespace MetaheuristicsLibrary.SolversSO
 
             }
 
-            checkBounds(ref child1, base.lb, base.ub);
-            checkBounds(ref child2, base.lb, base.ub);
+            base.checkBounds(ref child1, base.lb, base.ub);
+            base.checkBounds(ref child2, base.lb, base.ub);
 
         }
 
-        private void checkBounds(ref double[] x, double[] _lb, double[] _ub)
-        {
-            for (int i = 0; i < base.n; i++)
-            {
-                if (x[i] < _lb[i]) x[i] = _lb[i];
-                else if (x[i] > _ub[i]) x[i] = _ub[i];
-            }
-        }
-
-
-
-
-
+  
     }
 
 
@@ -1005,7 +1223,7 @@ namespace MetaheuristicsLibrary.SolversSO
                         }
                     }
                 }
-                this.checkBounds(ref this.x0[p], base.lb, base.ub);
+                base.checkBounds(ref this.x0[p], base.lb, base.ub);
                 this.fx0[p] = base.evalfnc(this.x0[p]);
                 this.evalcount++;
             }
@@ -1168,7 +1386,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     _xnew[i] = _xnew[i] + (_snew[i] * rnd.NextGaussian(0, 1));
                 }
             }
-            this.checkBounds(ref _xnew, base.lb, base.ub);
+            base.checkBounds(ref _xnew, base.lb, base.ub);
         }
 
         private void selection(out double [][] _x_sel, out double [] _fx_sel, out double [][] _s_sel,
@@ -1245,14 +1463,6 @@ namespace MetaheuristicsLibrary.SolversSO
             return stop;
         }
 
-        private void checkBounds(ref double[] x, double[] _lb, double[] _ub)
-        {
-            for (int i = 0; i < base.n; i++)
-            {
-                if (x[i] < _lb[i]) x[i] = _lb[i];
-                else if (x[i] > _ub[i]) x[i] = _ub[i];
-            }
-        }
     }
 
 
