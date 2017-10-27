@@ -250,7 +250,8 @@ namespace MetaheuristicsLibrary.SolversSO
 
 
     /// <summary>
-    /// Particle Swarm Optimizer (PSO), which uses multiple neighbouring particle vectors for updating velocity.
+    /// Particle Swarm Optimizer (PSO)
+    /// Fully informed PSO, which uses multiple neighbouring particle vectors for updating velocity.
     /// The canonical PSO only considers 2 vectors for updating: a particle's own best and the global / local best particle.
     /// Source:     Mendes R., Kennedy J., Neves J. (2004). Fully Informed Particle Swarm: Simpler, Maybe Better.
     /// 2nd Source: Poli R., Kennedy J., Blackwell T. (2007). Particle swarm optimization - An overview.
@@ -292,9 +293,13 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         private double chi;
         /// <summary>
-        /// upper bound for random number
+        /// upper bound for random number for attraction of particle i to best particle j. 4.1?
         /// </summary>
         private double phi;
+        /// <summary>
+        /// constriction coefficient for random initial velocity. fraction of the search domain.
+        /// </summary>
+        private double v0max;
         /// <summary>
         /// velocities
         /// </summary>
@@ -319,9 +324,16 @@ namespace MetaheuristicsLibrary.SolversSO
         private int x0samplingmode;
 
         /// <summary>
+        /// updating pxbest mode. mode 0 = update after looping trough entire population. mode 1 = update after each function evaluation.
+        /// </summary>
+        private int pxupdatemode;
+
+
+        /// <summary>
         /// initial stepsize, in case of gaussian initial sampling
         /// </summary>
         private double[] s0;
+
 
 
         /// <summary>
@@ -340,13 +352,52 @@ namespace MetaheuristicsLibrary.SolversSO
         {
             this.x0 = x0 ?? new double[0][];
 
-            this.popsize = 24;
+            this.popsize = 24;      // population size.
+            this.chi = 0.1;      // constriction coefficient
+            this.phi = 4;         // attraction to best particle 
+            this.v0max = 0.2;       // max velocity at initialisation. fraction of domain.
+            this.x0samplingmode = 1;// 0 = uniform, 1 = gaussian
+            this.pxupdatemode = 1;  //0 = update after population. 1 = update after each evaluation
+            this.s0 = new double[base.n];
+            for (int i = 0; i < base.n; i++) s0[i] = 1.0;
         }
 
         public override void solve()
         {
             this.initializeNeighbourhood();
+            this.initialSamples();
 
+            int pUpdate = this.popsize;
+            if (this.pxupdatemode == 1) pUpdate = 1;
+
+            int pNow = 0;
+
+            while (base.evalcount < base.evalmax)
+            {
+                for (int p = 0; p < pUpdate; p++)
+                {
+                    double[] v_new;
+                    double [] x_new;
+                    double fx_new;
+                    this.updateParticle(out v_new, out x_new, this.x_pop[pNow], this.v[pNow], this.px_best, this.indK[pNow]);
+                    fx_new = base.evalfnc(x_new);
+                    v_new.CopyTo(this.v[pNow], 0);
+                    x_new.CopyTo(this.x_pop[pNow], 0);
+                    this.fx_pop[pNow] = fx_new;
+
+                    this.updateParticlesBest(ref this.px_best[pNow], ref this.pfx_best[pNow], x_new, fx_new);
+
+                    base.evalcount++;
+                    pNow++;
+                    if (pNow == this.popsize) pNow = 0;
+                   
+                    this.storeCurrentBest();
+                    if (this.CheckIfNaN(fx_new))
+                    {
+                        return;
+                    }
+                }
+            }
         }
 
 
@@ -386,9 +437,9 @@ namespace MetaheuristicsLibrary.SolversSO
         }
 
         /// <summary>
-        /// sampling initial population x0
+        /// sampling initial population x0 and fx0, initial velocity v0, and store as current best particles.
         /// </summary>
-        private void initialSample()
+        private void initialSamples()
         {
             base.fxopt = double.MaxValue;
             base.xopt = new double[base.n];
@@ -436,7 +487,7 @@ namespace MetaheuristicsLibrary.SolversSO
                 this.x0[p] = new double[base.n];
                 if (this.x0samplingmode == 0)
                 {
-                    // uniform sampling withing the search domain
+                    // uniform sampling within the search domain
                     for (int i = 0; i < base.n; i++)
                     {
                         this.x0[p][i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i];
@@ -475,19 +526,84 @@ namespace MetaheuristicsLibrary.SolversSO
             }
 
             this.x_pop = new double[this.popsize][];
-            this.x0.CopyTo(this.x_pop, 0);
             this.fx_pop = new double[this.popsize];
+            this.px_best = new double[this.popsize][];
+            this.pfx_best = new double[this.popsize];
+            this.x0.CopyTo(this.x_pop, 0);
+            this.x0.CopyTo(this.px_best, 0);
             this.fx0.CopyTo(this.fx_pop, 0);
+            this.fx0.CopyTo(this.pfx_best, 0);
+
+
+
+            this.v = new double[this.popsize][];
+            for (int p = 0; p < this.popsize; p++)
+            {
+                this.v[p] = new double[base.n];
+                for (int i = 0; i < base.n; i++)
+                {
+                    this.v[p][i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i];
+                    this.v[p][i] *= this.v0max;
+                }
+            }
         }
+
+        private void updateParticle(out double [] v_new, out double [] x_new, double [] v_old, double [] x_old, double [][] px_best, int [] neighbours)
+        {
+            v_new = new double[base.n];
+            x_new = new double[base.n];
+            //v_i <- χ (v_i + 1/K (Σ_n∈K (U(0,ϕ) ⨂ (x_n,i,best - x_i) ) ) )
+            //x_i <- x_i + v_i
+            int K = neighbours.Length;
+            for (int i = 0; i < base.n; i++)
+            {
+                double sumXi = 0;
+                for (int k = 0; k < K; k++)
+                {
+                    sumXi += (rnd.NextDouble() * this.phi) * (px_best[neighbours[k]][i] - x_old[i]);
+                }
+                v_new[i] = v_old[i] + (sumXi / K);
+                v_new[i] *= this.chi;
+
+                x_new[i] = x_old[i] + v_new[i];
+            }
+
+            base.checkBounds(ref x_new, base.lb, base.ub);
+        }
+
+
+        private void updateParticlesBest(ref double [] px_best, ref double pfx_best, double [] x_now, double fx_now)
+        {
+            if (fx_now < pfx_best)
+            {
+                x_now.CopyTo(px_best, 0);
+                pfx_best = fx_now;
+            }
+
+        }
+
 
         protected override void storeCurrentBest()
         {
-            throw new NotImplementedException();
+            for (int p = 0; p < this.popsize; p++)
+            {
+                if (this.fx_pop[p] < base.fxopt)
+                {
+                    base.fxopt = this.fx_pop[p];
+                    this.x_pop[p].CopyTo(base.xopt, 0);
+                }
+            }
         }
 
         protected override bool CheckIfNaN(double fxtest)
         {
-            throw new NotImplementedException();
+
+            bool stop = false;
+            if (Double.IsNaN(fxtest))
+            {
+                stop = true;
+            }
+            return stop;
         }
 
 
@@ -1272,8 +1388,8 @@ namespace MetaheuristicsLibrary.SolversSO
                         {
                             base.fxopt = fx_new[l];
                             x_new[l].CopyTo(base.xopt, 0);
-                            return;
                         }
+                        return;
                     }
                 }
                 double[][] x_sel;
@@ -1456,7 +1572,7 @@ namespace MetaheuristicsLibrary.SolversSO
             if (Double.IsNaN(fxtest))
             {
                 //get the best
-                storeCurrentBest();
+                this.storeCurrentBest();
 
                 stop = true;
             }
