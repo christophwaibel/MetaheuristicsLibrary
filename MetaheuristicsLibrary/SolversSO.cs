@@ -669,14 +669,7 @@ namespace MetaheuristicsLibrary.SolversSO
         private double stat_avg, stat_max, stat_min;
 
 
-        /// <summary>
-        /// cost values of previous population
-        /// </summary>
-        private double[] fx_pop_old;
-        /// <summary>
-        /// decision variables of previous population
-        /// </summary>
-        private double[][] x_pop_old;
+
         /// <summary>
         /// cost values of new population
         /// </summary>
@@ -692,6 +685,10 @@ namespace MetaheuristicsLibrary.SolversSO
         private double[][] x0;
         private double[] fx0;
 
+        /// <summary>
+        /// how many elites to be maintained per generation
+        /// </summary>
+        private int elite;
 
         /// <summary>
         /// Simple GA, according to Goldberg 1989, chapter 3.
@@ -733,8 +730,6 @@ namespace MetaheuristicsLibrary.SolversSO
 
 
 
-
-
             if (settings.ContainsKey("maxgen"))
             {
                 maxgen = Convert.ToInt32(settings["maxgen"]);
@@ -751,6 +746,15 @@ namespace MetaheuristicsLibrary.SolversSO
             else
             {
                 popsize = 20;
+            }
+
+            if (settings.ContainsKey("elite"))
+            {
+                elite = Convert.ToInt32(settings["elite"]);
+            }
+            else
+            {
+                elite = 1;
             }
 
             if (settings.ContainsKey("pcross"))
@@ -799,6 +803,7 @@ namespace MetaheuristicsLibrary.SolversSO
             //main loop
             do
             {
+                Array.Sort(this.fx_pop, this.x_pop);
                 double[] fitness_pop = CostToFitness(this.fx_pop);
                 this.sumfitness = 0;
                 for (int p = 0; p < this.popsize; p++)
@@ -810,6 +815,13 @@ namespace MetaheuristicsLibrary.SolversSO
                 int nOffspring = 0;
                 double[][] x_new = new double[this.popsize][];
                 double[] fx_new = new double[this.popsize];
+                for (int e = 0; e < this.elite; e++)
+                {
+                    x_new[nOffspring] = new double[base.n];
+                    this.x_pop[e].CopyTo(x_new[nOffspring],0);
+                    fx_new[nOffspring] = this.fx_pop[e];
+                    nOffspring++;
+                }
                 do
                 {
                     double[] child1;
@@ -823,7 +835,6 @@ namespace MetaheuristicsLibrary.SolversSO
 
 
                     x_new[nOffspring] = child1;
-                    x_new[nOffspring + 1] = child2;
                     fx_new[nOffspring] = evalfnc(child1);
                     base.evalcount++;
                     if (CheckIfNaN(fx_new[nOffspring]))
@@ -835,19 +846,25 @@ namespace MetaheuristicsLibrary.SolversSO
                         base.fxopt = fx_new[nOffspring];
                         x_new[nOffspring].CopyTo(base.xopt, 0);
                     }
-                    fx_new[nOffspring + 1] = evalfnc(child2);
-                    base.evalcount++;
-                    if (CheckIfNaN(fx_new[nOffspring + 1]))
-                    {
-                        return;
-                    }
-                    if (fx_new[nOffspring + 1] < base.fxopt)
-                    {
-                        base.fxopt = fx_new[nOffspring + 1];
-                        x_new[nOffspring + 1].CopyTo(base.xopt, 0);
-                    }
 
-                    nOffspring += 2;
+
+                    if (nOffspring + 1 < this.popsize)
+                    {
+                        x_new[nOffspring + 1] = child2;
+                        fx_new[nOffspring + 1] = evalfnc(child2);
+                        base.evalcount++;
+                        if (CheckIfNaN(fx_new[nOffspring + 1]))
+                        {
+                            return;
+                        }
+                        if (fx_new[nOffspring + 1] < base.fxopt)
+                        {
+                            base.fxopt = fx_new[nOffspring + 1];
+                            x_new[nOffspring + 1].CopyTo(base.xopt, 0);
+                        }
+                        nOffspring++;
+                    }
+                    nOffspring++;
                 } while (nOffspring < this.popsize);
 
                 x_new.CopyTo(this.x_pop, 0);
@@ -953,16 +970,6 @@ namespace MetaheuristicsLibrary.SolversSO
             double[] fitness = new double[this.popsize];
             double[] keys = new double[this.popsize];
             fx_pop.CopyTo(keys, 0);
-            //double fxsum = 0;
-            //for (int p = 0; p < this.popsize; p++)
-            //{
-            //    fxsum += fx_pop[p];
-            //}
-            //for (int p = 0; p < this.popsize; p++)
-            //{
-            //    fitness[p] = 1 - (fx_pop[p] / fxsum);
-            //    //this.sumfitness += fitness[p];
-            //}
 
             for (int p = 0; p < this.popsize; p++)
             {
