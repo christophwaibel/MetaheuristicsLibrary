@@ -1101,8 +1101,7 @@ namespace MetaheuristicsLibrary.SolversSO
   
     }
 
-
-
+     
 
     /// <summary>
     /// Simple Evolution Strategy
@@ -1186,6 +1185,11 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         private double pmut_int;
 
+        /// <summary>
+        /// selection mode for recombination. 0 = random, 1 = roulette wheel,... to do 2 = stochastic universal sampling
+        /// </summary>
+        private int selmode;
+
         public SimpleES(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
             : base(lb, ub, xint, evalmax, evalfnc, seed)
         {
@@ -1213,6 +1217,12 @@ namespace MetaheuristicsLibrary.SolversSO
                 this.roh = 2;
             if (this.roh > this.popsize) this.roh = this.popsize;
 
+
+            //selection mode for recombination. 0 = random, 1 = roulette, 2 = SUS 
+            if (settings.ContainsKey("selmode"))
+                this.selmode = Convert.ToInt16(settings["selmode"]);
+            else
+                this.selmode = 0;
 
 
             //stepsize s
@@ -1361,10 +1371,13 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
             }
 
+
             this.x_pop = new double[this.popsize][];
             this.x0.CopyTo(this.x_pop, 0);
             this.fx_pop = new double[this.popsize];
             this.fx0.CopyTo(this.fx_pop, 0);
+
+            Array.Sort(this.fx_pop, this.x_pop);
         }
 
 
@@ -1382,7 +1395,7 @@ namespace MetaheuristicsLibrary.SolversSO
                 double[] fx_new = new double[this.lambda];
                 for (int l = 0; l < this.lambda; l++)
                 {
-                    this.marriage(out int_family, this.popsize, this.roh);
+                    this.marriage(out int_family, this.popsize, this.roh, this.selmode);
                     this.s_recombination(out s_new[l], this.s, int_family);   
                     this.x_recombination(out x_new[l], this.x_pop, int_family);   //interm. recomb. for R, or coordinate-wise recomb for N
                     this.s_mutation(ref s_new[l], this.tau);
@@ -1420,27 +1433,45 @@ namespace MetaheuristicsLibrary.SolversSO
         /// <param name="_xpop"></param>
         /// <param name="_spop"></param>
         /// <param name="_roh"></param>
-        private void marriage(out int[] _intfamily, int _popsize, int _roh)
+        private void marriage(out int[] _intfamily, int _popsize, int _roh, int selmode)
         {
             _intfamily = new int[this.roh];
-
             bool[] selected = new bool[_popsize];
-            for (int i = 0; i < this.roh; i++)
+
+            switch (selmode)
             {
-                bool found = false;
-                int sel = 0;
-                while (!found)
-                {
-                    sel = rnd.Next(_popsize);
-                    if (!selected[sel])
+                case 1: //roulette
+                    List<int> lengths = new List<int>();
+                    for (int p = 0; p < _popsize; p++) lengths.Add(_popsize - p); //first entry gets biggest value
+                    for (int i = 0; i < this.roh; i++)
                     {
-                        selected[sel] = true;
-                        found = true;
+                        int ranksum = lengths.Sum();
+                        int rand = base.rnd.Next(ranksum);
+                        int sel = -1;
+                        int partsum = 0;
+                        do
+                        {
+                            sel++;
+                            partsum += lengths[sel];
+                        } while (partsum < rand && sel != _popsize - 1);
+
+                        _intfamily[i] = popsize - lengths[sel];
+                        lengths.RemoveAt(sel);
                     }
-                }
-                _intfamily[i] = sel;
+                    break;
+                default:    //random, no fitness proportionate
+                    List<int> indices = new List<int>();
+                    for (int p = 0; p < _popsize; p++) indices.Add(p);
+                    for (int i = 0; i < this.roh; i++)
+                    {
+                        int rndind = rnd.Next(indices.Count());
+                        int sel = indices[rndind];
+                        indices.RemoveAt(rndind);
+                        _intfamily[i] = sel;
+                    }
+                    break;
             }
-  
+              
         }
 
         private void s_recombination(out double[] _s_new, double[][] _s, int[] _intfamily)
