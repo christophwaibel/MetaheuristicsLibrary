@@ -1041,8 +1041,8 @@ namespace MetaheuristicsLibrary.SolversMO
                     sigmakSUM[i] += sigma[i][j];
                 }
 
-                //KNNDensity[i] = 1.0 / (sigmak[i] + 2);
-                KNNDensity[i] = 1.0 / (sigmakSUM[i] + 1);     //chris version
+                KNNDensity[i] = 1.0 / (sigmak[i] + 2);
+                //KNNDensity[i] = 1.0 / (sigmakSUM[i] + 1);     //chris version
             }
 
         }

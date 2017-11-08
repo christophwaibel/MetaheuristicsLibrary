@@ -334,7 +334,13 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         private double[] s0;
 
+        private double phi1, phi2;
 
+
+        /// <summary>
+        /// false means inertia weight PSO, true is fipso
+        /// </summary>
+        private int psomode;
 
         /// <summary>
         /// using von Neumann topology.
@@ -352,49 +358,176 @@ namespace MetaheuristicsLibrary.SolversSO
         {
             this.x0 = x0 ?? new double[0][];
 
-            this.popsize = 24;      // population size.
-            this.chi = 0.1;      // constriction coefficient
-            this.phi = 4;         // attraction to best particle 
-            this.v0max = 0.2;       // max velocity at initialisation. fraction of domain.
-            this.x0samplingmode = 1;// 0 = uniform, 1 = gaussian
-            this.pxupdatemode = 1;  //0 = update after population. 1 = update after each evaluation
+            if (settings.ContainsKey("psomode"))
+            {
+                this.psomode = Convert.ToInt16(settings["psomode"]);
+            }
+            else
+            {
+                this.psomode = 0;       //fipso... 1=pso inertia, 2 = pso constriction coeff
+            }
+
+            if (settings.ContainsKey("phi1"))
+            {
+                this.phi1 = Convert.ToDouble(settings["phi1"]);
+            }
+            else
+            {
+                this.phi1 = 2.05;
+            }
+
+            if (settings.ContainsKey("phi2"))
+            {
+                this.phi2 = Convert.ToDouble(settings["phi2"]);
+            }
+            else
+            {
+                this.phi2 = 2.05;
+            }
+
+
+            if (settings.ContainsKey("popsize"))
+            {
+                this.popsize = Convert.ToInt32(settings["popsize"]);
+            }
+            else
+            {
+                this.popsize = 24;      // population size.
+            }
+
+            if (settings.ContainsKey("chi"))
+            {
+                this.chi = Convert.ToDouble(settings["chi"]);
+            }
+            else
+            {
+                this.chi = 0.1;      // constriction coefficient
+            }
+
+
+            if (settings.ContainsKey("phi"))
+            {
+                this.phi = Convert.ToDouble(settings["phi"]);
+            }
+            else
+            {
+                this.phi = 4;         // attraction to best particle 
+            }
+
+            if (settings.ContainsKey("v0max"))
+            {
+                this.v0max = Convert.ToDouble(settings["v0max"]);
+            }
+            else
+            {
+                this.v0max = 0.2;       // max velocity at initialisation. fraction of domain.
+            }
+
+            if (settings.ContainsKey("x0samplingmode"))
+            {
+                this.x0samplingmode = Convert.ToInt16(settings["x0samplingmode"]);
+            }
+            else
+            {
+                this.x0samplingmode = 0;// 0 = uniform, 1 = gaussian
+            }
+
+            if (settings.ContainsKey("pxupdatemode"))
+            {
+                this.pxupdatemode = Convert.ToInt16(settings["pxupdatemode"]);
+            }
+            else
+            {
+                this.pxupdatemode = 0;  //0 = update after population. 1 = update after each evaluation
+            }
+
             this.s0 = new double[base.n];
-            for (int i = 0; i < base.n; i++) s0[i] = 1.0;
+
+            if (settings.ContainsKey("s0"))
+            {
+                for (int i = 0; i < base.n; i++) s0[i] = Convert.ToDouble(settings["s0"]);
+            }
+            else
+            {
+                for (int i = 0; i < base.n; i++) s0[i] = 1.0;       //initial step size in case of gaussian sampling
+            }
         }
 
         public override void solve()
         {
-            this.initializeNeighbourhood();
-            this.initialSamples();
-
-            int pUpdate = this.popsize;
-            if (this.pxupdatemode == 1) pUpdate = 1;
-
-            int pNow = 0;
-
-            while (base.evalcount < base.evalmax)
+            if (psomode == 0)
             {
-                for (int p = 0; p < pUpdate; p++)
+                this.initializeNeighbourhood();
+                this.initialSamples();
+
+                int pUpdate = this.popsize;
+                if (this.pxupdatemode == 1) pUpdate = 1;
+
+                int pNow = 0;
+
+                while (base.evalcount < base.evalmax)
                 {
-                    double[] v_new;
-                    double [] x_new;
-                    double fx_new;
-                    this.updateParticle(out v_new, out x_new, this.x_pop[pNow], this.v[pNow], this.px_best, this.indK[pNow]);
-                    fx_new = base.evalfnc(x_new);
-                    v_new.CopyTo(this.v[pNow], 0);
-                    x_new.CopyTo(this.x_pop[pNow], 0);
-                    this.fx_pop[pNow] = fx_new;
-
-                    this.updateParticlesBest(ref this.px_best[pNow], ref this.pfx_best[pNow], x_new, fx_new);
-
-                    base.evalcount++;
-                    pNow++;
-                    if (pNow == this.popsize) pNow = 0;
-                   
-                    this.storeCurrentBest();
-                    if (this.CheckIfNaN(fx_new))
+                    for (int p = 0; p < pUpdate; p++)
                     {
-                        return;
+                        double[] v_new;
+                        double[] x_new;
+                        double fx_new;
+                        this.updateParticleFIPSO(out v_new, out x_new, this.v[pNow], this.x_pop[pNow], this.px_best, this.indK[pNow]);
+                        fx_new = base.evalfnc(x_new);
+                        this.v[pNow] = new double[base.n];
+                        this.x_pop[pNow] = new double[base.n];
+                        v_new.CopyTo(this.v[pNow], 0);
+                        x_new.CopyTo(this.x_pop[pNow], 0);
+                        this.fx_pop[pNow] = fx_new;
+
+                        this.updateParticlesBest(ref this.px_best[pNow], ref this.pfx_best[pNow], x_new, fx_new);
+
+                        base.evalcount++;
+                        pNow++;
+                        if (pNow == this.popsize) pNow = 0;
+
+                        this.storeCurrentBest();
+                        if (this.CheckIfNaN(fx_new))
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                this.initialSamples();
+                int pUpdate = this.popsize;
+                if (this.pxupdatemode == 1) pUpdate = 1;
+
+                int pNow = 0;
+
+                while (base.evalcount < base.evalmax)
+                {
+                    for (int p = 0; p < pUpdate; p++)
+                    {
+                        double[] v_new;
+                        double[] x_new;
+                        double fx_new;
+                        this.updateParticle(out v_new, out x_new, this.v[pNow], this.x_pop[pNow], this.xopt, this.px_best[pNow], this.chi, this.phi1, this.phi2, this.psomode);
+                        fx_new = base.evalfnc(x_new);
+                        this.v[pNow] = new double[base.n];
+                        v_new.CopyTo(this.v[pNow], 0);
+                        this.x_pop[pNow] = new double[base.n];
+                        x_new.CopyTo(this.x_pop[pNow], 0);      //magically, its also copied to pxbest???!!!
+                        this.fx_pop[pNow] = fx_new;
+
+                        this.updateParticlesBest(ref this.px_best[pNow], ref this.pfx_best[pNow], x_new, fx_new);
+
+                        base.evalcount++;
+                        pNow++;
+                        if (pNow == this.popsize) pNow = 0;
+
+                        this.storeCurrentBest();
+                        if (this.CheckIfNaN(fx_new))
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -406,9 +539,9 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         private void initializeNeighbourhood()
         {
-            double sqrtPop = Math.Sqrt(this.popsize);  
+            double sqrtPop = Math.Sqrt(this.popsize);
             int cols = (int)Math.Floor(sqrtPop);
-            int rows = (int)Math.Round((Convert.ToDouble(this.popsize) / Convert.ToDouble(cols)),0);
+            int rows = (int)Math.Round((Convert.ToDouble(this.popsize) / Convert.ToDouble(cols)), 0);
             this.popsize = cols * rows;         //making sure popsize can be divided into a cols*rows matrix
 
             this.indK = new int[this.popsize][];
@@ -428,7 +561,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     if ((count + 1) % cols == 0) this.indK[count][2] = count - cols + 1;
                     else if ((count + 1) % cols == 1) this.indK[count][1] = count + cols - 1;
 
-                    if (count - cols < 0) this.indK[count][0] = count + this.popsize - cols ;
+                    if (count - cols < 0) this.indK[count][0] = count + this.popsize - cols;
                     if (count + cols > this.popsize - 1) this.indK[count][3] = count - this.popsize + cols;
 
                     count++;
@@ -548,7 +681,7 @@ namespace MetaheuristicsLibrary.SolversSO
             }
         }
 
-        private void updateParticle(out double [] v_new, out double [] x_new, double [] v_old, double [] x_old, double [][] px_best, int [] neighbours)
+        private void updateParticleFIPSO(out double[] v_new, out double[] x_new, double[] v_old, double[] x_old, double[][] px_best, int[] neighbours)
         {
             v_new = new double[base.n];
             x_new = new double[base.n];
@@ -571,8 +704,35 @@ namespace MetaheuristicsLibrary.SolversSO
             base.checkBounds(ref x_new, base.lb, base.ub);
         }
 
+        private void updateParticle(out double[] v_new, out double[] x_new, double[] v_old, double[] x_old, 
+            double[] gx_best, double [] ownx_best,
+            double inertia, double phi1, double phi2,
+            int psomode)
+        {
+            v_new = new double[base.n];
+            x_new = new double[base.n];
+            for (int i = 0; i < base.n; i++)
+            {
+                if (psomode == 1)
+                {
+                    v_new[i] = inertia * v_old[i] +
+                        (rnd.NextDouble() * phi1) * (ownx_best[i] - x_old[i]) +
+                        (rnd.NextDouble() * phi2) * (gx_best[i] - x_old[i]);
+                }
+                else
+                {
+                    v_new[i] = inertia * (v_old[i] +
+                        (rnd.NextDouble() * phi1) * (ownx_best[i] - x_old[i]) +
+                        (rnd.NextDouble() * phi2) * (gx_best[i] - x_old[i]));
+                }
+                x_new[i] = x_old[i] + v_new[i];
+            }
 
-        private void updateParticlesBest(ref double [] px_best, ref double pfx_best, double [] x_now, double fx_now)
+            base.checkBounds(ref x_new, base.lb, base.ub);
+        }
+
+
+        private void updateParticlesBest(ref double[] px_best, ref double pfx_best, double[] x_now, double fx_now)
         {
             if (fx_now < pfx_best)
             {
@@ -818,7 +978,7 @@ namespace MetaheuristicsLibrary.SolversSO
                 for (int e = 0; e < this.elite; e++)
                 {
                     x_new[nOffspring] = new double[base.n];
-                    this.x_pop[e].CopyTo(x_new[nOffspring],0);
+                    this.x_pop[e].CopyTo(x_new[nOffspring], 0);
                     fx_new[nOffspring] = this.fx_pop[e];
                     nOffspring++;
                 }
@@ -924,7 +1084,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     base.evalcount++;
                 }
                 this.x0 = new double[this.popsize][];   //i'm doing this, because x0.Length at initialisation could be < popsize
-                _xpop.CopyTo(this.x0, 0);               
+                _xpop.CopyTo(this.x0, 0);
             }
             else
             {
@@ -1098,10 +1258,10 @@ namespace MetaheuristicsLibrary.SolversSO
 
         }
 
-  
+
     }
 
-     
+
 
     /// <summary>
     /// Simple Evolution Strategy
@@ -1109,30 +1269,30 @@ namespace MetaheuristicsLibrary.SolversSO
     /// </summary>
     public class SimpleES : SO_Solver
     {
-        
-          //(mu/roh ,+ lambda) - ES
-          
-          //Begin
-          //g:=0;
-          //initialize(Pop0:={(x0_i,s0_i,fx0_i), i=1,...,mu}
-          //Repeat
-          // For l:=1 to lambda Do Begin
-          //     Fl := marriage(Pg, roh);
-          //     sl := s_recombination(Fl);
-          //     yl := y_recombination(Fl);
-          //     stildel := s_mutation(sl);
-          //     ytildel := y_mutation(yl, stildel);
-          //     Ftildel := F(ytildel);
-          //  End;
-          //  P0g := {(ytildel, stildel, Ftildel), l=1,...,lambda};
-          //  Case selection_type Of
-          //     (mu , lambda) : Pg+1 := selection(P0g, mu);
-          //     (mu + lambda) : Pg+1 := selection(P0g, Pg, mu);
-          //  End;
-          //  g := g+1;
-          //Until termination_condition
-          //End
-        
+
+        //(mu/roh ,+ lambda) - ES
+
+        //Begin
+        //g:=0;
+        //initialize(Pop0:={(x0_i,s0_i,fx0_i), i=1,...,mu}
+        //Repeat
+        // For l:=1 to lambda Do Begin
+        //     Fl := marriage(Pg, roh);
+        //     sl := s_recombination(Fl);
+        //     yl := y_recombination(Fl);
+        //     stildel := s_mutation(sl);
+        //     ytildel := y_mutation(yl, stildel);
+        //     Ftildel := F(ytildel);
+        //  End;
+        //  P0g := {(ytildel, stildel, Ftildel), l=1,...,lambda};
+        //  Case selection_type Of
+        //     (mu , lambda) : Pg+1 := selection(P0g, mu);
+        //     (mu + lambda) : Pg+1 := selection(P0g, Pg, mu);
+        //  End;
+        //  g := g+1;
+        //Until termination_condition
+        //End
+
 
 
 
@@ -1141,7 +1301,7 @@ namespace MetaheuristicsLibrary.SolversSO
         /// Population size
         /// </summary>
         public int popsize { get; private set; }
-     
+
 
         /// <summary>
         /// cost values of new population
@@ -1163,7 +1323,7 @@ namespace MetaheuristicsLibrary.SolversSO
         /// <summary>
         /// step-size s0 only used at initial sampling
         /// </summary>
-        private double [] s0;
+        private double[] s0;
 
         /// <summary>
         /// learning rate
@@ -1174,7 +1334,7 @@ namespace MetaheuristicsLibrary.SolversSO
         /// mu = parents, lambda = offspring, roh = mixing number
         /// </summary>
         private int lambda, roh;
-        
+
         /// <summary>
         /// initiale population, sampling mode. 0=uniform sampling; 1=gaussian sampling around a base point.
         /// </summary>
@@ -1222,7 +1382,7 @@ namespace MetaheuristicsLibrary.SolversSO
             if (settings.ContainsKey("selmode"))
                 this.selmode = Convert.ToInt16(settings["selmode"]);
             else
-                this.selmode = 0;
+                this.selmode = 1;
 
 
             //stepsize s
@@ -1274,7 +1434,7 @@ namespace MetaheuristicsLibrary.SolversSO
 
             if (settings.ContainsKey("x0sampling"))
             {
-                this.x0samplingmode = Convert.ToInt16(settings["x0sampling"]);      
+                this.x0samplingmode = Convert.ToInt16(settings["x0sampling"]);
                 if (this.x0samplingmode > 1) this.x0samplingmode = 1;               //gaussian sampling around a point, which is uniformly sampled (unless an x0 is given)
             }
             else
@@ -1295,7 +1455,7 @@ namespace MetaheuristicsLibrary.SolversSO
             bool x0exists = false;
             if (this.x0.Length > 0)
             {
-                x0exists = true; 
+                x0exists = true;
                 double[][] _xpop = new double[this.popsize][];
                 for (int p = 0; p < this.x0.Length; p++)
                 {
@@ -1390,13 +1550,13 @@ namespace MetaheuristicsLibrary.SolversSO
             while (base.evalcount < base.evalmax)
             {
                 int[] int_family;
-                double [][] s_new = new double [this.lambda][];                    
-                double [][] x_new = new double [this.lambda][];
+                double[][] s_new = new double[this.lambda][];
+                double[][] x_new = new double[this.lambda][];
                 double[] fx_new = new double[this.lambda];
                 for (int l = 0; l < this.lambda; l++)
                 {
                     this.marriage(out int_family, this.popsize, this.roh, this.selmode);
-                    this.s_recombination(out s_new[l], this.s, int_family);   
+                    this.s_recombination(out s_new[l], this.s, int_family);
                     this.x_recombination(out x_new[l], this.x_pop, int_family);   //interm. recomb. for R, or coordinate-wise recomb for N
                     this.s_mutation(ref s_new[l], this.tau);
                     this.x_mutation(ref x_new[l], s_new[l], this.tau);
@@ -1416,9 +1576,9 @@ namespace MetaheuristicsLibrary.SolversSO
                 double[] fx_sel;
                 double[][] s_sel;
                 this.selection(out x_sel, out fx_sel, out s_sel, this.x_pop, this.fx_pop, this.s, x_new, fx_new, s_new);
-                x_sel.CopyTo(this.x_pop,0);
-                fx_sel.CopyTo(this.fx_pop,0);
-                s_sel.CopyTo(this.s, 0); 
+                x_sel.CopyTo(this.x_pop, 0);
+                fx_sel.CopyTo(this.fx_pop, 0);
+                s_sel.CopyTo(this.s, 0);
                 this.storeCurrentBest();
                 //Console.WriteLine("eval: {0} with fx: {1}", base.evalcount, base.get_fxoptimum());
             }
@@ -1471,7 +1631,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     }
                     break;
             }
-              
+
         }
 
         private void s_recombination(out double[] _s_new, double[][] _s, int[] _intfamily)
@@ -1493,7 +1653,7 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         /// <param name="_x_new"></param>
         /// <param name="_intfamily"></param>
-        private void x_recombination(out double [] _x_new, double [][] _xpop, int [] _intfamily)
+        private void x_recombination(out double[] _x_new, double[][] _xpop, int[] _intfamily)
         {
             int _roh = _intfamily.Length;
             _x_new = new double[base.n];
@@ -1543,8 +1703,8 @@ namespace MetaheuristicsLibrary.SolversSO
             base.checkBounds(ref _xnew, base.lb, base.ub);
         }
 
-        private void selection(out double [][] _x_sel, out double [] _fx_sel, out double [][] _s_sel,
-            double[][] _x_old, double[] _fx_old, double [][] _s_old, double[][] _x_new, double[] _fx_new, double [][] _s_new)
+        private void selection(out double[][] _x_sel, out double[] _fx_sel, out double[][] _s_sel,
+            double[][] _x_old, double[] _fx_old, double[][] _s_old, double[][] _x_new, double[] _fx_new, double[][] _s_new)
         {
             int popsize = _x_old.Length;
             int lambda = _x_new.Length;
@@ -1584,11 +1744,11 @@ namespace MetaheuristicsLibrary.SolversSO
             {
                 _x_sel[i] = new double[_x_merged[0].Length];
                 _xands[i][0].CopyTo(_x_sel[i], 0);
-                
+
                 _fx_sel[i] = _fx_merged[i];
 
                 _s_sel[i] = new double[_s_merged[0].Length];
-                _xands[i][1].CopyTo(_s_sel[i],0);
+                _xands[i][1].CopyTo(_s_sel[i], 0);
             }
         }
 
@@ -1695,100 +1855,100 @@ namespace MetaheuristicsLibrary.SolversSO
     public class sNES : SO_Solver
     {
 
-//        function[mean_vec, var_vec, mean_vec_fit] = snes(fitness, num_iter, dim, pop_size, learn_rates)
-//%[mean_vec, var_vec, mean_vec_fit] = 
-//%           snes(dim, mean_vec, var_vec, pop_size, learn_rates, @fitness)
-//%INPUTS:
-//% @fitness: fitness function (e.g., @rosenfit for rosenfit.m)
-//%           which takes an individual as input and outputs the fitness
-//% num_iter: number of iterations
-//% dim: dimension
-//% **pop_size: number of units to evaluate 
-//% **learn_rates: vector of two, for mean and variance
-//% defaults if pop_size and learn_rates not supplied
-//%OUTPUTS
-//% mean_vec: final mean
-//% var_vec: final variance
-//% mean_vec_fit: the fitness of the mean, measured at each iteration
-//%
-//%code by Matt Luciw (matt.luciw at gmail)
-//%contact Tom Schaul with all your SNES questions
+        //        function[mean_vec, var_vec, mean_vec_fit] = snes(fitness, num_iter, dim, pop_size, learn_rates)
+        //%[mean_vec, var_vec, mean_vec_fit] = 
+        //%           snes(dim, mean_vec, var_vec, pop_size, learn_rates, @fitness)
+        //%INPUTS:
+        //% @fitness: fitness function (e.g., @rosenfit for rosenfit.m)
+        //%           which takes an individual as input and outputs the fitness
+        //% num_iter: number of iterations
+        //% dim: dimension
+        //% **pop_size: number of units to evaluate 
+        //% **learn_rates: vector of two, for mean and variance
+        //% defaults if pop_size and learn_rates not supplied
+        //%OUTPUTS
+        //% mean_vec: final mean
+        //% var_vec: final variance
+        //% mean_vec_fit: the fitness of the mean, measured at each iteration
+        //%
+        //%code by Matt Luciw (matt.luciw at gmail)
+        //%contact Tom Schaul with all your SNES questions
 
-//%initial mean and variance
-//mean_vec = rand(dim,1);
-//var_vec = ones(dim,1);  %ones!  <-- this is important
+        //%initial mean and variance
+        //mean_vec = rand(dim,1);
+        //var_vec = ones(dim,1);  %ones!  <-- this is important
 
-//if (nargin < 4)
-//    %abra cadabra
-//    pop_size = 4 + floor(3 * log(dim));
-    
-//    learn_rates = [1 (3 + log(dim))/(5 * sqrt(dim))];
-//end
+        //if (nargin < 4)
+        //    %abra cadabra
+        //    pop_size = 4 + floor(3 * log(dim));
 
-//mean_vec_fit = zeros(1,num_iter);
+        //    learn_rates = [1 (3 + log(dim))/(5 * sqrt(dim))];
+        //end
 
-//%outer loop: number of population evaluations
-//for i = 1:num_iter
-     
-//    if (mod(i,500)==0) 
-//        fprintf(1, '\nGeneration %d...', i)
-//    end
-    
-//    %draw from standard normal distribution
-//    curr_samples = randn(pop_size,dim);
-    
-//    %add the input mean and variance
-//    curr_members = (curr_samples .* repmat(var_vec',pop_size,1)) + ...
-//        repmat(mean_vec',pop_size,1);
-    
-//    %store samples
-//    S = curr_samples';
-        
-//    %inner loop: number of population members
-//    for j = 1 : pop_size
-        
-//        %fitness evaluated here for this sample (and stored)
-//        fit(j) = fitness(curr_members(j,:));
-        
-//    end
-    
-//    %sort by fitness so most fit guys are last
-//    [dummy order] = sort(fit);
-    
-//    %ordered set of samples
-//    S = S(:,order);
-    
-//    %utilities which must sum to one
-//    %first half of the population has zero utility
-//    threshold = floor(pop_size / 2);
-//    step_size = 1 / threshold; 
-//    U = zeros(1,pop_size);
-//    U(end-threshold+1:end) = step_size:step_size:1;
-//    U = U ./ sum(U);
-    
-//    %compute gradients
-//    %one for mean
-//    mean_grad = U*S';
+        //mean_vec_fit = zeros(1,num_iter);
 
-//    %variance gradient
-//    S_sq_minus = S.^2 - 1;
-//    var_grad = U * S_sq_minus';
+        //%outer loop: number of population evaluations
+        //for i = 1:num_iter
 
-//    %update parameters
-//    mean_vec = mean_vec + learn_rates(1) * var_vec .* mean_grad';
- 
-//    var_vec = var_vec .* exp(learn_rates(2) / 2 * var_grad)';
-    
-//    %evaluate fitness of mean (for plotting)
-//    mean_vec_fit(i) = fitness(mean_vec);
-    
-//    %uncomment for spiffy updating plot
-//    %plot(mean_vec_fit)
-//    %drawnow
-//end
+        //    if (mod(i,500)==0) 
+        //        fprintf(1, '\nGeneration %d...', i)
+        //    end
+
+        //    %draw from standard normal distribution
+        //    curr_samples = randn(pop_size,dim);
+
+        //    %add the input mean and variance
+        //    curr_members = (curr_samples .* repmat(var_vec',pop_size,1)) + ...
+        //        repmat(mean_vec',pop_size,1);
+
+        //    %store samples
+        //    S = curr_samples';
+
+        //    %inner loop: number of population members
+        //    for j = 1 : pop_size
+
+        //        %fitness evaluated here for this sample (and stored)
+        //        fit(j) = fitness(curr_members(j,:));
+
+        //    end
+
+        //    %sort by fitness so most fit guys are last
+        //    [dummy order] = sort(fit);
+
+        //    %ordered set of samples
+        //    S = S(:,order);
+
+        //    %utilities which must sum to one
+        //    %first half of the population has zero utility
+        //    threshold = floor(pop_size / 2);
+        //    step_size = 1 / threshold; 
+        //    U = zeros(1,pop_size);
+        //    U(end-threshold+1:end) = step_size:step_size:1;
+        //    U = U ./ sum(U);
+
+        //    %compute gradients
+        //    %one for mean
+        //    mean_grad = U*S';
+
+        //    %variance gradient
+        //    S_sq_minus = S.^2 - 1;
+        //    var_grad = U * S_sq_minus';
+
+        //    %update parameters
+        //    mean_vec = mean_vec + learn_rates(1) * var_vec .* mean_grad';
+
+        //    var_vec = var_vec .* exp(learn_rates(2) / 2 * var_grad)';
+
+        //    %evaluate fitness of mean (for plotting)
+        //    mean_vec_fit(i) = fitness(mean_vec);
+
+        //    %uncomment for spiffy updating plot
+        //    %plot(mean_vec_fit)
+        //    %drawnow
+        //end
 
 
-           public sNES(double[] lb, double[] ub, bool[] xint, int itermax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
+        public sNES(double[] lb, double[] ub, bool[] xint, int itermax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
             : base(lb, ub, xint, itermax, evalfnc, seed)
         {
 
@@ -1817,7 +1977,7 @@ namespace MetaheuristicsLibrary.SolversSO
     /*
     /// <summary>
     /// options: deterministic or stochastic (metropolis) acceptance rules
-    /// 
+    ///  Moscato & Fontanari 1990
     /// implement re-annealing, with x* of previous run as new x0
     /// </summary>
     public class SimpleSA : SO_Solver
