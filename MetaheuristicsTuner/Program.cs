@@ -19,9 +19,9 @@ namespace MetaheuristicsTuner
 
         static void Main(string[] args)
         {
-            string solver = "ES";               //choosing solver to be tuned. string: "SGA", "ES", "FIPSO", "SA"
+            string solver = "FIPSO";               //choosing solver to be tuned. string: "SGA", "ES", "FIPSO", "SA"
             int maxfunc = 5000;                  //func calls of the meta-optimizer. 5000
-            int testfuncdim = 4;
+            int testfuncdim = 13;
             int rerunsMeta = 10;                 // 10
             int rerunsTestFuncs = 30;            // 30
 
@@ -46,7 +46,7 @@ namespace MetaheuristicsTuner
             Console.WriteLine(@"Please enter an existing output path for results. E.g.: c:\n13\");
             string basepath = Console.ReadLine();
             Console.WriteLine();
-            Console.WriteLine(@"How many threads would you like to assign to this? 15 is the maximum. Please enter just an integer between 1 and 15.");
+            Console.WriteLine(@"How many threads would you like to assign to this? Please enter just an integer between 1 and 15.");
             int maxthreads = Convert.ToInt16(Console.ReadLine());
             Console.WriteLine();
             Console.WriteLine("Thanks! Starting... This might take a couple of days.");
@@ -55,7 +55,7 @@ namespace MetaheuristicsTuner
 
 
 
-            Func<double[], double>[] manyhyperfuncs = new Func<double[], double>[27];
+            Func<double[], double>[] manyhyperfuncs = new Func<double[], double>[20];
             manyhyperfuncs[0] = hf.HyperFunc_B_Perm0db;
             manyhyperfuncs[1] = hf.HyperFunc_B_RotHypEll;
             manyhyperfuncs[2] = hf.HyperFunc_B_Sphere;
@@ -71,18 +71,18 @@ namespace MetaheuristicsTuner
             manyhyperfuncs[12] = hf.HyperFunc_P_Zhakarov;
             manyhyperfuncs[13] = hf.HyperFunc_V_DixonPrice;
             manyhyperfuncs[14] = hf.HyperFunc_V_Rosenbrock;
-            manyhyperfuncs[15] = hf.HyperFunc_B_RotHypEll_Edge;
-            manyhyperfuncs[16] = hf.HyperFunc_B_Sphere_Edge;
-            manyhyperfuncs[17] = hf.HyperFunc_B_SumSquares_Edge;
-            manyhyperfuncs[18] = hf.HyperFunc_L_Ackley_Edge;
-            manyhyperfuncs[19] = hf.HyperFunc_L_Griewank_Edge;
-            manyhyperfuncs[20] = hf.HyperFunc_L_Levy_Edge;
-            manyhyperfuncs[21] = hf.HyperFunc_L_Rastrigin_Edge;
-            manyhyperfuncs[22] = hf.HyperFunc_L_Schwefel_Edge;
-            manyhyperfuncs[23] = hf.HyperFunc_O_StyblinskiTang_Edge;
-            manyhyperfuncs[24] = hf.HyperFunc_P_Zhakarov_Edge;
-            manyhyperfuncs[25] = hf.HyperFunc_V_DixonPrice_Edge;
-            manyhyperfuncs[26] = hf.HyperFunc_V_Rosenbrock_Edge;
+            //manyhyperfuncs[15] = hf.HyperFunc_B_RotHypEll_Edge;
+            //manyhyperfuncs[16] = hf.HyperFunc_B_Sphere_Edge;
+            //manyhyperfuncs[17] = hf.HyperFunc_B_SumSquares_Edge;
+            //manyhyperfuncs[18] = hf.HyperFunc_L_Ackley_Edge;
+            //manyhyperfuncs[19] = hf.HyperFunc_L_Griewank_Edge;
+            manyhyperfuncs[15] = hf.HyperFunc_L_Levy_Edge;
+            //manyhyperfuncs[21] = hf.HyperFunc_L_Rastrigin_Edge;
+            manyhyperfuncs[16] = hf.HyperFunc_L_Schwefel_Edge;
+            manyhyperfuncs[17] = hf.HyperFunc_O_StyblinskiTang_Edge;
+            //manyhyperfuncs[24] = hf.HyperFunc_P_Zhakarov_Edge;
+            manyhyperfuncs[18] = hf.HyperFunc_V_DixonPrice_Edge;
+            manyhyperfuncs[19] = hf.HyperFunc_V_Rosenbrock_Edge;
 
 
 
@@ -123,7 +123,7 @@ namespace MetaheuristicsTuner
             Parallel.For(0, manyhyperfuncs.Length, new ParallelOptions { MaxDegreeOfParallelism = maxthreads }, hh =>
             {
             //for(int hh=0; hh<manyhyperfuncs.Length; hh++){
-                Console.WriteLine("started hh {0} of 15", hh);
+                Console.WriteLine("started hh {0} of {1}", hh, manyhyperfuncs.Length - 1);
                 List<string> log_SA = new List<string>();
                 List<string> log_ES = new List<string>();
                 List<string> log_PSO = new List<string>();
@@ -141,6 +141,7 @@ namespace MetaheuristicsTuner
                     {
                         str += ";" + Math.Round(ga.get_Xoptimum()[xx], 5);
                     }
+                    str += ";SGA";
                     log_SGA.Add(str);
                     Console.WriteLine("Metaoptimizer SGA DONE, seed {0} and hh {1}", iseeds, hh);
 
@@ -155,86 +156,70 @@ namespace MetaheuristicsTuner
                     {
                         str += ";" + Math.Round(es.get_Xoptimum()[xx], 5);
                     }
+                    str += ";ES";
                     log_ES.Add(str);
                     Console.WriteLine("Metaoptimizer ES DONE, seed {0} and hh {1}", iseeds, hh);
 
 
 
 
-                    /////////////////////////////////////////            FIPSO        /////////////////////////////////////////
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    FIPSO fipso = new FIPSO(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsPSO);
-                    fipso.solve();
-                    fipso.get_fxoptimum();
-                    str = "Last call;" + Math.Round(fipso.get_fxoptimum(), 4);
-                    for (int xx = 0; xx < dvar; xx++)
-                    {
-                        str += ";" + Math.Round(fipso.get_Xoptimum()[xx], 5);
-                    }
-                    log_PSO.Add(str);
-                    Console.WriteLine("Metaoptimizer FIPSO DONE, seed {0} and hh {1}", iseeds, hh);
+                    ///////////////////////////////////////////            FIPSO        /////////////////////////////////////////
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    //FIPSO fipso = new FIPSO(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsPSO);
+                    //fipso.solve();
+                    //fipso.get_fxoptimum();
+                    //str = "Last call;" + Math.Round(fipso.get_fxoptimum(), 4);
+                    //for (int xx = 0; xx < dvar; xx++)
+                    //{
+                    //    str += ";" + Math.Round(fipso.get_Xoptimum()[xx], 5);
+                    //}
+                    //str += ";FIPSO";
+                    //log_PSO.Add(str);
+                    //Console.WriteLine("Metaoptimizer FIPSO DONE, seed {0} and hh {1}", iseeds, hh);
 
 
 
-                    /////////////////////////////////////////            Hybrid.SA          ///////////////////////////////////
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    ISingleObjOpti hyperopti = new Hybrid(dvar, lb, ub, manyhyperfuncs[hh], iseeds, settingsSA);
-                    hyperopti.initialize();
-                    hyperopti.Solve();
-                    str = "Last call;" + Math.Round(hyperopti.fxBest, 4);
-                    for (int xx = 0; xx < dvar; xx++)
-                    {
-                        str += ";" + Math.Round(hyperopti.xBest[xx], 5);
-                    }
-                    log_SA.Add(str);
-                    Console.WriteLine("Metaoptimizer SA DONE, seed {0} and hh {1}", iseeds, hh);
+                    ///////////////////////////////////////////            Hybrid.SA          ///////////////////////////////////
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    //ISingleObjOpti hyperopti = new Hybrid(dvar, lb, ub, manyhyperfuncs[hh], iseeds, settingsSA);
+                    //hyperopti.initialize();
+                    //hyperopti.Solve();
+                    //str = "Last call;" + Math.Round(hyperopti.fxBest, 4);
+                    //for (int xx = 0; xx < dvar; xx++)
+                    //{
+                    //    str += ";" + Math.Round(hyperopti.xBest[xx], 5);
+                    //}
+                    //str += ";SA";
+                    //log_SA.Add(str);
+                    //Console.WriteLine("Metaoptimizer SA DONE, seed {0} and hh {1}", iseeds, hh);
                 }
 
 
                 /////////////////////////////////////////            Writing          ///////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                string fileName = basepath + solver + @"_by_SA_hf_" + hh + "_AllSeeds.txt";
+                string fileName = basepath + solver + @"_hf_" + hh + "_AllSeeds.txt";
                 using (FileStream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write))
                 using (StreamWriter sw = new StreamWriter(fs))
                 {
                     for (int i = 0; i < log_SA.Count; i++)
-                    {
                         sw.WriteLine(log_SA[i]);
-                    }
-                }
-                fileName = basepath + solver + @"_by_ES_hf_" + hh + "_AllSeeds.txt";
-                using (FileStream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write))
-                using (StreamWriter sw = new StreamWriter(fs))
-                {
                     for (int i = 0; i < log_ES.Count; i++)
-                    {
                         sw.WriteLine(log_ES[i]);
-                    }
-                }
-                fileName = basepath + solver + @"_by_PSO_hf_" + hh + "_seed_" + "_AllSeeds.txt";
-                using (FileStream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write))
-                using (StreamWriter sw = new StreamWriter(fs))
-                {
-                    for (int i = 0; i < log_PSO.Count; i++)
-                    {
-                        sw.WriteLine(log_PSO[i]);
-                    }
-                }
-
-                fileName = basepath + solver + @"_by_SimpleGA_hf_" + hh + "_seed_" + "_AllSeeds.txt";
-                using (FileStream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write))
-                using (StreamWriter sw = new StreamWriter(fs))
-                {
                     for (int i = 0; i < log_SGA.Count; i++)
-                    {
                         sw.WriteLine(log_SGA[i]);
-                    }
+                    for (int i = 0; i < log_PSO.Count; i++)
+                        sw.WriteLine(log_PSO[i]);
                 }
 
-                Console.WriteLine("Done hh {0} of 27", hh);
+
+
+                Console.WriteLine("Done hh {0} of {1}", hh, manyhyperfuncs.Length);
             });
         //}
+            Console.WriteLine();
+            Console.WriteLine(@"///////////////////////////////////////");
             Console.WriteLine("Done with everything, tuning the {0}", solver);
+            Console.WriteLine(@"///////////////////////////////////////");
             Console.ReadKey();
 
         }
@@ -318,10 +303,23 @@ namespace MetaheuristicsTuner
                     ub[7] = 1;
                     xint[7] = false;
                     break;
-
-                //case "FIPSO":
-
-                //    break;
+                case "FIPSO":
+                    dvar = 4;
+                    lb = new double[dvar];
+                    ub = new double[dvar];
+                    xint = new bool[dvar];
+                    lb[0] = 4;              // "popsize" ∈ {4,...,200}
+                    ub[0] = 200;
+                    xint[0] = false;
+                    lb[1] = 0.001;          // "chi" constriction coefficient ∈ [0.001,1]
+                    ub[1] = 1;
+                    xint[1] = false;
+                    lb[2] = 0;              // "phi" attraction to best particles ∈ [0,10]
+                    ub[2] = 50;
+                    xint[2] = false;
+                    lb[3] = 0;
+                    ub[3] = 10;             // "v0max" initial velocity multiplicator ∈ [0,10]
+                    break;
 
                 //case "SA":
 
@@ -398,8 +396,26 @@ namespace MetaheuristicsTuner
 
         private double meanFIPSO(double[] hpo_x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
         {
+            int dvar = testfuncDim;
+            int runs = runsperTestfunc;
 
-            return 0.0;
+            bool[] xint = new bool[dvar];
+            Dictionary<string, object> FIPSOsettings = new Dictionary<string, object>();
+            MetaheuristicsLibrary.SolversSO.SO_Solver[] FIPSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            int fipsopop = Convert.ToInt16(hpo_x[0]);
+            FIPSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
+            FIPSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
+            FIPSOsettings.Add("phi", hpo_x[2]);                 //x[2] ∈ [0, 50], attraction to best particle
+            FIPSOsettings.Add("v0max", hpo_x[3]);               //x[3] ∈ [0, 10], initial velocity
+            double[] mins = new double[runs];
+            for (int i = 0; i < runs; i++)
+            {
+                FIPSO[i] = new MetaheuristicsLibrary.SolversSO.SimpleGA(lb, ub, xint, _maxfuncs, testfunc, i, FIPSOsettings);
+                FIPSO[i].solve();
+                mins[i] = FIPSO[i].get_fxoptimum();
+            }
+
+            return mins.Average();
         }
 
 
