@@ -19,9 +19,9 @@ namespace MetaheuristicsTuner
 
         static void Main(string[] args)
         {
-            string solver = "FIPSO";               //choosing solver to be tuned. string: "SGA", "ES", "FIPSO", "SA"
+            string solver = "ES";               //choosing solver to be tuned. string: "SGA", "ES", "FIPSO", "SA"
             int maxfunc = 5000;                  //func calls of the meta-optimizer. 5000
-            int testfuncdim = 13;
+            int testfuncdim = 11;                //tuned to this n
             int rerunsMeta = 10;                 // 10
             int rerunsTestFuncs = 30;            // 30
 
@@ -165,17 +165,17 @@ namespace MetaheuristicsTuner
 
                     ///////////////////////////////////////////            FIPSO        /////////////////////////////////////////
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //FIPSO fipso = new FIPSO(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsPSO);
-                    //fipso.solve();
-                    //fipso.get_fxoptimum();
-                    //str = "Last call;" + Math.Round(fipso.get_fxoptimum(), 4);
+                    //PSO pso = new PSO(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsPSO);
+                    //pso.solve();
+                    //pso.get_fxoptimum();
+                    //str = "Last call;" + Math.Round(pso.get_fxoptimum(), 4);
                     //for (int xx = 0; xx < dvar; xx++)
                     //{
-                    //    str += ";" + Math.Round(fipso.get_Xoptimum()[xx], 5);
+                    //    str += ";" + Math.Round(pso.get_Xoptimum()[xx], 5);
                     //}
-                    //str += ";FIPSO";
+                    //str += ";PSO";
                     //log_PSO.Add(str);
-                    //Console.WriteLine("Metaoptimizer FIPSO DONE, seed {0} and hh {1}", iseeds, hh);
+                    //Console.WriteLine("Metaoptimizer PSO DONE, seed {0} and hh {1}", iseeds, hh);
 
 
 
@@ -304,21 +304,64 @@ namespace MetaheuristicsTuner
                     xint[7] = false;
                     break;
                 case "FIPSO":
-                    dvar = 4;
+                    dvar = 5;
                     lb = new double[dvar];
                     ub = new double[dvar];
                     xint = new bool[dvar];
-                    lb[0] = 4;              // "popsize" ∈ {4,...,200}
+                    lb[0] = 4;              
                     ub[0] = 200;
-                    xint[0] = false;
-                    lb[1] = 0.001;          // "chi" constriction coefficient ∈ [0.001,1]
+                    xint[0] = false;        // "popsize" ∈ {4,...,200}
+                    lb[1] = 0.001;         
                     ub[1] = 1;
-                    xint[1] = false;
-                    lb[2] = 0;              // "phi" attraction to best particles ∈ [0,10]
+                    xint[1] = false;        // "chi" constriction coefficient ∈ [0.001,1]
+                    lb[2] = 0;              
                     ub[2] = 50;
-                    xint[2] = false;
+                    xint[2] = false;        // "phi" attraction to best particles ∈ [0,10]
+                    lb[3] = 0;  
+                    ub[3] = 20;             
+                    xint[3] = false;        // "v0max" initial velocity multiplicator ∈ [0,20]
+                    lb[4] = 0;
+                    ub[4] = 1;
+                    xint[4] = true;         //0 = update after population. 1 = update after each evaluation 
+                    //lb[5] = 0;  
+                    //ub[5] = 2;
+                    //xint[5] = true;         //0 = fipso, 1 = inertia, 2 = constriction 
+                    //lb[6] = 0;
+                    //ub[6] = 5;      
+                    //xint[6] = false;        //attraction own best ∈ [0,5]
+                    //lb[7] = 0;
+                    //ub[7] = 5;
+                    //xint[7] = false;        //attraction global best ∈ [0,5]
+                    break;
+                case "PSO":
+                    dvar = 7;
+                    lb = new double[dvar];
+                    ub = new double[dvar];
+                    xint = new bool[dvar];
+                    lb[0] = 4;
+                    ub[0] = 200;
+                    xint[0] = false;        // "popsize" ∈ {4,...,200}
+                    lb[1] = 0.001;
+                    ub[1] = 1;
+                    xint[1] = false;        // "chi" constriction coefficient ∈ [0.001,1]
+                    //lb[2] = 0;
+                    //ub[2] = 50;
+                    //xint[2] = false;        // "phi" attraction to best particles ∈ [0,50]
+                    lb[2] = 0;
+                    ub[2] = 20;
+                    xint[2] = false;        // "v0max" initial velocity multiplicator ∈ [0,20]
                     lb[3] = 0;
-                    ub[3] = 10;             // "v0max" initial velocity multiplicator ∈ [0,10]
+                    ub[3] = 1;
+                    xint[3] = true;         //0 = update after population. 1 = update after each evaluation 
+                    lb[4] = 1;  
+                    ub[4] = 2;
+                    xint[4] = true;         //0 = fipso, 1 = inertia, 2 = constriction. fipso deactivated here 
+                    lb[5] = 0;
+                    ub[5] = 5;      
+                    xint[5] = false;        //attraction own best ∈ [0,5]
+                    lb[6] = 0;
+                    ub[6] = 5;
+                    xint[6] = false;        //attraction global best ∈ [0,5]
                     break;
 
                 //case "SA":
@@ -400,24 +443,55 @@ namespace MetaheuristicsTuner
             int runs = runsperTestfunc;
 
             bool[] xint = new bool[dvar];
-            Dictionary<string, object> FIPSOsettings = new Dictionary<string, object>();
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] FIPSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
+            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
             int fipsopop = Convert.ToInt16(hpo_x[0]);
-            FIPSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
-            FIPSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
-            FIPSOsettings.Add("phi", hpo_x[2]);                 //x[2] ∈ [0, 50], attraction to best particle
-            FIPSOsettings.Add("v0max", hpo_x[3]);               //x[3] ∈ [0, 10], initial velocity
+            PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
+            PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
+            PSOsettings.Add("phi", hpo_x[2]);                 //x[2] ∈ [0, 50], attraction to best particle
+            PSOsettings.Add("v0max", hpo_x[3]);               //x[3] ∈ [0, 10], initial velocity
+            PSOsettings.Add("pxupdatemode", Convert.ToInt16(hpo_x[4])); //x[4] 0 = update after population. 1 = update after each evaluation 
+            PSOsettings.Add("psomode", 0);
+            //PSOsettings.Add("psomode", Convert.ToInt16(hpo_x[5])); //x[5] 0 = fipso, 1 = inertia, 2 = constriction 
+            //PSOsettings.Add("phi1", hpo_x[6]);                //x[6] ∈ [0,5], attraction own best 
+            //PSOsettings.Add("phi2", hpo_x[7]);                //x[7] ∈ [0,5], attraction global best 
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                FIPSO[i] = new MetaheuristicsLibrary.SolversSO.SimpleGA(lb, ub, xint, _maxfuncs, testfunc, i, FIPSOsettings);
-                FIPSO[i].solve();
-                mins[i] = FIPSO[i].get_fxoptimum();
+                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i].solve();
+                mins[i] = PSO[i].get_fxoptimum();
             }
 
             return mins.Average();
         }
+        private double meanPSO(double[] hpo_x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
+        {
+            int dvar = testfuncDim;
+            int runs = runsperTestfunc;
 
+            bool[] xint = new bool[dvar];
+            Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
+            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            int fipsopop = Convert.ToInt16(hpo_x[0]);
+            PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
+            PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
+            //PSOsettings.Add("phi", hpo_x[2]);                 //x[2] ∈ [0, 50], attraction to best particle
+            PSOsettings.Add("v0max", hpo_x[2]);               //x[3] ∈ [0, 10], initial velocity
+            PSOsettings.Add("pxupdatemode", Convert.ToInt16(hpo_x[3])); //x[4] 0 = update after population. 1 = update after each evaluation 
+            PSOsettings.Add("psomode", Convert.ToInt16(hpo_x[4])); //x[5] 0 = fipso, 1 = inertia, 2 = constriction 
+            PSOsettings.Add("phi1", hpo_x[5]);                //x[6] ∈ [0,5], attraction own best 
+            PSOsettings.Add("phi2", hpo_x[6]);                //x[7] ∈ [0,5], attraction global best 
+            double[] mins = new double[runs];
+            for (int i = 0; i < runs; i++)
+            {
+                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i].solve();
+                mins[i] = PSO[i].get_fxoptimum();
+            }
+
+            return mins.Average();
+        }
 
         private double switchMean(double[] x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
         {
@@ -429,6 +503,8 @@ namespace MetaheuristicsTuner
                     return meanSGA(x, testfunc, _maxfuncs, lb, ub);
                 case "FIPSO":
                     return meanFIPSO(x, testfunc, _maxfuncs, lb, ub);
+                case "PSO":
+                    return meanPSO(x, testfunc, _maxfuncs, lb, ub);
                 default:
                     return 0.0;
             }
