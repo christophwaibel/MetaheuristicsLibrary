@@ -256,7 +256,7 @@ namespace MetaheuristicsLibrary.SolversSO
     /// Source:     Mendes R., Kennedy J., Neves J. (2004). Fully Informed Particle Swarm: Simpler, Maybe Better.
     /// 2nd Source: Poli R., Kennedy J., Blackwell T. (2007). Particle swarm optimization - An overview.
     /// </summary>
-    public class FIPSO : SO_Solver
+    public class PSO : SO_Solver
     {
         //Poli wt al. (2007), eqt. 5
         //
@@ -353,7 +353,7 @@ namespace MetaheuristicsLibrary.SolversSO
         /// <param name="seed"></param>
         /// <param name="settings"></param>
         /// <param name="x0"></param>
-        public FIPSO(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
+        public PSO(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed, Dictionary<string, object> settings, double[][] x0 = null)
             : base(lb, ub, xint, evalmax, evalfnc, seed)
         {
             this.x0 = x0 ?? new double[0][];
