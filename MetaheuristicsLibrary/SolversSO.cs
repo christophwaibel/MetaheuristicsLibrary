@@ -334,13 +334,25 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         private double[] s0;
 
+        /// <summary>
+        /// phi1 = own best, phi2 = global best
+        /// </summary>
         private double phi1, phi2;
 
-
+        
         /// <summary>
         /// false means inertia weight PSO, true is fipso
         /// </summary>
         private int psomode;
+
+        /// <summary>
+        /// probability for uniform random mutation of integer variable
+        /// </summary>
+        private double intmut;
+
+        private double mutstdev;
+
+
 
         /// <summary>
         /// using von Neumann topology.
@@ -450,6 +462,26 @@ namespace MetaheuristicsLibrary.SolversSO
             else
             {
                 for (int i = 0; i < base.n; i++) s0[i] = 1.0;       //initial step size in case of gaussian sampling
+            }
+
+
+
+            if (settings.ContainsKey("intmut"))
+            {
+                this.intmut = Convert.ToDouble(settings["intmut"]);
+            }
+            else
+            {
+                this.intmut = 0.5;
+            }
+
+            if (settings.ContainsKey("mutstdev"))
+            {
+                this.mutstdev = Convert.ToDouble(settings["mutstdev"]);
+            }
+            else
+            {
+                this.mutstdev = 0.3;
             }
         }
 
@@ -586,6 +618,13 @@ namespace MetaheuristicsLibrary.SolversSO
                 double[][] _xpop = new double[this.popsize][];
                 for (int p = 0; p < this.x0.Length; p++)
                 {
+                    for (int i = 0; i < base.n; i++)
+                    {
+                        if (base.xint[i])
+                        {
+                            this.x0[p][i] = Math.Round(this.x_pop[0][i], 0);
+                        }
+                    }
                     _xpop[p] = new double[base.n];
                     this.x0[p].CopyTo(_xpop[p], 0);
                     this.fx0[p] = base.evalfnc(this.x0[p]);
@@ -675,8 +714,15 @@ namespace MetaheuristicsLibrary.SolversSO
                 this.v[p] = new double[base.n];
                 for (int i = 0; i < base.n; i++)
                 {
-                    this.v[p][i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i];
-                    this.v[p][i] *= this.v0max;
+                    //!!!!!!!!!!!!!!!! BUG
+                    // v0 should be able to go into both directions, negative and positive!
+                    // here, its only going in one direction basically, and then shifted to lb. if thats -, it can happen
+                    // that we have - velocity.
+                    //but it should be:
+                    this.v[p][i] = base.rnd.NextGaussian(0, base.ub[i] - base.lb[i]) * this.v0max;
+
+                    //this.v[p][i] = base.rnd.NextDouble() * (base.ub[i] - base.lb[i]) + base.lb[i];
+                    //this.v[p][i] *= this.v0max;
                 }
             }
         }
@@ -697,8 +743,23 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
                 v_new[i] = v_old[i] + (sumXi / K);
                 v_new[i] *= this.chi;
+                if (Math.Round(v_new[i], 5) == 0)
+                {
+                    double rndgauss = base.rnd.NextGaussian(0, this.chi * (base.ub[i] - base.lb[i]));
+                    v_new[i] = rndgauss;
+                }
 
                 x_new[i] = x_old[i] + v_new[i];
+                if (base.xint[i])
+                {
+                    x_new[i] = Math.Round(x_new[i], 0);
+                    if (base.rnd.NextDouble() < this.intmut)
+                    {
+                        double rndgauss = base.rnd.NextGaussian(0, this.mutstdev * (base.ub[i] - base.lb[i]));
+                        //double rndgauss = base.rnd.NextGaussian(0, v_new[i] * (base.ub[i] - base.lb[i]));
+                        x_new[i] = Convert.ToInt32(x_new[i] + rndgauss);
+                    }
+                }
             }
 
             base.checkBounds(ref x_new, base.lb, base.ub);
@@ -725,7 +786,22 @@ namespace MetaheuristicsLibrary.SolversSO
                         (rnd.NextDouble() * phi1) * (ownx_best[i] - x_old[i]) +
                         (rnd.NextDouble() * phi2) * (gx_best[i] - x_old[i]));
                 }
+                if (Math.Round(v_new[i], 5) == 0)
+                {
+                    double rndgauss = base.rnd.NextGaussian(0, inertia * (base.ub[i] - base.lb[i]));
+                    v_new[i] = rndgauss;
+                }
                 x_new[i] = x_old[i] + v_new[i];
+                if (base.xint[i])
+                {
+                    x_new[i] = Math.Round(x_new[i], 0);
+                    if (base.rnd.NextDouble() < this.intmut)
+                    {
+                        double rndgauss = base.rnd.NextGaussian(0, this.mutstdev * (base.ub[i] - base.lb[i]));
+                        //double rndgauss = base.rnd.NextGaussian(0, v_new[i] * (base.ub[i] - base.lb[i]));
+                        x_new[i] = Convert.ToInt32(x_new[i] + rndgauss);
+                    }
+                }
             }
 
             base.checkBounds(ref x_new, base.lb, base.ub);
@@ -821,12 +897,6 @@ namespace MetaheuristicsLibrary.SolversSO
         /// sum of population fitness. required for roulette wheel
         /// </summary>
         private double sumfitness;
-
-
-        /// <summary>
-        /// statistics
-        /// </summary>
-        private double stat_avg, stat_max, stat_min;
 
 
 
@@ -1398,6 +1468,7 @@ namespace MetaheuristicsLibrary.SolversSO
                         this.s[p][i] = 0.5;
             }
 
+
             //initial stepsize s0
             this.s0 = new double[base.n];
             if (settings.ContainsKey("stepsize0"))
@@ -1692,7 +1763,7 @@ namespace MetaheuristicsLibrary.SolversSO
                 {
                     if (rnd.NextDouble() < this.pmut_int)
                     {
-                        _xnew[i] = Convert.ToDouble(rnd.Next(Convert.ToInt16(base.lb[i]), Convert.ToInt16(base.ub[i])));
+                        _xnew[i] = Convert.ToDouble(rnd.Next(Convert.ToInt16(base.lb[i]), Convert.ToInt16(base.ub[i]) + 1));
                     }
                 }
                 else
