@@ -14,19 +14,160 @@ namespace MetaheuristicsTuner
     class Program
     {
 
-
-        
-
         static void Main(string[] args)
         {
-            string solver = "ES";               //choosing solver to be tuned. string: "SGA", "ES", "FIPSO", "SA"
+            //TuneSolver("PSO", 20, 100);
+
+
+
+
+
+
+
+
+
+
+            ////FIPSO PARAMETERS
+            //double[] hp = new double[5];
+            ////// Cluster A
+            ////hp[0] = 20.5457;
+            ////hp[1] = 0.29263;
+            ////hp[2] = 12.33794;
+            ////hp[3] = 2.16909;
+            ////hp[4] = 0;
+            ////Clsuter B
+            //hp[0] = 17.85656;
+            //hp[1] = 0.32903;
+            //hp[2] = 10.87919;
+            //hp[3] = 11.24591;
+            //hp[4] = 0;
+
+
+
+            //PSO PARAMETERS
+            double[] hp = new double[7];
+            // cluster  
+            hp[0] = 14.85608;
+            hp[1]=0.28889	;
+            hp[2]=0	;
+            hp[3]=0	;
+            hp[4]=2	;
+            hp[5]=4.745	;
+            hp[6] = 4.75793;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ////SGA PARAMETERS
+            //double[] hp = new double[7];
+            //////cluster A
+            ////hp[0] = 5;
+            ////hp[1] = 71.23471;
+            ////hp[2] = 0.96031;
+            ////hp[3] = 0.97181;
+            ////hp[4] = 0.01;
+            ////hp[5] = 0.28861;
+            ////hp[6] = 0.32989;
+            ////cluster C (or B in paper)
+            //hp[0] = 5.46228;
+            //hp[1] = 99.78889;
+            //hp[2] = 0.97875;
+            //hp[3] = 0.9781;
+            //hp[4] = 0.13499;
+            //hp[5] = 1.95781;
+            //hp[6] = 0.45678;
+
+
+            ////ES PARAMETERS
+            //double[] hp = new double[8];
+            //// cluster A
+            //hp[0] = 2.67122;
+            //hp[1] = 1;
+            //hp[2] = 1;
+            //hp[3] = 0.07075;
+            //hp[4] = 10;
+            //hp[5] = 1.83897;
+            //hp[6] = 0.01;
+            //hp[7] = 0.97401;
+            //////// cluster B
+            //////hp[0] = 16.16981;
+            //////hp[1] = 5.97594;
+            //////hp[2] = 1;
+            //////hp[3] = 0.03825;
+            //////hp[4] = 0.01;
+            //////hp[5] = 0.41785;
+            //////hp[6] = 1.53637;
+            //////hp[7] = 0.92694;
+
+
+            TestHyperParam("PSO", hp, 4, 100, 30);
+        }
+
+        static void TestHyperParam(string solver, double[] hp, int testfuncdim, int evalbudgetmultipl, int rerunsTestFuncs)
+        {
+            //int evalbudgetmultiplier = 100;
+            //int testfuncdim = 20;                //tuned to this n
+            //int rerunsTestFuncs = 30;            // 30
+            HyperFuncs hf = new HyperFuncs(testfuncdim, rerunsTestFuncs, solver, evalbudgetmultipl);   //problem dim; reruns of testfuncs; solver to be tuned
+            Func<double[], double>[] manyhyperfuncs = new Func<double[], double>[20];
+            manyhyperfuncs[0] = hf.HyperFunc_B_Perm0db;
+            manyhyperfuncs[1] = hf.HyperFunc_B_RotHypEll;
+            manyhyperfuncs[2] = hf.HyperFunc_B_Sphere;
+            manyhyperfuncs[3] = hf.HyperFunc_B_SumSquares;
+            manyhyperfuncs[4] = hf.HyperFunc_B_Trid;
+            manyhyperfuncs[5] = hf.HyperFunc_L_Ackley;
+            manyhyperfuncs[6] = hf.HyperFunc_L_Griewank;
+            manyhyperfuncs[7] = hf.HyperFunc_L_Levy;
+            manyhyperfuncs[8] = hf.HyperFunc_L_Rastrigin;
+            manyhyperfuncs[9] = hf.HyperFunc_L_Schwefel;
+            manyhyperfuncs[10] = hf.HyperFunc_O_PermDB;
+            manyhyperfuncs[11] = hf.HyperFunc_O_StyblinskiTang;
+            manyhyperfuncs[12] = hf.HyperFunc_P_Zhakarov;
+            manyhyperfuncs[13] = hf.HyperFunc_V_DixonPrice;
+            manyhyperfuncs[14] = hf.HyperFunc_V_Rosenbrock;
+            manyhyperfuncs[15] = hf.HyperFunc_L_Levy_Edge;
+            manyhyperfuncs[16] = hf.HyperFunc_L_Schwefel_Edge;
+            manyhyperfuncs[17] = hf.HyperFunc_O_StyblinskiTang_Edge;
+            manyhyperfuncs[18] = hf.HyperFunc_V_DixonPrice_Edge;
+            manyhyperfuncs[19] = hf.HyperFunc_V_Rosenbrock_Edge;
+
+            double[] means = new double[manyhyperfuncs.Length];
+            for (int i = 0; i < manyhyperfuncs.Length; i++)
+            {
+                means[i] = manyhyperfuncs[i](hp);
+                Console.WriteLine(means[i]);
+            }
+            Console.ReadKey();
+
+
+        }
+
+
+
+        static void TuneSolver(string solver, int testfuncdim, int evalbudgetmultilp)
+        {
+            //string solver = "PSO";               //choosing solver to be tuned. string: "SGA", "ES", "FIPSO", "SA"
             int maxfunc = 5000;                  //func calls of the meta-optimizer. 5000
-            int testfuncdim = 11;                //tuned to this n
+            //int testfuncdim = 20;                //tuned to this n
             int rerunsMeta = 10;                 // 10
             int rerunsTestFuncs = 30;            // 30
 
 
-            HyperFuncs hf = new HyperFuncs(testfuncdim, rerunsTestFuncs, solver);   //problem dim; reruns of testfuncs; solver to be tuned
+            HyperFuncs hf = new HyperFuncs(testfuncdim, rerunsTestFuncs, solver, evalbudgetmultilp);   //problem dim; reruns of testfuncs; solver to be tuned
             int[] seeds_in = new int[rerunsMeta]; //reruns of meta-optimizer
             for (int i = 0; i < seeds_in.Length; i++) seeds_in[i] = i;
 
@@ -40,13 +181,13 @@ namespace MetaheuristicsTuner
             Console.WriteLine(@"///////////////////////////////////////");
             Console.WriteLine("Hyperparameter optimization of...: {0}", solver);
             Console.WriteLine(@"tuned to n = {0}", testfuncdim);
-            Console.WriteLine(@"Meta-optimizers: SGA, ES, PSO and SA. Each with {0} re-runs", seeds_in.Length);
+            Console.WriteLine(@"Meta-optimizers: SGA and ES. Each with {0} re-runs", seeds_in.Length);
             Console.WriteLine(@"///////////////////////////////////////");
             Console.WriteLine();
             Console.WriteLine(@"Please enter an existing output path for results. E.g.: c:\n13\");
             string basepath = Console.ReadLine();
             Console.WriteLine();
-            Console.WriteLine(@"How many threads would you like to assign to this? Please enter just an integer between 1 and 15.");
+            Console.WriteLine(@"How many threads would you like to assign to this? Please enter an integer between 1 and 20.");
             int maxthreads = Convert.ToInt16(Console.ReadLine());
             Console.WriteLine();
             Console.WriteLine("Thanks! Starting... This might take a couple of days.");
@@ -232,12 +373,14 @@ namespace MetaheuristicsTuner
         int testfuncDim;
         int runsperTestfunc;
         string solver;
+        int evalbudget;
 
-        internal HyperFuncs(int dim, int reruns, string solvername)
+        internal HyperFuncs(int dim, int reruns, string solvername, int evaluationBudgetMultiplier)
         {
             testfuncDim = dim;
             runsperTestfunc = reruns;
             solver = solvername;
+            evalbudget = evaluationBudgetMultiplier;
 
         }
 
@@ -520,7 +663,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Rastrigin;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -536,7 +679,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Levy;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -553,7 +696,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Griewank;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -570,7 +713,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Ackley;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -587,7 +730,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Schwefel;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -604,7 +747,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.P_Zakharov;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -621,7 +764,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.V_Rosenbrock;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -638,7 +781,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.V_DixonPrice;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -655,7 +798,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_Sphere;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -672,7 +815,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_SumSquares;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -689,7 +832,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_Trid;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -706,7 +849,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_RotHypEll;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -722,7 +865,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_Perm0db;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -738,7 +881,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.O_PermDB;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -755,7 +898,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.O_StyblinskiTang;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -779,7 +922,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Rastrigin;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -796,7 +939,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Levy;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -813,7 +956,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Griewank;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -830,7 +973,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Ackley;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -847,7 +990,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.L_Schwefel;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -864,7 +1007,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.P_Zakharov;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -881,7 +1024,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.V_Rosenbrock;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -898,7 +1041,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.V_DixonPrice;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -915,7 +1058,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_Sphere;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -932,7 +1075,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_SumSquares;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -949,7 +1092,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.B_RotHypEll;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
@@ -966,7 +1109,7 @@ namespace MetaheuristicsTuner
             int dvar = testfuncDim;
 
             Func<double[], double> testfunc = SO.O_StyblinskiTang;
-            int _maxfuncs = (dvar + 1) * 100;   //max func evals
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             for (int i = 0; i < dvar; i++)
