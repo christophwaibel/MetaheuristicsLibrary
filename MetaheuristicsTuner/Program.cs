@@ -16,7 +16,7 @@ namespace MetaheuristicsTuner
 
         static void Main(string[] args)
         {
-            //TuneSolver("PSO", 20, 100);
+            //TuneSolver("PSO",35,30);
 
 
 
@@ -24,97 +24,64 @@ namespace MetaheuristicsTuner
 
 
 
-
-
-
-            ////FIPSO PARAMETERS
+            ////FIPSO PARAMeters
             //double[] hp = new double[5];
-            ////// Cluster A
-            ////hp[0] = 20.5457;
-            ////hp[1] = 0.29263;
-            ////hp[2] = 12.33794;
-            ////hp[3] = 2.16909;
-            ////hp[4] = 0;
-            ////Clsuter B
-            //hp[0] = 17.85656;
-            //hp[1] = 0.32903;
-            //hp[2] = 10.87919;
-            //hp[3] = 11.24591;
-            //hp[4] = 0;
+            //// cluster a
+            //hp[0] = 4;
+            //hp[1] = 0.25452;
+            //hp[2] = 12.42113;
+            //hp[3] = 0.30566;
+            //hp[4] = 1;
 
 
 
-            //PSO PARAMETERS
+
+
+
+            //PSO PARAmeters
             double[] hp = new double[7];
             // cluster  
-            hp[0] = 14.85608;
-            hp[1]=0.28889	;
-            hp[2]=0	;
-            hp[3]=0	;
-            hp[4]=2	;
-            hp[5]=4.745	;
-            hp[6] = 4.75793;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            hp[0] = 19.57891;
+            hp[1] = 0.10542;
+            hp[2] = 18.76201;
+            hp[3] = 0;
+            hp[4] = 1;
+            hp[5] = 1.42516;
+            hp[6] = 2.03202;
 
 
 
 
             ////SGA PARAMETERS
             //double[] hp = new double[7];
-            //////cluster A
-            ////hp[0] = 5;
-            ////hp[1] = 71.23471;
-            ////hp[2] = 0.96031;
-            ////hp[3] = 0.97181;
-            ////hp[4] = 0.01;
-            ////hp[5] = 0.28861;
-            ////hp[6] = 0.32989;
-            ////cluster C (or B in paper)
-            //hp[0] = 5.46228;
-            //hp[1] = 99.78889;
-            //hp[2] = 0.97875;
-            //hp[3] = 0.9781;
-            //hp[4] = 0.13499;
-            //hp[5] = 1.95781;
-            //hp[6] = 0.45678;
+            //hp[0] = 15.95295;
+            //hp[1] = 1;
+            //hp[2] = 1;
+            //hp[3] = 0.87128;
+            //hp[4] = 0.01;
+            //hp[5] = 0.04092;
+            //hp[6] = 0.29608;
+
+
 
 
             ////ES PARAMETERS
             //double[] hp = new double[8];
             //// cluster A
-            //hp[0] = 2.67122;
-            //hp[1] = 1;
-            //hp[2] = 1;
-            //hp[3] = 0.07075;
-            //hp[4] = 10;
-            //hp[5] = 1.83897;
-            //hp[6] = 0.01;
-            //hp[7] = 0.97401;
-            //////// cluster B
-            //////hp[0] = 16.16981;
-            //////hp[1] = 5.97594;
-            //////hp[2] = 1;
-            //////hp[3] = 0.03825;
-            //////hp[4] = 0.01;
-            //////hp[5] = 0.41785;
-            //////hp[6] = 1.53637;
-            //////hp[7] = 0.92694;
+            //hp[0] = 13.15896;
+            //hp[1] = 7.46201;
+            //hp[2] = 0.95273;
+            //hp[3] = 0.06579;
+            //hp[4] = 9.78386;
+            //hp[5] = 0.13504;
+            //hp[6] = 1.81098;
+            //hp[7] = 1;
 
 
-            TestHyperParam("PSO", hp, 4, 100, 30);
+
+
+
+            TestHyperParam("PSO", hp, 10, 100, 30);
         }
 
         static void TestHyperParam(string solver, double[] hp, int testfuncdim, int evalbudgetmultipl, int rerunsTestFuncs)
@@ -197,6 +164,13 @@ namespace MetaheuristicsTuner
 
 
             Func<double[], double>[] manyhyperfuncs = new Func<double[], double>[20];
+            //manyhyperfuncs[0] = hf.HyperFunc_B_Perm0db;
+            //manyhyperfuncs[1] = hf.HyperFunc_B_RotHypEll;
+            //manyhyperfuncs[2] = hf.HyperFunc_L_Ackley;
+            //manyhyperfuncs[3] = hf.HyperFunc_O_PermDB;
+            //manyhyperfuncs[4] = hf.HyperFunc_L_Schwefel_Edge;
+
+
             manyhyperfuncs[0] = hf.HyperFunc_B_Perm0db;
             manyhyperfuncs[1] = hf.HyperFunc_B_RotHypEll;
             manyhyperfuncs[2] = hf.HyperFunc_B_Sphere;
