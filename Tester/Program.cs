@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MetaheuristicsLibrary;
-using MetaheuristicsLibrary.TestFunctions;
+using MetaheuristicsTuner.Testfunctions;
 using MetaheuristicsLibrary.SolversMO;
 using MetaheuristicsLibrary.SolversSO;
 using MetaheuristicsLibrary.Misc;
@@ -31,8 +31,11 @@ namespace Tester
             return val;
         }
 
-
-        static void mMain(string[] args)
+        /// <summary>
+        /// multi objective SPEA-2 for Emilie
+        /// </summary>
+        /// <param name="args"></param>
+        static void moMain(string[] args)
         {
             int nVar = 5;                                //number of decision variables                      
             int mObj = 3;                                //number of objectives
@@ -44,11 +47,11 @@ namespace Tester
                 ub[i] = 10;
             }
             bool[] intX = new bool[nVar];
-            intX[0] = true;
-            intX[1] = true;
-            intX[2] = true;
-            intX[3] = true;
-            intX[4] = true;
+            //intX[0] = true;
+            //intX[1] = true;
+            //intX[2] = true;
+            //intX[3] = true;
+            //intX[4] = true;
             //intX[5] = false;
             //intX[6] = false;
             //intX[7] = false;
@@ -58,23 +61,23 @@ namespace Tester
             //intX[11] = false;
 
             Func<double[], double[]> testfunc = testfnc;                                            //evaluation function
-            int randomSeed = ((int)DateTime.Now.Ticks & 0x0000FFFF);                               // random seed for random number generator
-
+            //int randomSeed = ((int)DateTime.Now.Ticks & 0x0000FFFF);                               // random seed for random number generator
+            int randomSeed = 1;
 
             //SPEA2
             List<double[]> x0pop = new List<double[]>();
             //x0pop.Add(new double[12] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });        //initial solution 1
             //x0pop.Add(new double[12] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });        //initial solution 2
-            x0pop.Add(new double[5] { 0, 0, 0, 0, 0 });        //initial solution 1
-            x0pop.Add(new double[5] { 1, 1, 1, 1, 1 });        //initial solution 2
+            //x0pop.Add(new double[5] { 0, 0, 0, 0, 0 });        //initial solution 1
+            //x0pop.Add(new double[5] { 1, 1, 1, 1, 1 });        //initial solution 2
 
             SPEA2 spea2 = new SPEA2(mObj, nVar, lb, ub, testfunc, randomSeed, x0pop, intX);
 
             //change solver parameters
-            spea2.ga_genmax = 300;                        // max amount of generations (which are the solver iterations)
+            spea2.ga_genmax = 3000;                        // max amount of generations (which are the solver iterations)
             spea2.ga_nPop = 20;                           //population size: number of solution candidates per iteration
-            spea2.ga_PCrossover = 1.0;
-            spea2.ga_PMutation = 0.0;
+            spea2.ga_PCrossover = 0.8;
+            spea2.ga_PMutation = 0.2;
 
 
             //initialize solver
@@ -139,8 +142,11 @@ namespace Tester
         }
 
 
-
-        static void emilieMain(string[] args)
+        /// <summary>
+        /// pareto front example
+        /// </summary>
+        /// <param name="args"></param>
+        static void pfMain(string[] args)
         {
             Random rnd = new Random();
 
@@ -205,79 +211,139 @@ namespace Tester
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            int dvar = 10;
+           
+            int seeds = 20;
+            double[] optis = new double[seeds];
+            int dvar = 13;
+            int evalcount = (dvar+1) * 100;
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             bool[] xint = new bool[dvar];
             for (int i = 0; i < dvar; i++)
             {
-                lb[i] = -32.768;
-                ub[i] = 32.768;
-                xint[i] = false;
+                lb[i] = -30;
+                //lb[i] = -3;
+                ub[i] = 1;
+                xint[i] = true;
             }
 
+            Func<double[], double> testfunc = SO.V_Rosenbrock;
 
 
-            //Hillclimber hc = new Hillclimber(lb, ub, 100, Testfunctions.L_Ackley, 1, 0.1);
+            //Hillclimber hc = new Hillclimber(lb, ub, xint, 100, testfunc, 1, 0.1);
             //hc.solve();
             //Console.WriteLine(hc.get_fxoptimum());
             //Console.ReadLine();
 
+            //simpleGAsettings.Add("popsize", simplegapop);            //x[0]  50
+            //simpleGAsettings.Add("maxgen", Convert.ToInt32(Math.Floor(_maxfuncs / Convert.ToDouble(simplegapop))));            //no x. its a function of popsize and max evals.  50
+            //simpleGAsettings.Add("k", hpo_x[1]);                //x[1]  6
+            //simpleGAsettings.Add("pcross", hpo_x[2]);           //x[2]  0.7
+            //simpleGAsettings.Add("pmut", hpo_x[3]);             //x[3]  0.3
+            //simpleGAsettings.Add("d", hpo_x[4]);                //x[4]  0.1
+            //simpleGAsettings.Add("r", hpo_x[5]);                //x[5]  0.1
+            //int SGAelite = Convert.ToInt16(hpo_x[6] * (int)Math.Round((double)simplegapop / 2, 0)); //from percentage to integer
+            //simpleGAsettings.Add("elite", SGAelite);                //x[6]  0 - (popsize/2). 
+
+
 
             //Dictionary<string, object> settings = new Dictionary<string, object>();
-            //settings.Add("maxgen", 100);
-            //settings.Add("popsize", 50);
-            //settings.Add("pcross", 0.7);
-            //settings.Add("pmut", 0.3);
-            //settings.Add("d", 0.1);
-            //settings.Add("r", 0.1);
-            //settings.Add("k", 6);
-            ////double[][] x0 = new double[50][];
-            ////double[] fx0 = new double[50];
-            ////for (int i = 0; i < x0.Length; i++)
-            ////{
-            ////    x0[i] = new double[dvar];
-            ////    for (int u = 0; u < x0[i].Length; u++)
-            ////    {
-            ////        x0[i][u] = i * u;
-            ////    }
-            ////    fx0[i] = i;
-            ////}
-            ////SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.L_Ackley, 1, settings, x0, fx0);
-            //SimpleGA ga = new SimpleGA(lb, ub, xint, 1000, Testfunctions.L_Ackley, 9, settings);
-            ////SimpleGA ga = new SimpleGA(lb, ub, xint, 100, Testfunctions.stupid, 1, settings);
-            //ga.solve();
-            //Console.WriteLine(ga.get_fxoptimum().ToString());
+            //int simplegapop = Convert.ToInt32(14);   //x[0]
+            //simplegapop += simplegapop % 2;
+            //settings.Add("maxgen", Convert.ToInt32(Math.Floor(evalcount / Convert.ToDouble(simplegapop))));
+            //settings.Add("popsize", simplegapop);
+            //settings.Add("k", 11);               //x[1]  6
+            //settings.Add("pcross", 1);          //x[2]  0.7
+            //settings.Add("pmut", 0.2);          //x[3]  0.3
+            //settings.Add("d", 0.01);             //x[4]  0.1
+            //settings.Add("r", 0.2);             //x[5]  0.1
+            ////int SGAelite = Convert.ToInt16(0 * (int)Math.Round((double)simplegapop / 2, 0)); // x[6].  from percentage to integer
+            //int SGAelite = 1;
+            //settings.Add("elite", SGAelite);
+            //SimpleGA[] ga = new SimpleGA[seeds];
+            //for (int i = 0; i < seeds; i++)
+            //{
+            //    ga[i] = new SimpleGA(lb, ub, xint, evalcount, testfunc, i, settings);
+            //    ga[i].solve();
+            //    optis[i] = ga[i].get_fxoptimum();
+            //}
+            //Console.WriteLine("ga average: {0}", optis.Average());
             //Console.ReadLine();
 
 
 
 
-            //Dictionary<string, object> settingsES = new Dictionary<string, object>();
-            //settingsES.Add("popsize", 20);          // ∈ {2,...,200}
-            //settingsES.Add("lambda", 20);            // ∈ {1,...,200}
-            //settingsES.Add("roh", 2);               // ∈ {1,...,popsize}  . in hyperoptimization, express as percentage of lambda
-            //settingsES.Add("x0sampling", 0);        // ∈ {0,1}  0=uniform, 1=gaussian
-            //settingsES.Add("stepsize0", 1);       // ∈ [0.01, 10]
-            //settingsES.Add("stepsize", 0.5);        // ∈ [0.01, 10]
-            //settingsES.Add("tauc", 1);              // ∈ [0.01, 10]
-            ////settingsES.Add("pmut_int", 0.1);        // ∈ [0.01, 0.99]
-            ////double[][] x0 = new double[1][];
-            ////x0[0] = new double[dvar];
-            ////x0[0][0] = 50;
-            ////x0[0][1] = 50;
-            //SimpleES es = new SimpleES(lb, ub, xint, 1100, Testfunctions.L_Ackley, 4, settingsES);
-            //es.solve();
-            //Console.WriteLine(es.get_fxoptimum());
-            //Console.ReadKey();
+            //Dictionary<string, object> settingsB = new Dictionary<string, object>();
+            //int simplegapopB = Convert.ToInt32(6);   //x[0]
+            //simplegapopB += simplegapopB % 2;
+            //settingsB.Add("maxgen", Convert.ToInt32(Math.Floor(evalcount / Convert.ToDouble(simplegapopB))));
+            //settingsB.Add("popsize", simplegapopB);
+            //settingsB.Add("k", 36.7352);               //x[1]  6
+            //settingsB.Add("pcross", 0.87624);          //x[2]  0.7
+            //settingsB.Add("pmut", 0.8189);          //x[3]  0.3
+            //settingsB.Add("d", 0.63072);             //x[4]  0.1
+            //settingsB.Add("r", 1.75361);             //x[5]  0.1
+            //int SGAeliteB = Convert.ToInt16(0.43565 * (int)Math.Round((double)simplegapopB / 2, 0)); // x[6].  from percentage to integer
+            //settingsB.Add("elite", SGAeliteB);
+            //SimpleGA[] ga_B = new SimpleGA[seeds];
+            //for (int i = 0; i < seeds; i++)
+            //{
+            //    ga_B[i] = new SimpleGA(lb, ub, xint, evalcount, testfunc, i, settingsB);
+            //    ga_B[i].solve();
+            //    optis[i] = ga_B[i].get_fxoptimum();
+            //}
+            //Console.WriteLine("ga B average: {0}", optis.Average());
+            //Console.ReadLine();
 
 
 
-            Dictionary<string, object> settingsPSO = new Dictionary<string, object>();
-            FIPSO pso = new FIPSO(lb, ub, xint, 300, Testfunctions.L_Ackley, 3, settingsPSO);
-            pso.solve();
-            Console.WriteLine(pso.get_fxoptimum());
+            Dictionary<string, object> settingsES = new Dictionary<string, object>();
+            settingsES.Add("popsize", 3);          // ∈ {2,...,200}
+            settingsES.Add("lambda", 1);            // ∈ {1,...,200}
+            settingsES.Add("roh", 2);               // ∈ {1,...,popsize}  . in hyperoptimization, express as percentage of lambda
+            settingsES.Add("x0sampling", 0);        // ∈ {0,1}  0=uniform, 1=gaussian
+            settingsES.Add("stepsize0", 10);       // ∈ [0.01, 10]
+            settingsES.Add("stepsize", 1.8);        // ∈ [0.01, 10]
+            settingsES.Add("tauc", 0.01);              // ∈ [0.01, 50]
+            settingsES.Add("selmode", 1);
+            //settingsES.Add("pmut_int", 0.1);        // ∈ [0.01, 0.99] 
+            SimpleES[] es = new SimpleES[seeds];
+            for (int i = 0; i < seeds; i++)
+            {
+                es[i] = new SimpleES(lb, ub, xint, evalcount, testfunc, i, settingsES);
+                es[i].solve();
+                optis[i] = es[i].get_fxoptimum();
+            }
+            Console.WriteLine("es average: {0}", optis.Average());
             Console.ReadKey();
+
+
+
+            //Dictionary<string, object> settingsPSO = new Dictionary<string, object>();
+            //settingsPSO.Add("popsize", 29);        // popsize                           ∈ {4,..., 100}
+            //settingsPSO.Add("chi", 0.32903);            // constriction coefficient         ∈ [0.001, 1]
+            //settingsPSO.Add("phi", 10.87919);              // attraction to best particle     ∈ [0.01, 50]
+            //settingsPSO.Add("v0max", 11.24591);          // max velocity at initialisation. fraction of domain. ∈ [0.01, 10]
+            //settingsPSO.Add("x0samplingmode", 0);   // 0 = uniform, 1 = gaussian        ∈ [0.01, 10]
+            //settingsPSO.Add("pxupdatemode", 0);     //0 = update after population. 1 = update after each evaluation ∈ [0.01, 10]
+            //settingsPSO.Add("s0", 1);             //initial step size in case of gaussian x0 ∈ [0.01, 10]
+            //settingsPSO.Add("psomode", 0);      //0 = fipso, 1 = inertia, 2 = constriction
+            //settingsPSO.Add("phi1", 1.05);      //attraction own best
+            //settingsPSO.Add("phi2", 2.05);      //attraction global best
+            //settingsPSO.Add("intmut", 0.5);     //mutation probability for integer variables
+            //settingsPSO.Add("mutstdev", 0.3);
+            //PSO[] pso = new PSO[seeds];
+            //for (int i = 0; i < seeds; i++)
+            //{
+            //    pso[i] = new PSO(lb, ub, xint, evalcount, testfunc, i, settingsPSO);
+            //    pso[i].solve();
+            //    optis[i] = pso[i].get_fxoptimum();
+            //}
+            //Console.WriteLine("pso average: {0}", optis.Average());
+            //Console.WriteLine("pso min: {0}", optis.Min());
+            //Console.WriteLine("pso max: {0}", optis.Max());
+
+            //Console.ReadKey();
 
         }
 
@@ -303,7 +369,7 @@ namespace Tester
                 {
                     dbl[i] = Convert.ToDouble(x[i]);
                 }
-                return Testfunctions.L_Ackley(dbl);
+                return SO.L_Ackley(dbl);
             };
 
 
@@ -328,52 +394,5 @@ namespace Tester
 
     }
 
-    public class Testfunctions
-    {
-        /// <summary>
-        /// ACKLEY Function. 
-        /// <para/> Objectives: 1.
-        /// <para/> Real variables: ∞.
-        /// <para/> Binary variables: 0.
-        /// <para/> Constraints: 0.
-        /// <para/> Type: Many local minima.
-        /// <para/> Description: The Ackley function is widely used for testing optimization algorithms. In its two-dimensional form, it is characterized by a nearly flat outer region, and a large hole at the centre. The function poses a risk for optimization algorithms, particularly hillclimbing algorithms, to be trapped in one of its many local minima.
-        /// </summary>
-        /// <param name="x">Decision variable vector. Usually: xi ∈ [-32.768, 32.768], or [-5, 5], for all i = 1, …, d.</param>
-        /// <param name="a">(optional) parameter. Default 20.</param>
-        /// <param name="b">(optional) parameter. Default 0.2.</param>
-        /// <param name="c">(optional) parameter. Default 2PI.</param>
-        /// <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0).</returns>
-        public static double L_Ackley(double[] x)
-        {
-            double a = 20;
-            double b = 0.2;
-            double c = (2 * Math.PI);
-            double term1, term2, xi, sum1 = 0, sum2 = 0;
-            int d = x.Length;
 
-            for (int i = 0; i < d; i++)
-            {
-                xi = x[i];
-                sum1 += (Math.Pow(xi, 2));
-                sum2 += (Math.Cos(c * xi));
-            }
-
-            term1 = -a * Math.Exp(-b * Math.Sqrt(sum1 / d));
-            term2 = -Math.Exp(sum2 / d);
-
-            return (term1 + term2 + a + Math.Exp(1));
-        }
-
-
-        public static double stupid(double[] x)
-        {
-            double sum = 0;
-            for (int i = 0; i < x.Length; i++)
-            {
-                sum += x[i];
-            }
-            return sum;
-        }
-    }
 }
