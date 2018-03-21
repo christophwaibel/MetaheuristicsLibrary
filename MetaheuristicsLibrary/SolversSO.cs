@@ -1745,7 +1745,11 @@ namespace MetaheuristicsLibrary.SolversSO
             }
         }
 
-
+        /// <summary>
+        /// Adaptive step size. Bayer and Schwefel 2002, eqt. 26 and 27
+        /// </summary>
+        /// <param name="_snew"></param>
+        /// <param name="_tau"></param>
         private void s_mutation(ref double[] _snew, double _tau)
         {
             double tau0exp = Math.Exp(this.tau0 * rnd.NextGaussian(0, 1));
