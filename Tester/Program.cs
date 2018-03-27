@@ -35,7 +35,7 @@ namespace Tester
         /// multi objective SPEA-2 for Emilie
         /// </summary>
         /// <param name="args"></param>
-        static void moMain(string[] args)
+        static void Main(string[] args)
         {
             int nVar = 5;                                //number of decision variables                      
             int mObj = 3;                                //number of objectives
@@ -106,12 +106,12 @@ namespace Tester
 
 
             //for each generation
-            //for (int t = 0; t < 100; t++)
-            //{
+            for (int t = 0; t < 100; t++)
+            {
             //solve one generation
             Console.WriteLine("***************************");
-            //Console.WriteLine("Generation: {0}", t);
-            spea2.Solve();
+            Console.WriteLine("Generation: {0}", t);
+            spea2.Solve(1);
 
             //looping through pareto front of the current generation
             //show three objective function values for each solution
@@ -120,22 +120,22 @@ namespace Tester
                 Console.WriteLine("{0}, {1}, {2}", current_best_objvalues[0], current_best_objvalues[1], current_best_objvalues[2]);
             }
 
-            //show decision variables for each solution
-            int j = 0;
-            foreach (double[] current_best_x in spea2.xPopulationArchive)
-            {
-                Console.WriteLine(" ");
-                Console.Write("individual {0}, x:  ", j);
-                for (int n = 0; n < spea2.nVar; n++)
-                {
-                    Console.Write("{0}, ", current_best_x[n]);
-                }
-                j++;
-            }
-
-            //Console.WriteLine(" ");
-            //Console.ReadKey();
+            ////show decision variables for each solution
+            //int j = 0;
+            //foreach (double[] current_best_x in spea2.xPopulationArchive)
+            //{
+            //    Console.WriteLine(" ");
+            //    Console.Write("individual {0}, x:  ", j);
+            //    for (int n = 0; n < spea2.nVar; n++)
+            //    {
+            //        Console.Write("{0}, ", current_best_x[n]);
+            //    }
+            //    j++;
             //}
+
+            Console.WriteLine(" ");
+            Console.ReadKey();
+            }
             Console.WriteLine(" ");
             Console.ReadKey();
 
@@ -209,7 +209,7 @@ namespace Tester
         /// Testing a SO solver from MetaheuristicsLibrary.SovlersSO
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static void sosoMain(string[] args)
         {
            
             int seeds = 20;
