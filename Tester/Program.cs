@@ -15,7 +15,7 @@ namespace Tester
 {
     class Program
     {
-
+        #region Multi-Objective Tests
         /// <summary>
         /// Test function
         /// </summary>
@@ -35,7 +35,7 @@ namespace Tester
         /// multi objective SPEA-2 for Emilie
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static void MultiObjective_Main(string[] args)
         {
             int nVar = 5;                                //number of decision variables                      
             int mObj = 3;                                //number of objectives
@@ -204,30 +204,37 @@ namespace Tester
             }
 
         }
+        #endregion
 
+
+        #region Single-Objective Tests
         /// <summary>
         /// Testing a SO solver from MetaheuristicsLibrary.SovlersSO
         /// </summary>
         /// <param name="args"></param>
-        static void sosoMain(string[] args)
+        static void Main(string[] args)
         {
            
-            int seeds = 20;
+            int seeds = 1;
             double[] optis = new double[seeds];
-            int dvar = 13;
-            int evalcount = (dvar+1) * 100;
+            int dvar = 2;
+            int evalcount = (dvar) * 50;
             double[] lb = new double[dvar];
             double[] ub = new double[dvar];
             bool[] xint = new bool[dvar];
             for (int i = 0; i < dvar; i++)
             {
-                lb[i] = -30;
-                //lb[i] = -3;
-                ub[i] = 1;
-                xint[i] = true;
+                lb[i] = 0;
+                ub[i] = 7;
+                xint[i] = false;
             }
+            lb[0] = -2.2;
+            lb[1] = 0.75;
+            ub[0] = 2.0;
+            ub[1] = 2.5;
 
-            Func<double[], double> testfunc = SO.V_Rosenbrock;
+
+            Func<double[], double> testfunc = SO.V_Camel3Hump;
 
 
             //Hillclimber hc = new Hillclimber(lb, ub, xint, 100, testfunc, 1, 0.1);
@@ -248,15 +255,15 @@ namespace Tester
 
 
             //Dictionary<string, object> settings = new Dictionary<string, object>();
-            //int simplegapop = Convert.ToInt32(14);   //x[0]
+            //int simplegapop = Convert.ToInt32(6);   //x[0]
             //simplegapop += simplegapop % 2;
             //settings.Add("maxgen", Convert.ToInt32(Math.Floor(evalcount / Convert.ToDouble(simplegapop))));
             //settings.Add("popsize", simplegapop);
-            //settings.Add("k", 11);               //x[1]  6
+            //settings.Add("k", 35);               //x[1]  6
             //settings.Add("pcross", 1);          //x[2]  0.7
-            //settings.Add("pmut", 0.2);          //x[3]  0.3
-            //settings.Add("d", 0.01);             //x[4]  0.1
-            //settings.Add("r", 0.2);             //x[5]  0.1
+            //settings.Add("pmut", 1);          //x[3]  0.3
+            //settings.Add("d", 0.2);             //x[4]  0.1
+            //settings.Add("r", 2);             //x[5]  0.1
             ////int SGAelite = Convert.ToInt16(0 * (int)Math.Round((double)simplegapop / 2, 0)); // x[6].  from percentage to integer
             //int SGAelite = 1;
             //settings.Add("elite", SGAelite);
@@ -297,53 +304,53 @@ namespace Tester
 
 
 
-            Dictionary<string, object> settingsES = new Dictionary<string, object>();
-            settingsES.Add("popsize", 3);          // ∈ {2,...,200}
-            settingsES.Add("lambda", 1);            // ∈ {1,...,200}
-            settingsES.Add("roh", 2);               // ∈ {1,...,popsize}  . in hyperoptimization, express as percentage of lambda
-            settingsES.Add("x0sampling", 0);        // ∈ {0,1}  0=uniform, 1=gaussian
-            settingsES.Add("stepsize0", 10);       // ∈ [0.01, 10]
-            settingsES.Add("stepsize", 1.8);        // ∈ [0.01, 10]
-            settingsES.Add("tauc", 0.01);              // ∈ [0.01, 50]
-            settingsES.Add("selmode", 1);
-            //settingsES.Add("pmut_int", 0.1);        // ∈ [0.01, 0.99] 
-            SimpleES[] es = new SimpleES[seeds];
-            for (int i = 0; i < seeds; i++)
-            {
-                es[i] = new SimpleES(lb, ub, xint, evalcount, testfunc, i, settingsES);
-                es[i].solve();
-                optis[i] = es[i].get_fxoptimum();
-            }
-            Console.WriteLine("es average: {0}", optis.Average());
-            Console.ReadKey();
-
-
-
-            //Dictionary<string, object> settingsPSO = new Dictionary<string, object>();
-            //settingsPSO.Add("popsize", 29);        // popsize                           ∈ {4,..., 100}
-            //settingsPSO.Add("chi", 0.32903);            // constriction coefficient         ∈ [0.001, 1]
-            //settingsPSO.Add("phi", 10.87919);              // attraction to best particle     ∈ [0.01, 50]
-            //settingsPSO.Add("v0max", 11.24591);          // max velocity at initialisation. fraction of domain. ∈ [0.01, 10]
-            //settingsPSO.Add("x0samplingmode", 0);   // 0 = uniform, 1 = gaussian        ∈ [0.01, 10]
-            //settingsPSO.Add("pxupdatemode", 0);     //0 = update after population. 1 = update after each evaluation ∈ [0.01, 10]
-            //settingsPSO.Add("s0", 1);             //initial step size in case of gaussian x0 ∈ [0.01, 10]
-            //settingsPSO.Add("psomode", 0);      //0 = fipso, 1 = inertia, 2 = constriction
-            //settingsPSO.Add("phi1", 1.05);      //attraction own best
-            //settingsPSO.Add("phi2", 2.05);      //attraction global best
-            //settingsPSO.Add("intmut", 0.5);     //mutation probability for integer variables
-            //settingsPSO.Add("mutstdev", 0.3);
-            //PSO[] pso = new PSO[seeds];
+            //Dictionary<string, object> settingsES = new Dictionary<string, object>();
+            //settingsES.Add("popsize", 3);          // ∈ {2,...,200}
+            //settingsES.Add("lambda", 1);            // ∈ {1,...,200}
+            //settingsES.Add("roh", 2);               // ∈ {1,...,popsize}  . in hyperoptimization, express as percentage of lambda
+            //settingsES.Add("x0sampling", 0);        // ∈ {0,1}  0=uniform, 1=gaussian
+            //settingsES.Add("stepsize0", 10);       // ∈ [0.01, 10]
+            //settingsES.Add("stepsize", 1.8);        // ∈ [0.01, 10]
+            //settingsES.Add("tauc", 0.01);              // ∈ [0.01, 50]
+            //settingsES.Add("selmode", 1);
+            ////settingsES.Add("pmut_int", 0.1);        // ∈ [0.01, 0.99] 
+            //SimpleES[] es = new SimpleES[seeds];
             //for (int i = 0; i < seeds; i++)
             //{
-            //    pso[i] = new PSO(lb, ub, xint, evalcount, testfunc, i, settingsPSO);
-            //    pso[i].solve();
-            //    optis[i] = pso[i].get_fxoptimum();
+            //    es[i] = new SimpleES(lb, ub, xint, evalcount, testfunc, i, settingsES);
+            //    es[i].solve();
+            //    optis[i] = es[i].get_fxoptimum();
             //}
-            //Console.WriteLine("pso average: {0}", optis.Average());
-            //Console.WriteLine("pso min: {0}", optis.Min());
-            //Console.WriteLine("pso max: {0}", optis.Max());
-
+            //Console.WriteLine("es average: {0}", optis.Average());
             //Console.ReadKey();
+
+
+
+            Dictionary<string, object> settingsPSO = new Dictionary<string, object>();
+            settingsPSO.Add("popsize", 10);        // popsize                           ∈ {4,..., 100}
+            settingsPSO.Add("chi", 0.39852);            // constriction coefficient         ∈ [0.001, 1]
+            settingsPSO.Add("phi", 9.24731);              // attraction to best particle     ∈ [0.01, 50]
+            settingsPSO.Add("v0max", 0.01699);          // max velocity at initialisation. fraction of domain. ∈ [0.01, 10]
+            settingsPSO.Add("x0samplingmode", 0);   // 0 = uniform, 1 = gaussian        ∈ [0.01, 10]
+            settingsPSO.Add("pxupdatemode", 0);     //0 = update after population. 1 = update after each evaluation ∈ [0.01, 10]
+            settingsPSO.Add("s0", 1);             //initial step size in case of gaussian x0 ∈ [0.01, 10]
+            settingsPSO.Add("psomode", 0);      //0 = fipso, 1 = inertia, 2 = constriction
+            settingsPSO.Add("phi1", 0);      //attraction own best
+            settingsPSO.Add("phi2", 0);      //attraction global best
+            settingsPSO.Add("intmut", 0.5);     //mutation probability for integer variables
+            settingsPSO.Add("mutstdev", 0.3);
+            PSO[] pso = new PSO[seeds];
+            for (int i = 0; i < seeds; i++)
+            {
+                pso[i] = new PSO(lb, ub, xint, evalcount, testfunc, i, settingsPSO);
+                pso[i].solve();
+                optis[i] = pso[i].get_fxoptimum();
+            }
+            Console.WriteLine("pso average: {0}", optis.Average());
+            Console.WriteLine("pso min: {0}", optis.Min());
+            Console.WriteLine("pso max: {0}", optis.Max());
+
+            Console.ReadKey();
 
         }
 
@@ -390,7 +397,7 @@ namespace Tester
             Console.ReadKey();
 
         }
-
+        #endregion
 
     }
 
