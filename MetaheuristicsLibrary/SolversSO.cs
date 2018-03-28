@@ -514,6 +514,7 @@ namespace MetaheuristicsLibrary.SolversSO
 
                         this.updateParticlesBest(ref this.px_best[pNow], ref this.pfx_best[pNow], x_new, fx_new);
 
+                        //Console.WriteLine("fx,x1,x2,{0},{1},{2}", fx_new, x_new[0], x_new[1]);
                         base.evalcount++;
                         pNow++;
                         if (pNow == this.popsize) pNow = 0;
@@ -628,6 +629,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     _xpop[p] = new double[base.n];
                     this.x0[p].CopyTo(_xpop[p], 0);
                     this.fx0[p] = base.evalfnc(this.x0[p]);
+                    //Console.WriteLine("fx,x1,x2,{0},{1},{2}", this.fx0[p], this.x0[p][0], this.x0[p][1]);
                     this.evalcount++;
                 }
                 this.x0 = new double[this.popsize][];   //i'm doing this, because x0.Length at initialisation could be < popsize
@@ -684,6 +686,7 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
                 this.checkBounds(ref this.x0[p], base.lb, base.ub);
                 this.fx0[p] = base.evalfnc(this.x0[p]);
+                //Console.WriteLine("fx,x1,x2,{0},{1},{2}", this.fx0[p], this.x0[p][0], this.x0[p][1]);
                 this.evalcount++;
             }
 
@@ -1066,6 +1069,7 @@ namespace MetaheuristicsLibrary.SolversSO
 
                     x_new[nOffspring] = child1;
                     fx_new[nOffspring] = evalfnc(child1);
+                    //Console.WriteLine("fx,x1,x2,{0},{1},{2}", fx_new[nOffspring], child1[0], child1[1]);
                     base.evalcount++;
                     if (CheckIfNaN(fx_new[nOffspring]))
                     {
@@ -1082,6 +1086,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     {
                         x_new[nOffspring + 1] = child2;
                         fx_new[nOffspring + 1] = evalfnc(child2);
+                        //Console.WriteLine("fx,x1,x2,{0},{1},{2}", fx_new[nOffspring + 1], child2[0], child2[1]);
                         base.evalcount++;
                         if (CheckIfNaN(fx_new[nOffspring + 1]))
                         {
@@ -1151,6 +1156,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     _xpop[p] = new double[base.n];
                     this.x0.CopyTo(_xpop[p], 0);
                     this.fx0[p] = base.evalfnc(this.x0[p]);
+                    //Console.WriteLine("fx,x1,x2,{0},{1},{2}", this.fx0[p], this.x0[p][0], this.x0[p][1]);
                     base.evalcount++;
                 }
                 this.x0 = new double[this.popsize][];   //i'm doing this, because x0.Length at initialisation could be < popsize
@@ -1173,6 +1179,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     }
                 }
                 this.fx0[p] = base.evalfnc(this.x0[p]);
+                //Console.WriteLine("fx,x1,x2,{0},{1},{2}", this.fx0[p], this.x0[p][0], this.x0[p][1]);
                 base.evalcount++;
             }
 
@@ -1745,11 +1752,7 @@ namespace MetaheuristicsLibrary.SolversSO
             }
         }
 
-        /// <summary>
-        /// Adaptive step size. Bayer and Schwefel 2002, eqt. 26 and 27
-        /// </summary>
-        /// <param name="_snew"></param>
-        /// <param name="_tau"></param>
+
         private void s_mutation(ref double[] _snew, double _tau)
         {
             double tau0exp = Math.Exp(this.tau0 * rnd.NextGaussian(0, 1));
