@@ -326,31 +326,58 @@ namespace Tester
 
 
 
-            Dictionary<string, object> settingsPSO = new Dictionary<string, object>();
-            settingsPSO.Add("popsize", 10);        // popsize                           ∈ {4,..., 100}
-            settingsPSO.Add("chi", 0.39852);            // constriction coefficient         ∈ [0.001, 1]
-            settingsPSO.Add("phi", 9.24731);              // attraction to best particle     ∈ [0.01, 50]
-            settingsPSO.Add("v0max", 0.01699);          // max velocity at initialisation. fraction of domain. ∈ [0.01, 10]
-            settingsPSO.Add("x0samplingmode", 0);   // 0 = uniform, 1 = gaussian        ∈ [0.01, 10]
-            settingsPSO.Add("pxupdatemode", 0);     //0 = update after population. 1 = update after each evaluation ∈ [0.01, 10]
-            settingsPSO.Add("s0", 1);             //initial step size in case of gaussian x0 ∈ [0.01, 10]
-            settingsPSO.Add("psomode", 0);      //0 = fipso, 1 = inertia, 2 = constriction
-            settingsPSO.Add("phi1", 0);      //attraction own best
-            settingsPSO.Add("phi2", 0);      //attraction global best
-            settingsPSO.Add("intmut", 0.5);     //mutation probability for integer variables
-            settingsPSO.Add("mutstdev", 0.3);
-            PSO[] pso = new PSO[seeds];
+
+
+            //Dictionary<string, object> settingsPSO = new Dictionary<string, object>();
+            //settingsPSO.Add("popsize", 10);        // popsize                           ∈ {4,..., 100}
+            //settingsPSO.Add("chi", 0.39852);            // constriction coefficient         ∈ [0.001, 1]
+            //settingsPSO.Add("phi", 9.24731);              // attraction to best particle     ∈ [0.01, 50]
+            //settingsPSO.Add("v0max", 0.01699);          // max velocity at initialisation. fraction of domain. ∈ [0.01, 10]
+            //settingsPSO.Add("x0samplingmode", 0);   // 0 = uniform, 1 = gaussian        ∈ [0.01, 10]
+            //settingsPSO.Add("pxupdatemode", 0);     //0 = update after population. 1 = update after each evaluation ∈ [0.01, 10]
+            //settingsPSO.Add("s0", 1);             //initial step size in case of gaussian x0 ∈ [0.01, 10]
+            //settingsPSO.Add("psomode", 0);      //0 = fipso, 1 = inertia, 2 = constriction
+            //settingsPSO.Add("phi1", 0);      //attraction own best
+            //settingsPSO.Add("phi2", 0);      //attraction global best
+            //settingsPSO.Add("intmut", 0.5);     //mutation probability for integer variables
+            //settingsPSO.Add("mutstdev", 0.3);
+            //PSO[] pso = new PSO[seeds];
+            //for (int i = 0; i < seeds; i++)
+            //{
+            //    pso[i] = new PSO(lb, ub, xint, evalcount, testfunc, i, settingsPSO);
+            //    pso[i].solve();
+            //    optis[i] = pso[i].get_fxoptimum();
+            //}
+            //Console.WriteLine("pso average: {0}", optis.Average());
+            //Console.WriteLine("pso min: {0}", optis.Min());
+            //Console.WriteLine("pso max: {0}", optis.Max());
+            //Console.ReadKey();
+
+
+
+
+
+            Dictionary<string, object> settingsNM = new Dictionary<string, object>();
+            settingsNM.Add("alpha", 1);
+            settingsNM.Add("gamma", 1.5);
+            settingsNM.Add("rho", 0.25);
+            settingsNM.Add("sigma", 0.2);
+            settingsNM.Add("step0", 0.02);
+            NelderMead[] nm = new NelderMead[seeds];
             for (int i = 0; i < seeds; i++)
             {
-                pso[i] = new PSO(lb, ub, xint, evalcount, testfunc, i, settingsPSO);
-                pso[i].solve();
-                optis[i] = pso[i].get_fxoptimum();
+                nm[i] = new NelderMead(lb, ub, xint, evalcount, testfunc, i, settingsNM);
+                nm[i].solve();
+                optis[i] = nm[i].get_fxoptimum();
             }
-            Console.WriteLine("pso average: {0}", optis.Average());
-            Console.WriteLine("pso min: {0}", optis.Min());
-            Console.WriteLine("pso max: {0}", optis.Max());
-
+            Console.WriteLine("nm average: {0}", optis.Average());
+            Console.WriteLine("nm min: {0}", optis.Min());
+            Console.WriteLine("nm max: {0}", optis.Max());
             Console.ReadKey();
+
+
+
+
 
         }
 
