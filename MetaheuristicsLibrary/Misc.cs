@@ -53,6 +53,44 @@ namespace MetaheuristicsLibrary.Misc
     }
 
 
+    /// <summary>
+    /// Vector Operations.
+    /// </summary>
+    public static class Vector
+    {
+        public static double Norm(double[] x)
+        {
+            double sum = 0;
+            for (int i = 0; i < x.Length; i++)
+            {
+                sum += Math.Pow(x[i], 2);
+            }
+
+            return Math.Sqrt(sum);
+
+        }
+
+        /// <summary>
+        /// Computes the centroid of points
+        /// </summary>
+        /// <param name="X">Input points</param>
+        /// <returns>Centroid</returns>
+        public static double[] Centroid(double[][] X)
+        {
+            double[] centroid = new double[X[0].Length];
+            for (int i = 0; i < X[0].Length; i++)
+            {
+                double sum = 0;
+                for (int j = 0; j < X.Length; j++)
+                {
+                    sum += X[j][i];
+                }
+                centroid[i] = sum / X.Length;
+            }
+            return centroid;
+        }
+
+    }
 
 
     /// <summary>
@@ -132,8 +170,6 @@ namespace MetaheuristicsLibrary.Misc
 
             return BitStringLength;
         }
-
-
 
     }
 
