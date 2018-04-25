@@ -229,7 +229,7 @@ namespace Tester
                 xint[i] = false;
             }
             lb[0] = -2.2;
-            lb[1] = 0.75;
+            lb[1] = -0.75;
             ub[0] = 2.0;
             ub[1] = 2.5;
 
@@ -357,25 +357,45 @@ namespace Tester
 
 
 
-            Dictionary<string, object> settingsNM = new Dictionary<string, object>();
-            settingsNM.Add("alpha", 1);
-            settingsNM.Add("gamma", 1.5);
-            settingsNM.Add("rho", 0.25);
-            settingsNM.Add("sigma", 0.2);
-            settingsNM.Add("step0", 0.02);
-            NelderMead[] nm = new NelderMead[seeds];
+            //Dictionary<string, object> settingsNM = new Dictionary<string, object>();
+            //settingsNM.Add("alpha", 1);
+            //settingsNM.Add("gamma", 1.5);
+            //settingsNM.Add("rho", 0.25);
+            //settingsNM.Add("sigma", 0.2);
+            //settingsNM.Add("step0", 0.02);
+            //NelderMead[] nm = new NelderMead[seeds];
+            //for (int i = 0; i < seeds; i++)
+            //{
+            //    nm[i] = new NelderMead(lb, ub, xint, evalcount, testfunc, i, settingsNM);
+            //    nm[i].solve();
+            //    optis[i] = nm[i].get_fxoptimum();
+            //}
+            //Console.WriteLine("nm average: {0}", optis.Average());
+            //Console.WriteLine("nm min: {0}", optis.Min());
+            //Console.WriteLine("nm max: {0}", optis.Max());
+            //Console.ReadKey();
+
+
+
+            double[] x0 = new double[dvar];
+            x0[0] = 1.5;
+            x0[1] = 2;
+
+            Dictionary<string, object> settingsRB = new Dictionary<string, object>();
+            settingsRB.Add("alpha", 3);
+            settingsRB.Add("beta", 0.5);
+            settingsRB.Add("stepsize", 0.125);
+            Rosenbrock[] rb = new Rosenbrock[seeds];
             for (int i = 0; i < seeds; i++)
             {
-                nm[i] = new NelderMead(lb, ub, xint, evalcount, testfunc, i, settingsNM);
-                nm[i].solve();
-                optis[i] = nm[i].get_fxoptimum();
+                rb[i] = new Rosenbrock(lb, ub, xint, evalcount, testfunc, i, settingsRB, x0);
+                rb[i].solve();
+                optis[i] = rb[i].get_fxoptimum();
             }
-            Console.WriteLine("nm average: {0}", optis.Average());
-            Console.WriteLine("nm min: {0}", optis.Min());
-            Console.WriteLine("nm max: {0}", optis.Max());
+            Console.WriteLine("rb average: {0}", optis.Average());
+            Console.WriteLine("rb min: {0}", optis.Min());
+            Console.WriteLine("rb max: {0}", optis.Max());
             Console.ReadKey();
-
-
 
 
 
