@@ -377,27 +377,34 @@ namespace Tester
 
 
 
-            double[] x0 = new double[dvar];
-            x0[0] = 1.5;
-            x0[1] = 2;
+            //double[] x0 = new double[dvar];
+            //x0[0] = 1.5;
+            //x0[1] = 2;
 
-            Dictionary<string, object> settingsRB = new Dictionary<string, object>();
-            settingsRB.Add("alpha", 3);
-            settingsRB.Add("beta", 0.5);
-            settingsRB.Add("stepsize", 0.125);
-            Rosenbrock[] rb = new Rosenbrock[seeds];
-            for (int i = 0; i < seeds; i++)
-            {
-                rb[i] = new Rosenbrock(lb, ub, xint, evalcount, testfunc, i, settingsRB, x0);
-                rb[i].solve();
-                optis[i] = rb[i].get_fxoptimum();
-            }
-            Console.WriteLine("rb average: {0}", optis.Average());
-            Console.WriteLine("rb min: {0}", optis.Min());
-            Console.WriteLine("rb max: {0}", optis.Max());
+            //Dictionary<string, object> settingsRB = new Dictionary<string, object>();
+            //settingsRB.Add("alpha", 3);
+            //settingsRB.Add("beta", 0.5);
+            //settingsRB.Add("stepsize", 0.125);
+            //Rosenbrock[] rb = new Rosenbrock[seeds];
+            //for (int i = 0; i < seeds; i++)
+            //{
+            //    rb[i] = new Rosenbrock(lb, ub, xint, evalcount, testfunc, i, settingsRB, x0);
+            //    rb[i].solve();
+            //    optis[i] = rb[i].get_fxoptimum();
+            //}
+            //Console.WriteLine("rb average: {0}", optis.Average());
+            //Console.WriteLine("rb min: {0}", optis.Min());
+            //Console.WriteLine("rb max: {0}", optis.Max());
+            //Console.ReadKey();
+
+
+
+
+
+            Direct dr = new Direct(lb,ub, xint, evalcount, testfunc, 0);
+            dr.solve();
+            Console.WriteLine("direct min: {0}", dr.get_fxoptimum());
             Console.ReadKey();
-
-
 
         }
 
