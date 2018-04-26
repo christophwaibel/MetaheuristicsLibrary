@@ -2581,6 +2581,8 @@ namespace MetaheuristicsLibrary.SolversSO
         Dictionary<int, double> S;                      // Pareto optimal solutions per iteration. int=> index of box, double=>size of box (sorted)
 
 
+        double fxAbort;     //if NaN, then abort
+
 
         public Direct(double[] lb, double[] ub, bool[] xint, int evalmax, Func<double[], double> evalfnc, int seed)
             : base(lb, ub, xint, evalmax, evalfnc, seed)
@@ -2592,6 +2594,7 @@ namespace MetaheuristicsLibrary.SolversSO
         private void initialize()
         {
             this.DIRini();
+            if (this.CheckIfNaN(this.fxAbort)) return;
             this.S = new Dictionary<int, double>();  // purge List of potential boxes. 1 is index (make (int)...), 2 is szes size of box
             this.find_po();          // find pareto optimal boxes... dictionary S
         }
@@ -2600,6 +2603,7 @@ namespace MetaheuristicsLibrary.SolversSO
         public override void solve()
         {
             this.initialize();
+            if (this.CheckIfNaN(this.fxAbort)) return;
 
             while (base.evalcount < base.evalmax)
             {
@@ -2608,11 +2612,14 @@ namespace MetaheuristicsLibrary.SolversSO
                 foreach (KeyValuePair<int, double> potentialBox in this.S)
                 {
                     this.DIRdivide(potentialBox.Key);
+                    if (this.CheckIfNaN(this.fxAbort)) return;
                 }
 
                 this.DIRbest();
                 S = new Dictionary<int, double>();  // purge List of potential boxes. 1 is index (make (int)...), 2 is szes size of box
                 find_po();          // find pareto optimal boxes... dictionary S
+
+
             }
         }
 
@@ -2638,9 +2645,6 @@ namespace MetaheuristicsLibrary.SolversSO
         void DIRbest()
         {
             //            %-- update minval, xatmin --------------------------------------%
-            //[minval,fminindex] =  min(fc(1:fcncounter)+con(1:fcncounter));
-            //penminval = minval + con(fminindex);
-
             double min = fc[0];
             int minIndex = 0;
 
@@ -2654,14 +2658,11 @@ namespace MetaheuristicsLibrary.SolversSO
             }
             minval = fc[minIndex];
 
-            //xatmin = (om_upper - om_lower).*c(:,fminindex) + om_lower;
             for (int u = 0; u < base.n; u++)
             {
-                //xatmin[u] = (ub[u] - lb[u]) * c[u][minIndex] + lb[u];
                 xatmin[u] = c[u][minIndex];
             }
-            //Console.WriteLine("DIRbest: bestval: {0}", fc[minIndex]);
-
+            
 
             base.xopt = xatmin;
             base.fxopt = fc[minIndex];
@@ -2674,28 +2675,9 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         void DIRdivide(int index)
         {
-            //function [lengths,fc,c,con,feas_flags,szes,fcncounter,pass] = ...
-            //    DIRdivide(a,b,Problem,index,thirds,p_lengths,p_fc,p_c,p_con,...
-            //    p_feas_flags,p_fcncounter,p_szes,impcons,calltype,varargin)
-
-            //lengths    = p_lengths;
-            //fc         = p_fc;
-            //c          = p_c;
-            //szes       = p_szes;
-            //fcncounter = p_fcncounter;
-            //con        = p_con;
-            //feas_flags = p_feas_flags;
-
-
-
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //%-- 1. Determine which sides are the largest
-            //li     = lengths(:,index);
-            //biggy  = min(li);
-            //ls     = find(li==biggy);
-            //lssize = length(ls);
-            //j = 0;
             int[] li = new int[base.n];
             for (int i = 0; i < li.Length; i++)
             {
@@ -2708,7 +2690,6 @@ namespace MetaheuristicsLibrary.SolversSO
                 if (li[i] == biggy) ls.Add(i);
             }
             int lssize = ls.Count;
-            //int j = 0;
             //////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -2717,20 +2698,14 @@ namespace MetaheuristicsLibrary.SolversSO
             //////////////////////////////////////////////////////////////////////////////////////
             //%-- 2. Evaluate function in directions of biggest size
             //%--    to determine which direction to make divisions
-            //oldc       = c(:,index);
             double[] oldc = new double[base.n];
             for (int i = 0; i < base.n; i++)
             {
                 oldc[i] = c[i][index];
             }
 
-            //delta      = thirds(biggy+1);
             double delta = thirds[biggy];
 
-            //newc_left  = oldc(:,ones(1,lssize));
-            //newc_right = oldc(:,ones(1,lssize));
-            //double[,] newc_left = new double[dvar, lssize];
-            //double[,] newc_right = new double[dvar, lssize];
 
             double[][] newc_left = new double[lssize][];
             double[][] newc_right = new double[lssize][];
@@ -2749,17 +2724,10 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
             }
 
-            //for i = 1:lssize
-            //    lsi               = ls(i);
-            //    newc_left(lsi,i)  = newc_left(lsi,i) - delta;
-            //    newc_right(lsi,i) = newc_right(lsi,i) + delta;
-            ////    [f_left(i), con_left(i), fflag_left(i)]    = CallObjFcn(Problem,newc_left(:,i),a,b,impcons,calltype,varargin{:});
-            ////    [f_right(i), con_right(i), fflag_right(i)] = CallObjFcn(Problem,newc_right(:,i),a,b,impcons,calltype,varargin{:});
-            //    fcncounter = fcncounter + 2;
-            //end
 
-            double[] f_left = new double[lssize + 1];               // ******************************** do this in EVAL()
-            double[] f_right = new double[lssize + 1];              // ******************************** do this in EVAL()
+
+            double[] f_left = new double[lssize + 1];         
+            double[] f_right = new double[lssize + 1];    
 
 
             int oldcounter = base.evalcount;
@@ -2768,36 +2736,26 @@ namespace MetaheuristicsLibrary.SolversSO
                 int lsi = ls[i];
                 newc_left[i][lsi] = newc_left[i][lsi] - delta;
                 newc_right[i][lsi] = newc_right[i][lsi] + delta;
-                f_left[i] = base.evalfnc(ReverseNormalization(newc_left[i]));       // ******************************** do this in EVAL()
+                f_left[i] = base.evalfnc(ReverseNormalization(newc_left[i]));
                 Console.WriteLine("fx,x1,x2,{0},{1},{2}", f_left[i], ReverseNormalization(newc_left[i])[0], ReverseNormalization(newc_left[i])[1]);
-                f_right[i] = base.evalfnc(ReverseNormalization(newc_right[i]));     // ******************************** do this in EVAL()
+                if (this.CheckIfNaN(f_left[i])) 
+                {
+                    this.fxAbort = double.NaN;
+                    return; 
+                }
+                f_right[i] = base.evalfnc(ReverseNormalization(newc_right[i]));   
                 Console.WriteLine("fx,x1,x2,{0},{1},{2}", f_right[i], ReverseNormalization(newc_right[i])[0], ReverseNormalization(newc_right[i])[1]);
-                base.evalcount += 2;                                    // ******************************** do this in EVAL()
+                if (this.CheckIfNaN(f_right[i]))
+                {
+                    this.fxAbort = double.NaN;
+                    return;
+                }
+                base.evalcount += 2;                                  
             }
             //////////////////////////////////////////////////////////////////////////////////////
-
             
 
             DIRsort(f_left, f_right, ls.ToArray(), oldcounter, index, newc_left, newc_right);
-
-
-
-
-            // *********************************************************i need this eventually
-            //xTestPopulation = new List<double[]>();
-            //for (int u = 0; u < lssize; u++)
-            //{
-            //    double[] rightTest = new double[dvar];
-            //    double[] leftTest = new double[dvar];
-            //    for (int i = 0; i < dvar; i++)
-            //    {
-            //        leftTest[i] = newc_left[u][i];
-            //        rightTest[i] = newc_right[u][i];
-            //    }
-            //    xTestPopulation.Add(leftTest);
-            //    xTestPopulation.Add(rightTest);
-            //}
-
         }
 
 
@@ -2806,7 +2764,6 @@ namespace MetaheuristicsLibrary.SolversSO
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //%-- 3. Sort w for division order
-            //w = [min(f_left, f_right)' ls];
             double[,] w = new double[ls.Length, 2];
             for (int i = 0; i < ls.Length; i++)
             {
@@ -2823,7 +2780,6 @@ namespace MetaheuristicsLibrary.SolversSO
                 w[i, 0] = min_f;
             }
 
-            //[V,order] = sort(w,1);
             double[,] V = new double[ls.Length, 2];
             int[,] order = new int[ls.Length, 2];
 
@@ -2856,16 +2812,12 @@ namespace MetaheuristicsLibrary.SolversSO
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //%-- 4. Make divisions in order specified by order
-            //for i = 1:size(order,1)
             for (int i = 0; i < order.GetLength(0); i++)
             {
-                //   newleftindex  = p_fcncounter+2*(i-1)+1;
-                //   newrightindex = p_fcncounter+2*(i-1)+2;
                 int newleftindex = oldcounter + 2 * i;
                 int newrightindex = oldcounter + 2 * i + 1;
 
                 //   %-- 4.1 create new rectangles identical to the old one
-                //   oldrect = lengths(:,index);
                 int[] oldrect = new int[base.n];
                 for (int u = 0; u < base.n; u++)
                 {
@@ -2873,8 +2825,6 @@ namespace MetaheuristicsLibrary.SolversSO
                     oldrect[u] = copy;
                 }
 
-                //   lengths(:,newleftindex)   = oldrect;
-                //   lengths(:,newrightindex)  = oldrect;
                 for (int u = 0; u < base.n; u++)
                 {
                     lengths[u].Add(0);
@@ -2885,16 +2835,11 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
 
                 //   %-- old, and new rectangles have been sliced in order(i) direction
-                //   lengths(ls(order(i,1)),newleftindex)  = lengths(ls(order(i,1)),index) + 1;
-                //   lengths(ls(order(i,1)),newrightindex) = lengths(ls(order(i,1)),index) + 1;
-                //   lengths(ls(order(i,1)),index)         = lengths(ls(order(i,1)),index) + 1;
                 lengths[ls[order[i, 1]]][newleftindex] = lengths[ls[order[i, 1]]][index] + 1;
                 lengths[ls[order[i, 1]]][newrightindex] = lengths[ls[order[i, 1]]][index] + 1;
                 lengths[ls[order[i, 1]]][index] = lengths[ls[order[i, 1]]][index] + 1;
 
                 //   %-- add new columns to c
-                //   c(:,newleftindex)  = newc_left(:,order(i));
-                //   c(:,newrightindex) = newc_right(:,order(i));
                 for (int u = 0; u < base.n; u++)
                 {
                     c[u].Add(0);
@@ -2906,23 +2851,12 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
 
                 //   %-- add new values to fc
-                //   fc(newleftindex)  = f_left(order(i));
-                //   fc(newrightindex) = f_right(order(i));
                 fc.Add(f_left[order[i, 0]]);
                 fc.Add(f_right[order[i, 0]]);
 
                 //   %-- add new values to con
-                //   con(newleftindex)  = con_left(order(i));
-                //   con(newrightindex) = con_right(order(i));
-
                 //   %-- add new flag values to feas_flags
-                //   feas_flags(newleftindex)  = fflag_left(order(i));
-                //   feas_flags(newrightindex) = fflag_right(order(i));
-
-                //   %-- 01/21/04 Dan Hack
                 //   %-- store sizes of each rectangle
-                //   szes(1,newleftindex)  = 1/2*norm((1/3*ones(size(lengths,1),1)).^(lengths(:,newleftindex)));
-                //   szes(1,newrightindex) = 1/2*norm((1/3*ones(size(lengths,1),1)).^(lengths(:,newrightindex)));
                 double[] xleft = new double[base.n];
                 double[] xright = new double[base.n];
                 for (int u = 0; u < base.n; u++)
@@ -2934,11 +2868,9 @@ namespace MetaheuristicsLibrary.SolversSO
                 double szesright = 0.5 * Misc.Vector.Norm(xright);
                 szes.Add(szesleft);
                 szes.Add(szesright);
-                //end
             }
 
 
-            //szes(index) = 1/2*norm((1/3*ones(size(lengths,1),1)).^(lengths(:,index)));
             double[] xindex = new double[base.n];
             for (int u = 0; u < base.n; u++)
             {
@@ -2946,48 +2878,7 @@ namespace MetaheuristicsLibrary.SolversSO
             }
             double szesindex = 0.5 * Misc.Vector.Norm(xindex);
             szes[index] = szesindex;
-
-            //pass = 1;
             //////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-            //return
-        }
-
-
-        void DIReval()
-        {
-            // **********************************************************************************************************************
-            // **********************************************************************************************************************
-            // DO THIS IN EVAL()
-            ////f_left     = zeros(1,lssize);
-            ////f_right    = zeros(1,lssize);
-            //double[] f_left = new double[lssize];
-            //double[] f_right = new double[lssize];
-            // **********************************************************************************************************************
-            // **********************************************************************************************************************
-
-
-
-
-            //for i = 1:lssize
-            //    lsi               = ls(i);
-            //    newc_left(lsi,i)  = newc_left(lsi,i) - delta;
-            //    newc_right(lsi,i) = newc_right(lsi,i) + delta;
-            ////    [f_left(i), con_left(i), fflag_left(i)]    = CallObjFcn(Problem,newc_left(:,i),a,b,impcons,calltype,varargin{:});
-            ////    [f_right(i), con_right(i), fflag_right(i)] = CallObjFcn(Problem,newc_right(:,i),a,b,impcons,calltype,varargin{:});
-            //    fcncounter = fcncounter + 2;
-            //end
-
-            // ******************************************************************* im doing this alrady in DIRdivide... but this should be here
-            //foreach (double[] xIn in xTestPopulation)
-            //{
-            //    fc.Add(base.evalfnc(ReverseNormalization(xIn)));
-            //    fcncounter++;
-            //}
         }
 
 
@@ -3018,12 +2909,9 @@ namespace MetaheuristicsLibrary.SolversSO
             //%-- will be a column.
             //             ...one slice is 2 cuts (making a box into 3 boxes)
             //%-- first rectangle is the whole unit hyperrectangle
-            //l_lengths(:,1) = zeros(n,1);
-
+           
             //4. c, center coordinates
             //%-- first element of c is the center of the unit hyperrectangle
-            //l_c(:,1) = ones(n,1)/2;
-
             lengths = new List<int>[base.n];
             c = new List<double>[base.n];
             for (int i = 0; i < base.n; i++)
@@ -3040,9 +2928,7 @@ namespace MetaheuristicsLibrary.SolversSO
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //3. Size of hyperrectangles
-            //%01/21/04 HACK
             //%-- store size of hyperrectangle in vector szes
-            //szes(1,1) = 1;
             szes.Add(1);
             //////////////////////////////////////////////////////////////////////////////////////
 
@@ -3051,51 +2937,28 @@ namespace MetaheuristicsLibrary.SolversSO
 
 
 
-            //**********************************************************************************************************************
-            //**********************************************************************************************************************
-            // TO DO: Everything
-            //____________________________________________________________________________________
-            //////////////////////////////////////////////////////////////////////////////////////
-            //5. Constraints
-            //%-- Determine if there are constraints
-            //calltype = DetermineFcnType(Problem,impcons);
-            //////////////////////////////////////////////////////////////////////////////////////
-            //**********************************************************************************************************************
+           
 
-
-
-
-
-
-
-            //**********************************************************************************************************************
-            //**********************************************************************************************************************
-            // TO DO: constraints. -> function CallObjFcn...
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //6. Eval function
             //%-- first element of f is going to be the function evaluated
             //%-- at the center of the unit hyper-rectangle.
-            //%om_point   = abs(b - a).*l_c(:,1)+ a;
-            //%l_fc(1)    = feval(f,om_point,varargin{:});
-            //[l_fc(1),l_con(1), l_feas_flags(1)] = ...
-            //    CallObjFcn(Problem,l_c(:,1),a,b,impcons,calltype,varargin{:});
-            //fcncounter = 1;
             double[] xIn = new double[base.n];
             for (int i = 0; i < base.n; i++)
             {
                 xIn[i] = c[i][0];
             }
-            //Console.WriteLine("normalized x1: {0} and x2: {1}", xIn[0], xIn[1]);
             double fx = base.evalfnc(ReverseNormalization(xIn));
+            if (this.CheckIfNaN(fx))
+            {
+                this.fxAbort = double.NaN;
+                return;
+            }
             fc.Add(fx);
             Console.WriteLine("fx,x1,x2,{0},{1},{2}", fx, ReverseNormalization(xIn)[0], ReverseNormalization(xIn)[1]);
             base.evalcount++;
-            //Console.WriteLine("fc: {0}", fc[0]);
             //////////////////////////////////////////////////////////////////////////////////////
-            //**********************************************************************************************************************
-
-
 
 
 
@@ -3105,17 +2968,6 @@ namespace MetaheuristicsLibrary.SolversSO
             //7. minval and xatmin
             //  that is: best so far, obj fnuc val and its x
             //            %-- initialize minval and xatmin to be center of hyper-rectangle
-            //xatmin = l_c(:,1);
-            //minval   = l_fc(1);
-            //if tflag == 1
-            //    if theglobalmin ~= 0
-            //        perror = 100*(minval - theglobalmin)/abs(theglobalmin);
-            //    else
-            //        perror = 100*minval;
-            //    end
-            //else
-            //   perror = 2;
-            //end
             xatmin = new double[base.n];
             Array.Copy(xIn, xatmin, base.n);
             minval = fc[0];
@@ -3135,8 +2987,6 @@ namespace MetaheuristicsLibrary.SolversSO
             {
                 perror = 2;
             }
-            //Console.WriteLine("xatmin, x1: {0}, x2: {1}", xatmin[0], xatmin[1]);
-            //Console.WriteLine("minval: {0}", minval);
             //////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -3145,13 +2995,7 @@ namespace MetaheuristicsLibrary.SolversSO
             //////////////////////////////////////////////////////////////////////////////////////
             //8. history
             //%-- initialize history
-            //%if g_nargout == 3
-            //    history(1,1) = 0;
-            //    history(1,2) = 0;
-            //    history(1,3) = 0;
-            //%end
             history.Add(Tuple.Create(0, base.evalcount, minval));
-            //Console.WriteLine("iteration: {0}, function evaluations: {1}, minval: {2}", history[0].Item1, history[0].Item2, history[0].Item3);
             //////////////////////////////////////////////////////////////////////////////////////
             
         }
@@ -3168,7 +3012,6 @@ namespace MetaheuristicsLibrary.SolversSO
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //            %-- 1. Find all rects on hub
-            //%     diff_szes = sum(lengths,1);
             int[] diff_szes = new int[lengths[0].Count];
 
             for (int u = 0; u < diff_szes.Length; u++)
@@ -3180,29 +3023,23 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
             }
 
-            //%     tmp_max = max(diff_szes);
             int tmp_max = diff_szes.Max();
 
-            //%     j=1;
             int j = 0;
 
-            //%     sum_lengths = sum(lengths,1);
             int[] sum_lengths = new int[diff_szes.Length];
             Array.Copy(diff_szes, sum_lengths, diff_szes.Length);
 
             List<int> hull = new List<int>();
 
-            //%     for i =1:tmp_max+1
             for (int i = 0; i <= tmp_max; i++)
             {
-                //%    tmp_idx = find(sum_lengths==i-1);
                 List<int> tmp_idx = new List<int>();
                 for (int u = 0; u < sum_lengths.Length; u++)
                 {
                     if (sum_lengths[u] == i) tmp_idx.Add(u);
                 }
 
-                //%    [tmp_n, hullidx] = min(fc(tmp_idx));
                 if (tmp_idx.Count > 0)
                 {
                     double tmp_n = 0;
@@ -3221,44 +3058,32 @@ namespace MetaheuristicsLibrary.SolversSO
                         }
                     }
 
-                    //% if length(hullidx) > 0              //replaced with couples of lines higher ....: if (tmp_idx.Count > 0)
-
-                    //        hull(j) = tmp_idx(hullidx);
-                    //        j=j+1;
                     hull.Add(hullidx);
                     j++;
 
                     //        %-- 1.5 Check for ties
-                    //        ties = find(abs(fc(tmp_idx)-tmp_n) <= 1e-13);
                     List<int> ties = new List<int>();
                     for (int u = 0; u < tmp_idx.Count; u++)
                     {
                         if (Math.Abs(fc[tmp_idx[u]] - tmp_n) <= 1e-13) ties.Add(u);
                     }
 
-                    //        if length(ties) > 1
                     if (ties.Count > 1)
                     {
-                        //            mod_ties = find(tmp_idx(ties) ~= hull(j-1));
                         List<int> mod_ties = new List<int>();
                         for (int u = 0; u < ties.Count; u++)
                         {
                             if (tmp_idx[ties[u]] != hull[j - 1]) mod_ties.Add(u);
                         }
 
-                        //            hull = [hull tmp_idx(ties(mod_ties))];
-                        //            j = length(hull)+1;
                         for (int u = 0; u < mod_ties.Count; u++)
                         {
                             hull.Add(tmp_idx[ties[mod_ties[u]]]);
                             j++;
                         }
-                        //        end
-                    }
-                    //    end
-                }
+                     }
+                 }
             }
-            //%     end
             //////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -3266,8 +3091,6 @@ namespace MetaheuristicsLibrary.SolversSO
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //          %-- 2. Compute lb and ub for rects on hub
-            //lbound = calc_lbound(lengths, fc, hull, szes);
-            //ubound = calc_ubound(lengths, fc, hull, szes);
             double[] lbound = calc_lbound(hull);
             double[] ubound = calc_ubound(hull);
             //////////////////////////////////////////////////////////////////////////////////////
@@ -3277,7 +3100,6 @@ namespace MetaheuristicsLibrary.SolversSO
             //////////////////////////////////////////////////////////////////////////////////////
             //%-- 3. Find indeces of hull who satisfy
             //%--    1st condition
-            //maybe_po = find(lbound-ubound <= 0);
             List<int> maybe_po = new List<int>();
             for (int i = 0; i < lbound.Length; i++)
             {
@@ -3292,15 +3114,11 @@ namespace MetaheuristicsLibrary.SolversSO
             //////////////////////////////////////////////////////////////////////////////////////
             //%-- 4. Find indeces of hull who satisfy
             //%--    2nd condition
-            //t_len  = length(hull(maybe_po));
             int t_len = maybe_po.Count;
 
             List<int> po = new List<int>();
-            //if minval ~= 0
             if (minval != 0)
             {
-                //    po = find((minval-fc(hull(maybe_po)))./abs(minval) +...
-                //        szes(hull(maybe_po)).*ubound(maybe_po)./abs(minval) >= ep);
                 for (int i = 0; i < t_len; i++)
                 {
                     if (((minval - fc[hull[maybe_po[i]]]) / Math.Abs(minval) +
@@ -3311,11 +3129,8 @@ namespace MetaheuristicsLibrary.SolversSO
                     }
                 }
             }
-            //else
             else
             {
-                //    po = find(fc(hull(maybe_po)) -...
-                //        szes(hull(maybe_po)).*ubound(maybe_po) <= 0);
                 for (int i = 0; i < t_len; i++)
                 {
                     if ((fc[hull[maybe_po[i]]] - szes[hull[maybe_po[i]]] * ubound[maybe_po[i]])
@@ -3325,10 +3140,7 @@ namespace MetaheuristicsLibrary.SolversSO
                     }
                 }
             }
-            //end
-
-
-            //final_pos      = hull(maybe_po(po));
+            
             List<int> final_pos = new List<int>();
             for (int i = 0; i < po.Count; i++)
             {
@@ -3343,8 +3155,6 @@ namespace MetaheuristicsLibrary.SolversSO
             //____________________________________________________________________________________
             //////////////////////////////////////////////////////////////////////////////////////
             //%-- 6. Return dictionary with potential boxes
-            //rects = [final_pos;szes(final_pos)];
-            //return
             for (int i = 0; i < final_pos.Count; i++)
             {
                 S.Add(final_pos[i], szes[final_pos[i]]);
@@ -3360,14 +3170,9 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         double[] calc_lbound(List<int> hull)
         {
-            //function lb = calc_lbound(lengths,fc,hull,szes)
-
-
-            //hull_length  = length(hull);
             int hull_length = hull.Count;
             double[] lbDir = new double[hull_length];
 
-            //hull_lengths = lengths(:,hull);
             int[,] hull_lengths = new int[lengths.Length, hull_length];
             for (int i = 0; i < lengths.Length; i++)
             {
@@ -3378,10 +3183,8 @@ namespace MetaheuristicsLibrary.SolversSO
             }
 
 
-            //for i = 1:hull_length
             for (int i = 0; i < hull_length; i++)
             {
-                //    tmp_rects = find(sum(hull_lengths,1)>sum(lengths(:,hull(i))));
                 List<int> tmp_rects = new List<int>();
                 int[] sum_hull_lengths = new int[hull_lengths.GetLength(1)];
                 for (int u = 0; u < hull_lengths.GetLength(1); u++)
@@ -3407,14 +3210,6 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
 
 
-                //    if length(tmp_rects) > 0
-                //        tmp_f     = fc(hull(tmp_rects));
-                //        tmp_szes  = szes(hull(tmp_rects));
-                //        tmp_lbs   = (fc(hull(i))-tmp_f)./(szes(hull(i))-tmp_szes);
-                //        lb(i)     = max(tmp_lbs);
-                //    else
-                //        lb(i)     = -1.976e14;
-                //    end
                 if (tmp_rects.Count > 0)
                 {
                     List<double> tmp_f = new List<double>();
@@ -3434,9 +3229,6 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
 
             }
-            //end
-
-            //return
             return lbDir;
         }
 
@@ -3446,14 +3238,9 @@ namespace MetaheuristicsLibrary.SolversSO
         /// </summary>
         double[] calc_ubound(List<int> hull)
         {
-            //function ub = calc_ubound(lengths,fc,hull,szes)
-
-
-            //hull_length  = length(hull);
             int hull_length = hull.Count;
             double[] ubDir = new double[hull_length];
 
-            //hull_lengths = lengths(:,hull);
             int[,] hull_lengths = new int[lengths.Length, hull_length];
             for (int i = 0; i < lengths.Length; i++)
             {
@@ -3463,11 +3250,8 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
             }
 
-
-            //for i = 1:hull_length
             for (int i = 0; i < hull_length; i++)
             {
-                //    tmp_rects = find(sum(hull_lengths,1)<sum(lengths(:,hull(i))));
                 List<int> tmp_rects = new List<int>();
                 int[] sum_hull_lengths = new int[hull_lengths.GetLength(1)];
                 for (int u = 0; u < hull_lengths.GetLength(1); u++)
@@ -3493,14 +3277,6 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
 
 
-                //    if length(tmp_rects) > 0
-                //        tmp_f     = fc(hull(tmp_rects));
-                //        tmp_szes  = szes(hull(tmp_rects));
-                //        tmp_ubs   = (tmp_f-fc(hull(i)))./(tmp_szes-szes(hull(i)));
-                //        ub(i)        = min(tmp_ubs);
-                //    else
-                //        ub(i)=1.976e14;
-                //    end
                 if (tmp_rects.Count > 0)
                 {
                     List<double> tmp_f = new List<double>();
@@ -3520,9 +3296,6 @@ namespace MetaheuristicsLibrary.SolversSO
                 }
 
             }
-            //end
-
-            //return
             return ubDir;
         }
 
@@ -3532,7 +3305,6 @@ namespace MetaheuristicsLibrary.SolversSO
         private double[] NormalizeX(double[] _x)
         {
             double[] _xNorm = new double[_x.Length];
-            //Array.Copy(x0, xTest, base.n);
             for (int i = 0; i < base.n; i++)
             {
                 _xNorm[i] = (_x[i] - base.lb[i]) / Math.Abs(base.ub[i] - base.lb[i]);
