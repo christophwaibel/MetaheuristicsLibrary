@@ -3,3 +3,7 @@ c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\Metahe
 c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.dll
 c:\users\wach\documents\visual studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.pdb
 C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.csprojResolveAssemblyReference.cache
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsLibrary\bin\Debug\MetaheuristicsLibrary.dll
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsLibrary\bin\Debug\MetaheuristicsLibrary.pdb
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.dll
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsLibrary\obj\Debug\MetaheuristicsLibrary.pdb
