@@ -8,3 +8,17 @@ C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary\Metahe
 C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsTuner\obj\Debug\MetaheuristicsTuner.pdb
 C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsTuner\bin\Debug\MetaheuristicsRepository.dll
 C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary\MetaheuristicsTuner\bin\Debug\MetaheuristicsRepository.xml
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\MetaheuristicsTuner.exe.config
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\MetaheuristicsTuner.exe
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\MetaheuristicsTuner.pdb
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\MetaheuristicsLibrary.dll
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\MetaheuristicsRepository.dll
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\MetaheuristicsLibrary.pdb
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\MetaheuristicsRepository.xml
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\obj\Debug\MetaheuristicsTuner.csprojResolveAssemblyReference.cache
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\obj\Debug\MetaheuristicsTuner.exe
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\obj\Debug\MetaheuristicsTuner.pdb
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\ILOG.Concert.dll
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\ILOG.CPLEX.dll
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\ILOG.Concert.xml
+C:\Users\wach\Documents\Visual Studio 2012\Projects\MetaheuristicsLibrary-master\MetaheuristicsTuner\bin\Debug\ILOG.CPLEX.xml

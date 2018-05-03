@@ -9,17 +9,111 @@ using MetaheuristicRepository.Solvers_SO;
 using MetaheuristicRepository;
 using System.IO;
 
+using ILOG.CPLEX;
+using ILOG.Concert;
+
+
 namespace MetaheuristicsTuner
 {
     class Program
     {
 
+
         static void Main(string[] args)
         {
+
+            IdentifyTwoBestParameterSets("FIPS");    //"SGA", "ES", "PSO", "FIPS"
+        }
+
+        /// <summary>
+        /// Getting maximum congruency for naming parameter sets A or B. Linear Programming optimization model.
+        /// </summary>
+        static void IdentifyTwoBestParameterSets(string caseSolver)
+        {
+            Cplex cpl = new Cplex();
+
+            int N = 7;
+            //string caseSolver = "ES"; //"SGA" (default), "ES", "PSO", "FIPS" 
+
+            int[] ctopA;
+            int[] cTopB;
+            int[] cBtmA;
+            int[] cBtmB;
+            switch (caseSolver)
+            {
+                default:
+                    ctopA = new int[] { 11, 1, 1, 13, 0, 0, 2 };
+                    cTopB = new int[] { 0, 5, 3, 0, 5, 5, 5 };
+                    cBtmA = new int[] { 2, 12, 12, 0, 14, 14, 9 };
+                    cBtmB = new int[] { 4, 0, 1, 4, 0, 0, 0 };
+                    break;
+                case "ES":
+                    ctopA = new int[] { 4, 6, 9, 3, 11, 11, 5 };
+                    cTopB = new int[] { 2, 3, 1, 3, 1, 3, 3 };
+                    cBtmA = new int[] { 4, 5, 2, 8, 0, 0, 6 };
+                    cBtmB = new int[] { 3, 1, 3, 2, 5, 3, 2 };
+                    break;
+                case "PSO":
+                    ctopA = new int[] { 1, 3, 2, 3, 3, 7, 5 };
+                    cTopB = new int[] { 12, 11, 3, 1, 7, 8, 5 };
+                    cBtmA = new int[] { 7, 5, 6, 5, 5, 1, 3 };
+                    cBtmB = new int[] { 0, 1, 9, 11, 5, 4, 7 };
+                    break;
+                case "FIPS":
+                    ctopA = new int[] { 6, 6, 7, 3, 5, 0, 8 };
+                    cTopB = new int[] { 4, 6, 6, 9, 5, 9, 1 };
+                    cBtmA = new int[] { 4, 4, 3, 7, 5, 10, 2 };
+                    cBtmB = new int[] { 6, 4, 4, 1, 5, 1, 9 };
+                    break;
+            }
+
+
+            INumVar[] xTopA = new INumVar[N];
+            INumVar[] xBtmB = new INumVar[N];
+            INumVar[] xTopB = new INumVar[N];
+            INumVar[] xBtmA = new INumVar[N];
+            ILinearNumExpr value = cpl.LinearNumExpr();
+            for (int n = 0; n < N; n++)
+            {
+                xTopA[n] = cpl.BoolVar();
+                xBtmB[n] = cpl.BoolVar();
+                xTopB[n] = cpl.BoolVar();
+                xBtmA[n] = cpl.BoolVar();
+                cpl.AddEq(cpl.Sum(xTopB[n], xTopA[n]), 1);
+                cpl.AddEq(cpl.Sum(xBtmA[n], xBtmB[n]), 1);
+                cpl.AddEq(cpl.Sum(xTopA[n], xBtmA[n]), 1);
+                cpl.AddEq(cpl.Sum(xTopB[n], xBtmB[n]), 1);
+                value.AddTerm(xTopA[n], ctopA[n]);
+                value.AddTerm(xTopB[n], cTopB[n]);
+                value.AddTerm(xBtmA[n], cBtmA[n]);
+                value.AddTerm(xBtmB[n], cBtmB[n]);
+            }
+
+            cpl.AddMaximize(value);
+            cpl.Solve();
+
+            Console.WriteLine("Parameter Grouping for Solver: {0}", caseSolver);
+            for (int n = 0; n < N; n++)
+            {
+                Console.WriteLine("n: {0}", n);
+                Console.WriteLine("xtopA: ;{0};, _____, xTopB: ;{1};", cpl.GetValue(xTopA[n]), cpl.GetValue(xTopB[n]));
+                Console.WriteLine("xbtmB: ;{0};, _____, xBtmA: ;{1};", cpl.GetValue(xBtmB[n]), cpl.GetValue(xBtmA[n]));
+            }
+            Console.WriteLine("cost: {0}", cpl.GetObjValue());
+            Console.ReadKey();
+
+
+
+
+        }
+
+
+
+
+
+        static void TuningMain(string[] args)
+        {
             //TuneSolver("PSO",35,30);
-
-
-
 
 
 
@@ -32,8 +126,6 @@ namespace MetaheuristicsTuner
             //hp[2] = 12.42113;
             //hp[3] = 0.30566;
             //hp[4] = 1;
-
-
 
 
 
@@ -83,6 +175,10 @@ namespace MetaheuristicsTuner
 
             TestHyperParam("PSO", hp, 10, 100, 30);
         }
+
+
+
+
 
         static void TestHyperParam(string solver, double[] hp, int testfuncdim, int evalbudgetmultipl, int rerunsTestFuncs)
         {
@@ -237,7 +333,7 @@ namespace MetaheuristicsTuner
 
             Parallel.For(0, manyhyperfuncs.Length, new ParallelOptions { MaxDegreeOfParallelism = maxthreads }, hh =>
             {
-            //for(int hh=0; hh<manyhyperfuncs.Length; hh++){
+                //for(int hh=0; hh<manyhyperfuncs.Length; hh++){
                 Console.WriteLine("started hh {0} of {1}", hh, manyhyperfuncs.Length - 1);
                 List<string> log_SA = new List<string>();
                 List<string> log_ES = new List<string>();
@@ -251,7 +347,7 @@ namespace MetaheuristicsTuner
                     SimpleGA ga = new SimpleGA(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsSGA);
                     ga.solve();
                     ga.get_fxoptimum();
-                    str = "Last call;"+ Math.Round(ga.get_fxoptimum(), 4);
+                    str = "Last call;" + Math.Round(ga.get_fxoptimum(), 4);
                     for (int xx = 0; xx < dvar; xx++)
                     {
                         str += ";" + Math.Round(ga.get_Xoptimum()[xx], 5);
@@ -330,7 +426,7 @@ namespace MetaheuristicsTuner
 
                 Console.WriteLine("Done hh {0} of {1}", hh, manyhyperfuncs.Length);
             });
-        //}
+            //}
             Console.WriteLine();
             Console.WriteLine(@"///////////////////////////////////////");
             Console.WriteLine("Done with everything, tuning the {0}", solver);
@@ -425,17 +521,17 @@ namespace MetaheuristicsTuner
                     lb = new double[dvar];
                     ub = new double[dvar];
                     xint = new bool[dvar];
-                    lb[0] = 4;              
+                    lb[0] = 4;
                     ub[0] = 200;
                     xint[0] = false;        // "popsize" ∈ {4,...,200}
-                    lb[1] = 0.001;         
+                    lb[1] = 0.001;
                     ub[1] = 1;
                     xint[1] = false;        // "chi" constriction coefficient ∈ [0.001,1]
-                    lb[2] = 0;              
+                    lb[2] = 0;
                     ub[2] = 50;
                     xint[2] = false;        // "phi" attraction to best particles ∈ [0,10]
-                    lb[3] = 0;  
-                    ub[3] = 20;             
+                    lb[3] = 0;
+                    ub[3] = 20;
                     xint[3] = false;        // "v0max" initial velocity multiplicator ∈ [0,20]
                     lb[4] = 0;
                     ub[4] = 1;
@@ -470,11 +566,11 @@ namespace MetaheuristicsTuner
                     lb[3] = 0;
                     ub[3] = 1;
                     xint[3] = true;         //0 = update after population. 1 = update after each evaluation 
-                    lb[4] = 1;  
+                    lb[4] = 1;
                     ub[4] = 2;
                     xint[4] = true;         //0 = fipso, 1 = inertia, 2 = constriction. fipso deactivated here 
                     lb[5] = 0;
-                    ub[5] = 5;      
+                    ub[5] = 5;
                     xint[5] = false;        //attraction own best ∈ [0,5]
                     lb[6] = 0;
                     ub[6] = 5;
