@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaheuristicsLibrary", "Me
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{2BAE263D-3A74-47F7-ACCC-717C7C8D1640}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaheuristicsTuner", "MetaheuristicsTuner\MetaheuristicsTuner.csproj", "{57A8E0B9-AC73-4E27-B6DE-CF86C254E103}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{2BAE263D-3A74-47F7-ACCC-717C7C8D1640}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BAE263D-3A74-47F7-ACCC-717C7C8D1640}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BAE263D-3A74-47F7-ACCC-717C7C8D1640}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57A8E0B9-AC73-4E27-B6DE-CF86C254E103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57A8E0B9-AC73-4E27-B6DE-CF86C254E103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57A8E0B9-AC73-4E27-B6DE-CF86C254E103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57A8E0B9-AC73-4E27-B6DE-CF86C254E103}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
