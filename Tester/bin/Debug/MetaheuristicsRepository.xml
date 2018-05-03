@@ -1,0 +1,2726 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MetaheuristicsRepository</name>
+    </assembly>
+    <members>
+        <member name="T:MetaheuristicRepository.legacy_ISingleObjFunc">
+            <summary>
+            Interface for an arbitrary function of n dimensions
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.legacy_ISingleObjFunc.GetVal(System.Double[])">
+            <summary>
+            Return Value of the function for a value vector x
+            </summary>
+            <param name="x">vector of arguments</param>
+            <returns></returns>
+        </member>
+        <member name="P:MetaheuristicRepository.legacy_ISingleObjFunc.Dimension">
+            <summary>
+            Returns dimension of the function
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.IMultiObjOpti.initialize">
+            <summary>
+             Initial solution(s).
+             <para/>Differentiate between:
+             <para/>- Trajectory based (e.g. Simulated Annealing),
+             <para/>- Population based (e.g. Evolutionary Algorithms).
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.IMultiObjOpti.Solve">
+            <summary>
+            Solve the Problem; starting the optimization.
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.ISingleObjOpti">
+            <summary>
+            Construction plan for a single objective optimizer.
+            <para/>These steps have to be implemented in all algorithms.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.ISingleObjOpti.initialize">
+            <summary>
+             Initial solution(s).
+             <para/>Differentiate between:
+             <para/>- Trajectory based (e.g. Simulated Annealing),
+             <para/>- Population based (e.g. Evolutionary Algorithms).
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.ISingleObjOpti.Solve">
+            <summary>
+            Solve the Problem; starting the optimization.
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.LUPDecomposition">
+            Lower Upper Permutation (LUP) decomposition
+            
+            @author Didier H. Besset
+            @translator edgar.sanchez@logicstudio.net
+        </member>
+        <member name="F:MetaheuristicRepository.Misc.LUPDecomposition._rows">
+            Rows of the system
+        </member>
+        <member name="F:MetaheuristicRepository.Misc.LUPDecomposition._permutation">
+            Permutation
+        </member>
+        <member name="F:MetaheuristicRepository.Misc.LUPDecomposition._parity">
+            Permutation's parity
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.#ctor(System.Double[0:,0:])">
+            Constructor method
+            @param components double[,]
+            @exception DhbMatrixAlgebra.DhbIllegalDimension 
+            								the supplied matrix is not square
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.#ctor(MetaheuristicRepository.Misc.Matrix)">
+            Constructor method.
+            @param m DhbMatrixAlgebra.Matrix
+            @exception DhbMatrixAlgebra.DhbIllegalDimension 
+            								the supplied matrix is not square
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.#ctor(MetaheuristicRepository.Misc.SymmetricMatrix)">
+            Constructor method.
+            @param m DhbMatrixAlgebra.DhbSymmetricMatrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.BackwardSubstitution(System.Double[])">
+            @return double[]
+            @param xTilde double[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.Decomposed">
+            @return boolean	true if decomposition was done already
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.Determinant">
+            @return double[]
+            @param c double[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.ForwardSubstitution(System.Double[])">
+            @return double[]
+            @param c double[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.Initialize(System.Double[0:,0:])">
+            @param components double[,]  components obtained from constructor methods.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.InverseMatrixComponents">
+            @return double[]
+            @param c double[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.LargestPivot(System.Int32)">
+            @return int
+            @param k int
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.Pivot(System.Int32)">
+            @param k int
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.Solve(System.Double[])">
+            @return double[]
+            @param c double[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.Solve(MetaheuristicRepository.Misc.DhbVector)">
+            @return double[]
+            @param c double[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.SwapRows(System.Int32,System.Int32)">
+            @param i int
+            @param k int
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.SymmetrizeComponents(System.Double[0:,0:])">
+            Make sure the supplied matrix components are those of
+            a symmetric matrix
+            @param components double
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.LUPDecomposition.ToString">
+            Returns a string that represents the value of this object.
+            @return a string representation of the receiver
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.DhbIllegalDimension">
+            @author Didier H. Besset
+            @translator edgar.sanchez@logicstudio.net
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbIllegalDimension.#ctor">
+            DhbIllegalDimension constructor comment.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbIllegalDimension.#ctor(System.String)">
+            DhbIllegalDimension constructor comment.
+            @param s string
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.DhbVector">
+             Vector implementation
+            
+             @author Didier H. Besset
+             @translator edgar.sanchez@logicstudio.net
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.#ctor(System.Double[])">
+            Create a vector of given dimension.
+            NOTE: The supplied array of components must not be changed.
+            @param comp double[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.#ctor(System.Int32)">
+            Create a vector of given dimension.
+            @param dimension int dimension of the vector; must be positive.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.Accumulate(System.Double[])">
+            @param x double[]
+            @exception DhbMatrixAlgebra.DhbIllegalDimension if the vector
+            and supplied vector do not have the same dimension.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.Accumulate(MetaheuristicRepository.Misc.DhbVector)">
+            @param v DhbMatrixAlgebra.DhbVector
+            @exception DhbMatrixAlgebra.DhbIllegalDimension if the vector
+            and supplied vector do not have the same dimension.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.AccumulateNegated(System.Double[])">
+            @param x double[]
+            @exception DhbMatrixAlgebra.DhbIllegalDimension if the vector
+            and supplied vector do not have the same dimension.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.AccumulateNegated(MetaheuristicRepository.Misc.DhbVector)">
+            @param v DhbMatrixAlgebra.DhbVector
+            @exception DhbMatrixAlgebra.DhbIllegalDimension if the vector
+            and supplied vector do not have the same dimension.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.op_Addition(MetaheuristicRepository.Misc.DhbVector,MetaheuristicRepository.Misc.DhbVector)">
+            @return DHBmatrixAlgebra.DhbVector sum of the vector with
+            											the supplied vector
+            @param v DHBmatrixAlgebra.DhbVector
+            @exception DHBmatrixAlgebra.DhbIllegalDimension if the vector
+            				and supplied vector do not have the same dimension.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.Clear">
+            Sets all components of the receiver to 0.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.Equals(MetaheuristicRepository.Misc.DhbVector)">
+            @return true if the supplied vector is equal to the receiver
+            @param v DHBmatrixAlgebra.DhbVector
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.NormalizedBy(System.Double)">
+            @param x double
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.op_Multiply(MetaheuristicRepository.Misc.DhbVector,System.Double)">
+            Computes the product of the vector by a number.
+            @return DHBmatrixAlgebra.DhbVector
+            @param d double
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.op_Multiply(MetaheuristicRepository.Misc.DhbVector,MetaheuristicRepository.Misc.DhbVector)">
+            Compute the scalar product (or dot product) of two vectors.
+            @return double the scalar product of the receiver with the argument
+            @param v DHBmatrixAlgebra.DhbVector
+            @exception DHBmatrixAlgebra.DhbIllegalDimension if the dimension
+            											of v is not the same.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.op_Multiply(MetaheuristicRepository.Misc.DhbVector,MetaheuristicRepository.Misc.Matrix)">
+            Computes the product of the transposed vector with a matrix
+            @return MatrixAlgebra.DhbVector
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.ScaledBy(System.Double)">
+            @param x double
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.SecureProduct(MetaheuristicRepository.Misc.DhbVector)">
+            Compute the scalar product (or dot product) of two vectors.
+            No dimension checking is made.
+            @return double the scalar product of the receiver with the argument
+            @param v DHBmatrixAlgebra.DhbVector
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.SecureProduct(MetaheuristicRepository.Misc.Matrix)">
+            Computes the product of the transposed vector with a matrix
+            @return MatrixAlgebra.DhbVector
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.op_Subtraction(MetaheuristicRepository.Misc.DhbVector,MetaheuristicRepository.Misc.DhbVector)">
+            @return DHBmatrixAlgebra.DhbVector	subtract the supplied vector
+            												to the receiver
+            @param v DHBmatrixAlgebra.DhbVector
+            @exception DHBmatrixAlgebra.DhbIllegalDimension if the vector
+            and supplied vector do not have the same dimension.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.TensorProduct(MetaheuristicRepository.Misc.DhbVector)">
+            @return MatrixAlgebra.Matrix	tensor product with the specified
+            															vector
+            @param v MatrixAlgebra.DhbVector	second vector to build tensor
+            													product with.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.ToComponents">
+            @return double[]	a copy of the components of the receiver.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbVector.ToString">
+            Returns a string representation of the vector.
+            @return string
+        </member>
+        <member name="P:MetaheuristicRepository.Misc.DhbVector.Item(System.Int32)">
+            @return double
+            @param n int
+        </member>
+        <member name="P:MetaheuristicRepository.Misc.DhbVector.Dimension">
+            Returns the dimension of the vector.
+            @return int
+        </member>
+        <member name="P:MetaheuristicRepository.Misc.DhbVector.Norm">
+            Computes the norm of a vector.
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.DhbNonSymmetricComponents">
+            @author Didier H. Besset
+            @translator edgar.sanchez@logicstudio.net
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbNonSymmetricComponents.#ctor">
+            DhbNonSymmetricComponents constructor comment.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.DhbNonSymmetricComponents.#ctor(System.String)">
+            DhbNonSymmetricComponents constructor comment.
+            @param s string
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.SymmetricMatrix">
+            Symmetric matrix
+            
+            @author Didier H. Besset
+            @translator edgar.sanchez@logicstudio.net
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.Matrix">
+             Class representing matrix
+            
+             @author Didier H. Besset
+             @translator edgar.sanchez@logicstudio.net
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.#ctor(System.Double[0:,0:])">
+            Creates a matrix with given components.
+            NOTE: the components must not be altered after the definition.
+            @param a double[,]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.#ctor(System.Int32,System.Int32)">
+            Creates a null matrix of given dimensions.
+            @param n int	number of rows
+            @param m int	number of columns
+            @exception NegativeArraySizeException
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.Accumulate(MetaheuristicRepository.Misc.Matrix)">
+            @param a MatrixAlgebra.Matrix
+            @exception MatrixAlgebra.DhbIllegalDimension if the supplied matrix
+            								does not have the same dimensions.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.op_Addition(MetaheuristicRepository.Misc.Matrix,MetaheuristicRepository.Misc.Matrix)">
+            @return MatrixAlgebra.Matrix		sum of the receiver with the
+            												supplied matrix.
+            @param a MatrixAlgebra.Matrix
+            @exception MatrixAlgebra.DhbIllegalDimension if the supplied matrix
+            								does not have the same dimensions.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.AddComponents(MetaheuristicRepository.Misc.Matrix)">
+            Computes the components of the sum of the receiver and
+            												a supplied matrix.
+            @return double[,]
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.Determinant">
+            @return double
+            @exception MatrixAlgebra.DhbIllegalDimension if the supplied 
+            											matrix is not square.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.Equals(MetaheuristicRepository.Misc.Matrix)">
+            @return true if the supplied matrix is equal to the receiver.
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.Inverse">
+            @return DhbMatrixAlgebra.DhbMatrix		inverse of the receiver
+            			or pseudoinverse if the receiver is not a square matrix.
+            @exception ArithmeticException if the receiver is
+            												a singular matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.LupDecomposition">
+            @return LUPDecomposition	the LUP decomposition of the receiver.
+            @exception DhbIllegalDimension if the receiver is not
+            												a square matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.op_Multiply(MetaheuristicRepository.Misc.Matrix,System.Double)">
+            @return MatrixAlgebra.Matrix		product of the matrix with
+            												a supplied number
+            @param a double	multiplicand.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.op_Multiply(MetaheuristicRepository.Misc.Matrix,MetaheuristicRepository.Misc.DhbVector)">
+            Computes the product of the matrix with a vector.
+            @return DHBmatrixAlgebra.DhbVector
+            @param v DHBmatrixAlgebra.DhbVector
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.op_Multiply(MetaheuristicRepository.Misc.Matrix,MetaheuristicRepository.Misc.Matrix)">
+            @return MatrixAlgebra.Matrix		product of the receiver with the
+            												supplied matrix
+            @param a MatrixAlgebra.Matrix
+            @exception MatrixAlgebra.DhbIllegalDimension If the number of
+            				columns of the receiver are not equal to the
+            							number of rows of the supplied matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.ProductComponents(System.Double)">
+            @return double[,]
+            @param a double
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.ProductComponents(MetaheuristicRepository.Misc.Matrix)">
+            @return double[,]	the components of the product of the receiver
+            										with the supplied matrix
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.ProductWithTransposed(MetaheuristicRepository.Misc.Matrix)">
+            @return MatrixAlgebra.Matrix	product of the receiver with the
+            								tranpose of the supplied matrix
+            @param a MatrixAlgebra.Matrix
+            @exception MatrixAlgebra.DhbIllegalDimension If the number of
+            					columns of the receiver are not equal to
+            					the number of columns of the supplied matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.ProductWithTransposedComponents(MetaheuristicRepository.Misc.Matrix)">
+            @return double[][]	the components of the product of the receiver
+            						with the transpose of the supplied matrix
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.SecureProduct(MetaheuristicRepository.Misc.DhbVector)">
+            Computes the product of the matrix with a vector.
+            @return DHBmatrixAlgebra.DhbVector
+            @param v DHBmatrixAlgebra.DhbVector
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.SecureProduct(MetaheuristicRepository.Misc.Matrix)">
+            Same as product(Matrix a), but without dimension checking.
+            @return MatrixAlgebra.Matrix		product of the receiver with the
+            												supplied matrix
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.SecureSubtract(MetaheuristicRepository.Misc.Matrix)">
+            Same as subtract ( DhbMarix a), but without dimension checking.
+            @return MatrixAlgebra.Matrix
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.op_Subtraction(MetaheuristicRepository.Misc.Matrix,MetaheuristicRepository.Misc.Matrix)">
+            @return MatrixAlgebra.Matrix		subtract the supplied matrix to
+            													the receiver.
+            @param a MatrixAlgebra.Matrix
+            @exception MatrixAlgebra.DhbIllegalDimension if the supplied matrix
+            								does not have the same dimensions.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.SubtractComponents(MetaheuristicRepository.Misc.Matrix)">
+            @return double[,]
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.ToComponents">
+            @return double[,]	a copy of the components of the receiver.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.ToString">
+            Returns a string representation of the system.
+            @return string
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.Transpose">
+            @return MatrixAlgebra.Matrix		transpose of the receiver
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.TransposedProduct">
+            @return DhbMatrixAlgebra.SymmetricMatrix	the transposed product
+            									of the receiver with itself.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.TransposedProduct(MetaheuristicRepository.Misc.Matrix)">
+            @return MatrixAlgebra.Matrix	product of the tranpose of the
+            								receiver with the supplied matrix
+            @param a MatrixAlgebra.Matrix
+            @exception MatrixAlgebra.DhbIllegalDimension If the number of rows
+            							of the receiver are not equal to 
+            						the number of rows of the supplied matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.TransposedProductComponents(MetaheuristicRepository.Misc.Matrix)">
+            @return double[][]	the components of the product of the
+            										transpose of the receiver
+            with the supplied matrix.
+            @param a MatrixAlgebra.Matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.setToIdentity">
+            <summary>
+            Set all components outside the main diagonal to zero and the components in the main diagonal to 1.
+            if the instance is not a squared matrix returns exception (note that this is an "in-place" operation).
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Matrix.setTo(System.Double)">
+            <summary>
+            Set all components to val (note that this is an "in-place" operation).
+            </summary>
+            <param name="val">
+            desired value to which all elements in the matrix will be set to.
+             </param>
+        </member>
+        <member name="P:MetaheuristicRepository.Misc.Matrix.Columns">
+            @return int	the number of columns of the matrix
+        </member>
+        <member name="P:MetaheuristicRepository.Misc.Matrix.Item(System.Int32,System.Int32)">
+            @return double
+            @param n int
+            @param m int
+        </member>
+        <member name="P:MetaheuristicRepository.Misc.Matrix.IsSquare">
+            @return boolean
+        </member>
+        <member name="P:MetaheuristicRepository.Misc.Matrix.Rows">
+            @return int	the number of rows of the matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.#ctor(System.Double[0:,0:])">
+            Creates a symmetric matrix with given components.
+            @param a double[,]
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:MetaheuristicRepository.Misc.SymmetricMatrix.#ctor(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:MetaheuristicRepository.Misc.SymmetricMatrix.#ctor(System.Int32,System.Int32)" -->
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.op_Addition(MetaheuristicRepository.Misc.SymmetricMatrix,MetaheuristicRepository.Misc.SymmetricMatrix)">
+            @return SymmetricMatrix	sum of the matrix with the supplied matrix.
+            @param a DhbMatrix
+            @exception DhbIllegalDimension if the supplied matrix does not
+            										have the same dimensions.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.CrlInverse">
+            Answers the inverse of the receiver computed via the CRL algorithm.
+            @return DhbMatrixAlgebra.SymmetricMatrix
+            @exception ArithmeticException if the matrix is singular.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.FromComponents(System.Double[0:,0:])">
+            @return DhbMatrixAlgebra.SymmetricMatrix
+            @param	comp double[][]	components of the matrix
+            @exception DhbMatrixAlgebra.DhbIllegalDimension
+            			The supplied components are not those of a square matrix.
+            @exception DhbMatrixAlgebra.DhbNonSymmetricComponents
+            		The supplied components are not symmetric.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.IdentityMatrix(System.Int32)">
+            @return SymmetricMatrix	an identity matrix of size n
+            @param n int
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.Inverse">
+            @return DhbMatrix		inverse of the receiver.
+            @exception ArithmeticException if the receiver is
+            												a singular matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.Inverse1By1">
+            Compute the inverse of the receiver in the case of a 1 by 1 matrix.
+            Internal use only: no check is made.
+            @return DhbMatrixAlgebra.SymmetricMatrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.Inverse2By2">
+            Compute the inverse of the receiver in the case of a 2 by 2 matrix.
+            Internal use only: no check is made.
+            @return DhbMatrixAlgebra.SymmetricMatrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.Join(MetaheuristicRepository.Misc.Matrix[])">
+            Build a matrix from 3 parts (inverse of split).
+            @return DhbMatrixAlgebra.SymmetricMatrix
+            @param a DhbMatrixAlgebra.Matrix[]
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.LargestPowerOf2SmallerThan(System.Int32)">
+            @return int
+            @param n int
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.op_Multiply(MetaheuristicRepository.Misc.SymmetricMatrix,System.Double)">
+            @return DhbMatrixAlgebra.SymmetricMatrix
+            @param a double
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.op_Multiply(MetaheuristicRepository.Misc.SymmetricMatrix,MetaheuristicRepository.Misc.SymmetricMatrix)">
+            @return Matrix		product of the receiver with the supplied matrix
+            @param a Matrix
+            @exception DhbIllegalDimension If the number of columns of
+            the receivers are not equal to the number of rows
+            of the supplied matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.ProductWithTransposed(MetaheuristicRepository.Misc.SymmetricMatrix)">
+            @return DhbMatrixAlgebra.Matrix	product of the receiver with
+            								the transpose of the supplied matrix
+            @param a DhbMatrixAlgebra.Matrix
+            @exception DhbMatrixAlgebra.DhbIllegalDimension If the number of
+            		columns of the receiver are not equal to the number of
+            		columns of the supplied matrix.
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.SecureAdd(MetaheuristicRepository.Misc.SymmetricMatrix)">
+            Same as add ( SymmetricMatrix a), but without dimension checking.
+            @return DhbMatrixAlgebra.SymmetricMatrix
+            @param a DhbMatrixAlgebra.SymmetricMatrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.SecureProduct(MetaheuristicRepository.Misc.SymmetricMatrix)">
+            Same as product(DhbSymmetricMatrix a), but without dimension checking.
+            @return DhbMatrixAlgebra.SymmetricMatrix
+            @param a DhbMatrixAlgebra.SymmetricMatrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.SecureSubtract(MetaheuristicRepository.Misc.SymmetricMatrix)">
+            Same as subtract ( SymmetricMatrix a), but without dimension checking.
+            @return DhbMatrixAlgebra.SymmetricMatrix
+            @param a DhbMatrixAlgebra.SymmetricMatrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.Split">
+            Divide the receiver into 3 matrices or approximately equal dimension.
+            @return DhbMatrixAlgebra.Matrix[]	Array of splitted matrices
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.op_Subtraction(MetaheuristicRepository.Misc.SymmetricMatrix,MetaheuristicRepository.Misc.SymmetricMatrix)">
+            @return DHBmatrixAlgebra.SymmetricMatrix
+            @param a DHBmatrixAlgebra.SymmetricMatrix
+            @exception DHBmatrixAlgebra.DhbIllegalDimension (from constructor).
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.Transpose">
+            @return DHBmatrixAlgebra.Matrix		the same matrix
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.SymmetricMatrix.TransposedProduct(MetaheuristicRepository.Misc.SymmetricMatrix)">
+            @return DhbMatrixAlgebra.SymmetricMatrix	product of the tranpose
+            							of the receiver with the supplied matrix
+            @param a DhbMatrixAlgebra.SymmetricMatrix
+            @exception DhbMatrixAlgebra.DhbIllegalDimension If the number of
+            					rows of the receiver are not equal to
+            					the number of rows of the supplied matrix.
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.MatrixKniaz">
+            <summary>
+            Matrix Operations.
+            Source: www.kniaz.net
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.MatrixKniaz.New(System.Int32,System.Int32)">
+            <summary>
+            Generates n x m jagged array of doubles
+            </summary>
+            <param name="m"></param>
+            <param name="n"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.MatrixKniaz.Norma(System.Int32,System.Int32,System.Double[][])">
+            <summary>
+            Sqr Root of the sum column sqrs
+            </summary>
+            <param name="k"></param>
+            <param name="l"></param>
+            <param name="a"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.MatrixKniaz.Wers(System.Int32,System.Int32,System.Double[][])">
+            <summary>
+            
+            </summary>
+            <param name="k"></param>
+            <param name="l"></param>
+            <param name="a"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.MatrixKniaz.scalarProduct(System.Int32,System.Int32,System.Int32,System.Double[][])">
+            <summary>
+            Scalar Product of two matrices
+            </summary>
+            <param name="k"></param>
+            <param name="p"></param>
+            <param name="q"></param>
+            <param name="a"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.MatrixKniaz.Minim(System.Int32,System.Double[],System.Double[][])">
+            <summary>
+            
+            </summary>
+            <param name="wym">dimensions</param>
+            <param name="s1">basevector, used for rotation</param>
+            <param name="a">current orthogonal vectors</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.MatrixKniaz.Ortog(System.Int32,System.Double[][])">
+            <summary>
+            Performs Orthogonalization of the vector
+            </summary>
+            <param name="wym">dimensions</param>
+            <param name="v">current orthogonal vectors, after "minim" was run with basevector</param>
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.Vector">
+            <summary>
+            Vector Operations.
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.RandomDistributions">
+            <summary>
+            Random Number with distribution probabilities.
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Misc.Misc">
+            <summary>
+            Miscellaneous functions
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Misc.Dec2Bin(System.Int32,System.Int32)">
+            <summary>
+            Convert an integer to a bitstring with specified length.
+            Source: http://stackoverflow.com/questions/1838963/easy-and-fast-way-to-convert-an-int-to-binary
+            </summary>
+            <param name="value">Integer to be converted</param>
+            <param name="len">Bitstring length</param>
+            <returns>Bitstring</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Misc.Bin2Dec(System.String)">
+            <summary>
+            Convert a bitstring to an integer.
+            </summary>
+            <param name="binary"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Misc.Misc.BinReqLength(System.Boolean[],System.Double[],System.Double[])">
+            <summary>
+            Tells the required Bitstring length of an array of integer numbers.
+            </summary>
+            <param name="value">Array of double values. If they are indicated as integer, they will be round to integer.</param>
+            <param name="intx">Indicator, wether variable is integer (true), or not.</param>
+            <param name="lb">Array of lower bounds.</param>
+            <param name="ub">Array of upper bounds</param>
+            <returns>Required length of bitsting.</returns>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_MO.NSGA2">
+            <summary>
+             NSGA2
+             <para/>Non-Dominated-Sorting Genetic-Algorithm 2.
+             <para/>Paper: 
+             <para/>Source code: https://www.mathworks.com/matlabcentral/fileexchange/10429-nsga-ii--a-multi-objective-optimization-algorithm
+             <para/>Description:
+            </summary>
+            <remarks>
+            ???
+            </remarks>
+        </member>
+        <member name="T:MetaheuristicRepository.Operators.Oper_MO">
+            <summary>
+            repository of Multi Objective Operators. 
+            Difference to single objective is:
+                - returns an array of pareto-optimal solutions, instead of only one solution
+                - instead of one objective function value, it has multiple values
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Operators.Oper_Basic">
+            <summary>
+            Repository of (single) objective operators.
+            <para/>Classified into general operator types:
+            <para/>- Initialization    
+            <para/>- Evaluation
+            <para/>- Selection of next solution(s)
+            <para/>- Perturbation of variable vector(s)
+            <para/>- Termination
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.Solve">
+            <summary>
+            Run the solver.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.Solve(System.Int32)">
+            <summary>
+            Run the solver for a specific number of iterations.
+            </summary>
+            <param name="iterations">number or iterations.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.GetSolverName">
+            <summary>
+            Get the name of the instantiated solver.
+            </summary>
+            <returns>String</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.ReverseNormalization(System.Double[])">
+            <summary>
+            This function translates normalized variables back to initial variable domain.
+            </summary>
+            <param name="_xNorm">Variable vector in normalized domain.</param>
+            <returns>Variable vector in initial domain.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.NormalizeX(System.Double[])">
+            <summary>
+            Normalizes a variable vector using it's domain bounds.
+            </summary>
+            <param name="_x">Variable vector to be be normalized</param>
+            <returns>Normalized variable vector.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.upperBounds">
+            <summary>
+            Return normalized or original upper bounds.
+            </summary>
+            <returns>Returns upper bounds.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.lowerBounds">
+            <summary>
+            Return normalized or original lower bounds.
+            </summary>
+            <returns>Returns lower bounds.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.checkBounds(System.Double[]@,System.Double[],System.Double[])">
+            <summary>
+            Check, if point is withing bounds. If not, ceil/floor it to bounds.
+            </summary>
+            <param name="x">Point to be checked.</param>
+            <param name="_lb">Lower bounds.</param>
+            <param name="_ub">Upper bounds.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_normalizeX(System.Boolean)">
+            <summary>
+            Normalize variable space x?
+            </summary>
+            <param name="normalize">true = normalize, false = don't normalize</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_PopSize(System.Int32)">
+            <summary>
+            define the population size
+            </summary>
+            <param name="pop"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_ManualX0">
+            <summary>
+            Insert manually provided initial solutions.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_RndUniform">
+            <summary>
+            Creates a initial solution vector, drawn from uniform random distribution.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_RndUniformPop(System.Int32)">
+            <summary>
+            Creates a population of initial solution vectors, drawn from random uniform distribution.
+            </summary>
+            <param name="popsize">Population Size</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_RndNormal(System.Double[],System.Double[])">
+            <summary>
+            Creates a initial solution vector, drawn from normal random distribution.
+            </summary>
+            <param name="mean">Mean of distributon.</param>
+            <param name="stdDev">Standard deviation from mean.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_RndNormalPop(System.Double[],System.Double[],System.Int32)">
+            <summary>
+            Creates a population of initial solution vectors, drawn from random normal distribution.
+            </summary>
+            <param name="mean">Mean of distributon.</param>
+            <param name="stdDev">Standard deviation from mean.</param>
+            <param name="popsize">Number of solutions to be created.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_OrthoSimplex(System.Double[],System.Double[])">
+            <summary>
+            Creates a n+1 Simplex with orthogonal steps from the base solution.
+            n is the problem dimension.
+            </summary>
+            <param name="xBase">Base solution, from which orthogonal steps are conducted to create additional solutions.</param>
+            <param name="sigma">Step size for orthogonal steps</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_FINALIZE">
+            <summary>
+            Finalizing initialisation. Always needs to be called at end of the operator I.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_normalRandom_old(System.Double[],System.Double)">
+            <summary>
+            
+            </summary>
+            <param name="mean"></param>
+            <param name="stdDev"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_normalRandomPop_old(System.Double[],System.Double,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="mean"></param>
+            <param name="stdDev"></param>
+            <param name="popsize"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_uniformRandom_old">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_uniformRandomPop_old(System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="popsize"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_OrthoSimplex_old(System.Double)">
+            <summary>
+            n+1 Simplex. Orthogonal steps. Only works with n+1, because of these orthogonal steps.
+            </summary>
+            <param name="steplength"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_Rosenbrock_old(System.Collections.Generic.List{System.Boolean[]}@,System.Collections.Generic.List{System.Boolean[]}@,System.Collections.Generic.List{System.Int32}@,System.Collections.Generic.List{System.Int32}@,System.Collections.Generic.List{System.Double[][]}@,System.Collections.Generic.List{System.Double[]}@,System.Double)">
+            <summary>
+            initializes and returns stuff for Rosenbrock moves
+            </summary>
+            <param name="flag_fail"></param>
+            <param name="flag_success"></param>
+            <param name="flags_sum"></param>
+            <param name="flag_currentDirection"></param>
+            <param name="vMoves"></param>
+            <param name="xOrigin"></param>
+            <param name="steplength"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.I_PSO_old(System.Double[][]@,System.Double[][]@,System.Double[]@,System.Double,System.Int32@)">
+            <summary>
+            
+            </summary>
+            <param name="PopVelocities"></param>
+            <param name="PopOwnBestLocation"></param>
+            <param name="PopOwnBestValue"></param>
+            <param name="speedLimit"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_PURGE">
+            <summary>
+            Purge x' and fx' and counters.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__NelderMead(System.Int32@,System.Double[][]@,System.Double[]@,System.Double[],System.Double[],System.Double[])">
+            <summary>
+            
+            </summary>
+            <param name="NM_currentstep"></param>
+            <param name="Simplex"></param>
+            <param name="fxSimplex"></param>
+            <param name="_xbest"></param>
+            <param name="_xworst"></param>
+            <param name="_xr"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__NM_centroid(System.Double[][])">
+            <summary>
+            Calculate centroid of a Simplex of any size. 
+            Last point of Simplex (usually the one with the worst cost value) is omitted for centroid calculation.
+            </summary>
+            <param name="Simplex">Simplex, that is an array of points.</param>
+            <returns>Centroid point of Simplex, omitting the last point of the Simplex.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_CopyXtoXTest">
+            <summary>
+            Copy current x(t) into x'. Including fx
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_AddStep(System.Double[],System.Double[],System.Nullable{System.Int32})">
+            <summary>
+            Add a step sigma to a base point.
+            In PSO, this is used, sigma called velocity.
+            </summary>
+            <param name="xbase">Base solution.</param>
+            <param name="sigma">Step size, array with length of nr. of variables in x</param>
+            <param name="index">if an index is provided, no new x' will be created, but the element with that index within X' will be changed</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_AddStep2(System.Double[],System.Double[],System.Nullable{System.Int32})">
+            <summary>
+            Add a step sigma to a base point.
+            </summary>
+            <param name="xbase">Base solution.</param>
+            <param name="sigma">Step size, array with length of nr. of variables in x</param>
+            <param name="index">if an index is provided, no new x' will be created, but the element with that index within X' will be changed</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_MutationGaussian(System.Double[],System.Double[],System.Nullable{System.Int32})">
+            <summary>
+            Mutation with gaussian distribution from base vector. For each variable new draw.
+            </summary>
+            <param name="xbase">mean</param>
+            <param name="sigma">standard deviation</param>
+            <param name="index">if an index is provided, no new x' will be created, but the element with that index within X' will be changed</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_MutationPohlheim(System.Double[],System.Double,System.Double,System.Nullable{System.Int32})">
+            <summary>
+            Mutation of real numbers.
+            <para/>working on xBestPopulation.
+            <para/>Pohlheim (1999). Evolutionäre Algorithmen.
+            </summary>
+            <param name="xBase">xBase to be mutated</param>
+            <param name="r">mutation range. r∈[0,1]. 0.1 means 10% of the variable domain.</param>
+            <param name="k">mutation precision. Higher number means less spread.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_PerturbGaussDiminProbs(System.Double[],System.Double[],System.Int32,System.Double,System.Nullable{System.Int32})">
+            <summary>
+            Perturbation of variables with gaussian distribution. 1st variable (chosen by random, uniform) has p=1.
+            All further variables have p defined by input for this operator psigma.
+            </summary>
+            <param name="xbase">Base solution vector, used for perturbation.</param>
+            <param name="sigma">Step size, fraction of upper and lower variable bounds.</param>
+            <param name="pmode">Select a mode for how the probability of further variables being moved changes. 0 = all the same p1plus; 1 = decreasing p(i)=p1plus^i, i being variable counter.</param>
+            <param name="p1plus">probability of 2nd (and ohter?) variables being moved as well [0,1]</param>
+            <param name="index">put an index of X', which should be replaced by this operator</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_InterRecomb(System.Collections.Generic.List{System.Int32[]},System.Double[],System.Int32,System.Nullable{System.Int32})">
+            <summary>
+            Intermediate Recombiation.
+            <para/>Creates from each parents pair 1 or 2 offspring. New variables constructed on a (extended) hypercube between parents variables.
+            <para/>working on xPopulation.
+            </summary>
+            <param name="parents">pair of parents. indicating index in the Population array.</param>
+            <param name="d">if d>0, then hypercube is extended. if d=0 then hypercube not extended.</param>
+            <param name="HowManyChildren">1 or 2 children per couple?</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_Reflect(System.Double[],System.Double[],System.Double[],System.Nullable{System.Int32})">
+            <summary>
+            Reflects a base point, using a center point as mirror. 
+            </summary>
+            <param name="xBase">Point, which will be reflected.</param>
+            <param name="xCenter">Center point, used as mirror.</param>
+            <param name="alpha">Multiplication factor, usually > 0.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_ReflectWorst(System.Double[],System.Nullable{System.Int32})">
+            <summary>
+            Reflects a base point, using a center point as mirror. 
+            </summary>
+            <param name="xBase">Point, which will be reflected.</param>
+            <param name="xCenter">Center point, used as mirror.</param>
+            <param name="alpha">Multiplication factor, usually > 0.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_ExpansionContraction(System.Double[],System.Double[],System.Double[])">
+            <summary>
+            Expands (sigma > 1) or contracts (sigma smaller 1) a base point from a reference (center) point, 
+            i.e. increases or decreases distance to it.
+            </summary>
+            <param name="xBase">Base point, which will be expanded or contracted.</param>
+            <param name="xCenter">Reference, or center point, from which distance is increased to.</param>
+            <param name="sigma">Multiplication factor, expansion(gamma) > 1, contraction (roh) smaller 1 </param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_ExpandContractPopulation(System.Double[][],System.Double[],System.Double[])">
+            <summary>
+            Expanding or Contracting population of points towards a reference point.
+            </summary>
+            <param name="xi">Points to be contracted or expanded, i.e. moved closer or further to reference point.</param>
+            <param name="xBest">Reference point. If contracting, should be the best point, if expandig could be the worst point.</param>
+            <param name="sigma">Contraction or Expansion coefficient. Contraction smaller 1 (usually 0.5), expansion > 1. </param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_PSO(System.Double[][]@,System.Double[][]@,System.Double,System.Double,System.Double,System.Int32@,System.Int32@)">
+            <summary>
+            Particle Swarm Optimization Move. 
+            Only one particle is moved. Requires existing xPopulationTest of size this.PopSize
+            </summary>
+            <param name="PSO_PopVel">PSO-specific: Velocities of the particles in the population.</param>
+            <param name="PSO_PopOwnBestLoc"></param>
+            <param name="PSO_c1">PSO-specific: Weight for own best position.</param>
+            <param name="PSO_c2">PSO-specific: Weight for global best position.</param>
+            <param name="PSO_inertia">PSO-specific: Inertia for velocity of particles. Could use step size value here.</param>
+            <param name="currParticle">Index of current particle ∈[0,PopSize-1]</param>
+            <param name="pso_xtestref">Index reference of current particle to xPopulationTest.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__SigmaConstant(System.Double[])">
+            <summary>
+            Constant Step Size.
+            </summary>
+            <param name="sigma0">Step size at start of optimization t=0.</param>
+            <returns>The same step size.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__SigmaSchwefel1977(System.Double[]@,System.Int32)">
+            <summary>
+            Step size adaptation according to Schwefel 1977.
+            </summary>
+            <param name="sigmat">Current step size at t.</param>
+            <param name="sigmamode">available modes: 0 = no tau i; 1 = tau i</param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__SigmaIncreaseOrReset(System.Double[],System.Double[],System.Double,System.Boolean)">
+            <summary>
+            Step size is increased by multiplication factor, if a flag indicates to do so. Otherwise, the step size is reset to initial step size at t=0.
+            </summary>
+            <param name="sigma0">Initial step size at start of optimization t=0.</param>
+            <param name="sigmat">Current step size at t.</param>
+            <param name="factor">Multiplication factor, if success flag is true</param>
+            <param name="success">Success flag, e.g. if previous move was successfull, indicating good search direction.</param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__SigmaSimAnn(System.Double[]@,System.Double,System.Double,System.Double@,System.Double,System.Int32,System.Int32@,System.Int32,System.Int32@)">
+            <summary>
+            Temperature dependant step size control.
+            Based on Simulated Annealing.
+            </summary>
+            <param name="beta">Initial step size, i.e. at start of optimization t=0.</param>
+            <param name="T">Current temperature.</param>
+            <param name="T0">Initial temperature, i.e. at start of optimization t=0.</param>
+            <param name="c">cooling coefficient</param>
+            <param name="max_cnt_success">allowed successfull moves, before cooling down.</param>
+            <param name="max_cnt_total">allowed max moves, before cooling down.</param>
+            <param name="cnt_success_now">currently counted successfull moves.</param>
+            <param name="cnt_total_now">currently counted total moves.</param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__SigmaPSOsteps(System.Boolean,System.Int32,System.Double[],System.Double[],System.Double[],System.Double,System.Double,System.Double,System.Double,System.Double[]@)">
+            <summary>
+            PSO step sizes, i.e. velocities
+            </summary>
+            <param name="init">initialize velocities?</param>
+            <param name="particleIndex">current particle index</param>
+            <param name="xglobalbest">global best known location</param>
+            <param name="xownbest">own best known location</param>
+            <param name="xt">current location xt</param>
+            <param name="w">inertia</param>
+            <param name="roh1">weight towards own best</param>
+            <param name="roh2">weight towards global best</param>
+            <param name="vmax">vmax for initial velocity</param>
+            <param name="fullsigma">size: nVar*popsize</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_SBXAndMutate_old(System.Int32,System.Int32,System.Int32,System.Int32,System.Double)">
+            <summary>
+            Simulated Binary Crossover (SBX). Recombination and Mutation. REAL VALUED
+            Performed on xBestPopulation . Creates new xTestPopulation
+            </summary>
+            <param name="parents">array with pairs of parents</param>
+            <param name="offspring">amount of offspring to be generated</param>
+            <param name="mu">distribution index for crossover</param>
+            <param name="mum">distribution index for mutation</param>
+            <param name="Pcrossover">probability for crossover [0,1]. 1-P(crossover) is probability of mutation.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_PerturbGaussWithDiminishingProbs_old(System.Double[],System.Double,System.Double,System.Double,System.Int32,System.Double)">
+            <summary>
+            Perturbation of variables with gaussian distribution. 1st variable (chosen by random, uniform) has p=1.
+            All further variables have p defined by input for this operator psigma and pconstant.
+            </summary>
+            <param name="xbase"></param>
+            <param name="sigmarange"></param>
+            <param name="T"></param>
+            <param name="T0"></param>
+            <param name="psigmamode">select a mode for how the probabiltiy of further variables being moved change. available: 0 = all the same p1plus; 1 = decreasing p(i)=p1plus^i</param>
+            <param name="p1plus">probability of 2nd (and ohter?) variables being moved as well [0,1]</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M__BinCrossover_old(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Single Point Crossover of Bitstrings.
+            </summary>
+            <param name="xpar1"></param>
+            <param name="xpar2"></param>
+            <param name="ub"></param>
+            <param name="lb"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_Rosenbrock_old(System.Boolean[]@,System.Boolean[]@,System.Int32@,System.Int32@,System.Double[]@,System.Double[][]@,System.Double,System.Double)">
+            <summary>
+            Rosenbrock moves.
+            </summary>
+            <param name="flag_fail"></param>
+            <param name="flag_success"></param>
+            <param name="flags_sum"></param>
+            <param name="flag_currentDirection"></param>
+            <param name="xOrigin"></param>
+            <param name="vMoves"></param>
+            <param name="alpha"></param>
+            <param name="beta"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_NelderMeadSimplex_old(System.Double,System.Double)">
+            <summary>
+            Nelder Mead Simplex Moves (reflect, extend, contract, shrink,...)
+            Includes evaluation of tests....
+            </summary>
+            <param name="alpha">expansion factor</param>
+            <param name="beta">contraction factor</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_PSO_1step_old(System.Double[][]@,System.Double[][]@,System.Double[]@,System.Double,System.Double,System.Double,System.Int32@,System.Int32@)">
+            <summary>
+            
+            </summary>
+            <param name="PopVelocities"></param>
+            <param name="PopOwnBestLocation"></param>
+            <param name="PopOwnBestValue"></param>
+            <param name="c1"></param>
+            <param name="c2"></param>
+            <param name="speedLimit"></param>
+            <param name="currParticle"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_MutationPohlheim_old(System.Int32[],System.Double,System.Int32)">
+            <summary>
+            Mutation of real numbers.
+            <para/>working on xBestPopulation.
+            <para/>Pohlheim (1999). Evolutionäre Algorithmen.
+            </summary>
+            <param name="x2mutate">indices of xBestPopulation to be mutated</param>
+            <param name="r">mutation range. r∈[0,1]. 0.1 means 10% of the variable domain.</param>
+            <param name="k">mutation precision. Higher number means less spread.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.M_InterRecomb_old(System.Int32[][],System.Double)">
+            <summary>
+            Intermediate Recombiation.
+            <para/>Creates from each parents pair 1 offspring. New variables constructed on a (extended) hypercube between parents variables.
+            <para/>working on xBestPopulation.
+            </summary>
+            <param name="parents">pair of parents. indicating index in the Population array.</param>
+            <param name="d">if d>0, then hypercube is extended. if d=0 then hypercube not extended.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.E_evalauteTestPopulation">
+            <summary>
+            Evaluates all x'i, which have flag=true
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.E_evaluateTest">
+            <summary>
+            Evaluate f(x) of one solution candidate in solver.xTest.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.E_evaluateTestPopulation_old">
+            <summary>
+            Evaluate f(x) for all solution candidates in solver.xTestPopulation.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.C_GlobalBest">
+            <summary>
+            Get the global best from x(t), x'(t) and xbest.
+            Save as xBest and objvalBest.
+            And as xPopulationBest[0] and objvalPopulationBest[0].
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.C_BestSolutionOfTrajectory(System.Nullable{System.Int32})">
+            <summary>
+            Update the Archive of best solutions. Replace with one from X', if its better than in Xarchive
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.C_BestOfTestPopulation">
+            <summary>
+            returns single best of a population
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.C_ArchiveOfBest(System.Int32,System.Boolean)">
+            <summary>
+            Archive of current best population. X and F(X)
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.C_archive_Elite(System.Double,System.Double)">
+            <summary>
+            Storing the best
+            </summary>
+            <param name="objvalElite"></param>
+            <param name="objvalTest"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_FINALIZE">
+            <summary>
+            Populate x(t+1) with all selected from x'. Purges all temporary variables.
+            ALWAYS called, ALWAYS at the end of S-operator
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_Tournament(System.Int32)">
+            <summary>
+            Tournament (environment) selection. 
+            Two uniform-randomly selected solutions from x' compete with each other.
+            The one with lower f(x') will be selected for x(t+1), and removed from the tournament for the next round. Hence, it can't be selected twice.
+            If ToBeSelected has the same size as x', then you don't need to run a tournament.
+            </summary>
+            <param name="nToBeSelected">Amount of solutions to be moved to x(t+1)</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_Roulette(System.Int32)">
+            <summary>
+            Roulette (environment) selection.
+            Fitness proportional. Roulette wheel spinned ToBeSelected-times. Winner removed from wheel for next spin.
+            Only those x'i, which are not yet selected, can participate in the roulette wheel selection.
+            </summary>
+            <param name="nToBeSelected">Amount of solutions to be moved to x(t+1)</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_SimAnn(System.Int32,System.Int32,System.Double,System.Double,System.Int32@,System.Int32@)">
+            <summary>
+            Simulated Annealing Acceptance probability. 
+            If f(x')i smaller f(x)i, take x'i, else, only take with p(exp(-(f(x')-f(x)) * k / T)
+            </summary>
+            <param name="xTestIndex">Index of x'(t) within xpopulationtest, which will be used for x(t+1)</param>
+            <param name="xIndex">Index of x within xpopulation x(t), which can be replaced by x'</param>
+            <param name="T">Temperature parameter</param>
+            <param name="k">factor to multiply f(x') - f(x) with.</param>
+            <param name="cnt_successNow">successfull moves counter</param>
+            <param name="cnt_totalNow">total moves counter</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_AcceptAlways(System.Int32)">
+            <summary>
+            every move x(t')i is accepted and put to x(t+1)i. 
+            only one solution per iteration.
+            </summary>
+            <param name="xTestIndex">Index of x'(t) within xpopulationtest, which will be used for x(t+1)</param>
+            <param name="xIndex">Index of x within xpopulation x(t) and x(t+1), which will be replaced by x'</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_AcceptEntireTestPop">
+            <summary>
+            Accepting entire X'
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_AcceptBetter(System.Int32,System.Int32)">
+            <summary>
+            Only accept, if x'i is better compared to a x(t)i
+            </summary>
+            <param name="xTestIndex">Index i in x'.</param>
+            <param name="xIndex">Index i in x(t).</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_AccepptMuBest(System.Int32)">
+            <summary>
+            Only select best Mu of x'. 
+            Ignores, if a x'i is already flagged for selection. I.e. true stays true.
+            Basically (Mu+Lambda)-ES, if M_CopyXtoXTest is performed before.
+            </summary>
+            <param name="Mu">Number of solutions to be selected</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MIGR_SimAnnPop(System.Int32,System.Double,System.Double,System.Int32@,System.Int32@)">
+            <summary>
+            Simulated Annealing Acceptance probability. 
+            If f(x')i smaller f(x)i, take x'i, else, only take with p(exp(-(f(x')-f(x)) * k / T)
+            </summary>
+            <param name="xTestIndex">Index of x'(t) within xpopulationtest, which will be used for x(t+1)</param>
+            <param name="xIndex">Index of x within xpopulation x(t), which can be replaced by x'</param>
+            <param name="T">Temperature parameter</param>
+            <param name="k">factor to multiply f(x') - f(x) with.</param>
+            <param name="cnt_successNow">successfull moves counter</param>
+            <param name="cnt_totalNow">total moves counter</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MOVE_AcceptIncrementalIndex(System.Int32@,System.Int32)">
+            <summary>
+            Incremental selection in every t.
+            </summary>
+            <param name="iNow">current index, which will be selected, and incremented</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MOVE_TournamentRecomb(System.Int32)">
+            <summary>
+            Tournament selection for Recombination.
+            </summary>
+            <param name="pairs">amount of pairs</param>
+            <returns>List of integers pairs, indicating index of x(t) for recombination to create x'.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MOVE_RouletteRecomb(System.Int32)">
+            <summary>
+            Roulette Wheel selection for Recombination.
+            Fitness proportional selection. High quality solutions have high probability to be selected multiple times.
+            </summary>
+            <param name="pairs">Amount of pairs</param>
+            <returns>List of integers pairs, indicating index of x(t) for recombination to create x'.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MOVE_SUSRecomb(System.Int32)">
+            <summary>
+            Stochastic Universal Sampling selection for Recombination.
+            Fitness proportional selection. High quality solutions have high probability to be selected multiple times.
+            </summary>
+            <param name="pairs">Amount of pairs</param>
+            <returns>List of integers pairs, indicating index of x(t) for recombination to create x'.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MOVE_TournamentMutate(System.Int32)">
+            <summary>
+            Tournament selection for mutation. 
+            Two uniform-randomly selected solutions from x(t) compete with each other.
+            The one with lower f(x) will be selected for mutation operators creating x'.
+            </summary>
+            <param name="mutants">Amount of solutions to be chosen for x'</param>
+            <returns>Integer array, indicating indices of x(t) subject to be mutated to create x'</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MOVE_RouletteMutate(System.Int32)">
+            <summary>
+            Roulette Wheel selection for mutation.
+            Fitness proportional selection. High quality solutions have high probability to be selected multiple times.
+            </summary>
+            <param name="mutants">Amount of solutions to be chosen for x'</param>
+            <returns>Integer array, indicating indices of x(t) subject to be mutated to create x'</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_MOVE_SUSMutate(System.Int32)">
+            <summary>
+            Stochastic Universal Sampling selection for mutation.
+            Fitness proportional selection. High quality solutions have high probability to be selected multiple times.
+            </summary>
+            <param name="mutants">Amount of solutions to be chosen for x'</param>
+            <returns>Integer array, indicating indices of x(t) subject to be mutated to create x'</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_SimAnn_old(System.Int32,System.Int32,System.Double,System.Double)">
+            <summary>
+            Simulated Annealing Acceptance probability. 
+            If f(x')i smaller f(x)i, take x'i, else, only take with p(exp(-(f(x')-f(x)) * k / T)
+            </summary>
+            <param name="xTestIndex">Index of x'(t) within xpopulationtest, which will be used for x(t+1)</param>
+            <param name="xIndex">Index of x within xpopulation x(t), which can be replaced by x'</param>
+            <param name="T">Temperature parameter</param>
+            <param name="k">factor to multiply f(x') - f(x) with.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_AcceptAlways_old(System.Int32,System.Int32)">
+            <summary>
+            every move x(t')i is accepted and put to x(t+1)i. 
+            only one solution per iteration.
+            </summary>
+            <param name="xTestIndex">Index of x'(t) within xpopulationtest, which will be used for x(t+1)</param>
+            <param name="xIndex">Index of x within xpopulation x(t) and x(t+1), which will be replaced by x'</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_AcceptBetter_old(System.Int32,System.Int32)">
+            <summary>
+            Accept x'(t)i only if better then x(t)i
+            </summary>
+            <param name="xTestIndex">Index of x'(t) within xpopulationtest, which will be used for x(t+1)</param>
+            <param name="xIndex">Index of x within xpopulation x(t) and x(t+1), which will be replaced by x'</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_SortXTestAndAccepptMuBest_old(System.Int32)">
+            <summary>
+            Sort x' and delete worst, so x' has popsize. Copy all x' into x(t+1). 
+            Basically (Mu+Lambda)-ES.
+            </summary>
+            <param name="Mu">Population Size of x(t+1)</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_SimAnn_old(System.Double)">
+            <summary>
+            Simulated Annealing selection scheme, based on Metropolis-Hasting algorithm.
+            <para/>TO DO: normalize objective values... for delta Energy...
+            </summary>
+            <param name="objval">Objective value of current best solution.</param>
+            <param name="objvalTest">Objective value of new candidate solution.</param>
+            <param name="par_Temp">Temperature. Parameter to control likelihood for worse candidates to be selected.
+            The higher the temperature, the higher the chance for a worse solution to be selected.
+            Temperature is controled in a seperete cooling schedule operator.</param>
+            <returns></returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_BinTournSelPairs_old(System.Int32)">
+            <summary>
+            Binary Tournament Selection.
+            <para/>Creating pairs. 
+            </summary>
+            <param name="pairs">amount of pairs to be drawn</param>
+            <returns>pairs of parents, drawn from xBestPopulation</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.S_BinTournSel_old(System.Int32)">
+            <summary>
+            Binary Tournamet Selection.
+            </summary>
+            <param name="nSelect">amount of candidates to be selected</param>
+            <returns>indices of xBestPopulation</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.T_Convergence">
+            <summary>
+            Convergence of optimization
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.T_MaxClockTime">
+            <summary>
+            Max real clock time
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.T_MaxCPUTime">
+            <summary>
+            Max CPU Time
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.T_MaxFunctionCalls">
+            <summary>
+            Max Function Calls
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.T_MaxAlgoSpecificIter(System.Int32,System.Int32)">
+            <summary>
+            e.g. Generations (GA), or Temperature drops (SA)
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.T_ExpectedBest">
+            <summary>
+            Stop if a solution better than an expected best is found.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.ReStart">
+            <summary>
+            ReStart operator
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_Basic.AffineTransformation">
+            <summary>
+            Affine Transformation of the search domain with concentration to (local) optimum found in the previous run.
+            look up DIRECT modifications... can´t remember which paper was talking about it...
+            </summary>
+        </member>
+        <member name="P:MetaheuristicRepository.Operators.Oper_Basic.flagXNormalized">
+            <summary>
+            Flag to indicate wether we work in normalized variable space (true) or not (false)
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.E_MO_evaluateTest">
+            <summary>
+            Evaluate F(x) of one solution candidate in solver.xTest. returns multiple f(x) coz multi objective
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.E_MO_evaluateTestPopulation">
+            <summary>
+            Evaluate f(x) for all solution candidates in solver.xTestPopulation.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.S_MO_NonDominatedFront">
+            <summary>
+            returns this.Rank and sorts xTestPopulation, objvalsTestPop_MO
+            source: https://www.mathworks.com/matlabcentral/fileexchange/10429-nsga-ii--a-multi-objective-optimization-algorithm
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.S_MO_NonDomStrength">
+            <summary>
+            S(i)    = |{j|j∈Pt+Parchive∧i≻j}|
+            <para/>returns Strength for each individual in xTestPopulation 
+            <para/>i.e. number of individuals it dominates
+            <para/>requires base.Rank[] to be calculated already
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.S_MO_NonDomRawFitness">
+            <summary>
+            R(i)    = Sum(Sj) |j∈Pt+Parchive∧j≻i
+            <para/>returns RawFitness for each individual in xTestPopulation.
+            <para/>i.e. sum of S(j)
+            <para/>requires base.Rank and base.Strength
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.S_MO_KNNDensity(System.Int32)">
+            <summary>
+            D(i)    = 1 / (σk(i)+2)
+            <para/>Density, k-th nearest neighbour method (Silvermann 1986)
+            </summary>
+            <param name="k"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.S_MO_CrowdingDistance">
+            <summary>
+            returns this.CrowdingDist and sorts xTestPopulation and objvalsTestPop_MO
+            source: https://www.mathworks.com/matlabcentral/fileexchange/10429-nsga-ii--a-multi-objective-optimization-algorithm
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Operators.Oper_MO.S_MO_TournamentSelection(System.Int32,System.Int32)">
+            <summary>
+            performed on xBestPopulation and objvalsBestPopulation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_MO.SPEA2">
+            <summary>
+            SPEA2
+             <para/>Strength Pareto Evolutionary Algorithm 2.
+             <para/>Paper: Zitzler E. et al. (2001). SPEA2: Improving the Strength Pareto Evolutionary Algorithm. In: Evolutionary Methods for Design Optimization and Control with Applications to Industrial Problems 2001: 95-100.
+             <para/>Source code: http://yarpiz.com/74/ypea122-spea2
+             <para/>Description:
+            </summary>
+            <remarks>
+            ???
+            </remarks>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.CMAES">
+            <summary>
+             CMA-ES
+             <para/>Covariance Matrix Adaptation Evolutionary Strategy.
+             <para/>Paper: Hansen N. et al. (2003). Reducing the Time Complexity of the Derandomized Evolution Strategy with Covariance Matrix Adaptation (CMA-ES). In: Evolutionary Computation 11(1): 1-18.
+             <para/>Source code: https://www.lri.fr/~hansen/cmaes_inmatlab.html
+             <para/>Description:
+            </summary>
+            <remarks>
+            Complexity: O(d^2)
+            </remarks>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.PSO">
+            <summary>
+             PSO
+             <para/>Full name: Particle Swarm Optimization.
+             <para/>Paper: Kennedy J. and Eberhardt R. (1995). Particle Swarm Optimization. In: Proceedings of IEEE International Conference on Neural Networks, pp. 1942.1948.
+             <para/>Source code:
+             <para/>Description:
+            </summary>
+            <remarks>
+            Complexity: O(d)
+            </remarks>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.PSO.PSOInit">
+            <summary>
+            PSO initialisation. creating particles
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.SimulatedAnnealing">
+            <summary>
+            Simulated Annealing.
+            <para/>Kirkpatrick, Gelatt, Vecchi (1983). Optimization by Simulated Annealing.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.SimulatedAnnealing.#ctor(System.Int32,System.Double[],System.Double[],System.Func{System.Double[],System.Double},System.Int32)">
+            <summary>
+            Create new Simulated Annealing solver instance.
+            </summary>
+            <param name="_dvar">Number of decision variables.</param>
+            <param name="_lb">Lower bounds of variables.</param>
+            <param name="_ub">Upper bounds of variables.</param>
+            <param name="_evaluationFunction">Evaluation function.</param>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.DIRECT">
+            <summary>
+            DIRECT.
+            <para/>DIviding RECTangles algorithm.
+            <para/>Jones, Perttunen, Stuckman (1993). Lipschitzian Optimization Without the Lipschitz Constant.
+            <para/>Matlab code: http://www4.ncsu.edu/~ctk/Finkel_Direct/
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.DIRECT.DIRdivide(System.Int32)">
+            <summary>
+            Divides rectangle i that is passed in
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.DIRECT.DIRini">
+            <summary>
+            Initialization of Direct to eliminate storing floating numbers???...
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.DIRECT.find_po">
+            <summary>
+            Return list of PO hyperrectangles
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.DIRECT.calc_lbound(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Calculate the lbound used in determing potentially optimal hrectangles.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.DIRECT.calc_ubound(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Calculate the ubound used in determing potentially optimal hrectangles.
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.Rosenbrock">
+            <summary>
+            
+            <para/>Rosenbrock H.H. (1960). An Automatic Method for finding the Greatest or Least Value of a Function.
+            <para/>Palmer J.R. (1969). An improved procedure for orthogonalising the search vectors in Rosenbrock's and Swann's direct search optimisation methods.
+            <para/>Source code: Kniaz.net 
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Rosenbrock.#ctor(System.Int32,System.Double[],System.Double[],System.Func{System.Double[],System.Double},System.Int32,System.Double[])">
+            <summary>
+            Initialize Rosenbrock Search Algorithm.
+            </summary>
+            <param name="dvar">Number of decision variables.</param>
+            <param name="lb">Lower bounds of variables.</param>
+            <param name="ub">Upper bounds of variables.</param>
+            <param name="evaluationFunction">Evaluation function.</param>
+            <param name="settings">Settings structure.</param>
+            <param name="rndSeed">Seed for Random number generator. Only needed if no x0 is provided. Used as random start within the lower and upper bounds.</param>
+            <param name="x0">Initial start.</param>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.NelderMead">
+            <summary>
+             Nelder-Mead Simplex.
+             <para/>Nelder J.A. and Mead R. (1965). A Simplex method for function minimization.
+             <para/>Lagarias J.C., Reeds J.A., Wright M.H. and Wright P.E. (1998). Convergence Properties of the Nelder-Mead Simplex Method in Low Dimensions.
+             <para/>Source code: MATLAB 2014 fmnisearch.m
+             <para/>Description: Local hill-climber. Derivative-free direct search method. Constructs a n+1 simplex, whose vertices are reflected, expanded and contracted. 
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.NelderMead.#ctor(System.Int32,System.Double[],System.Double[],System.Func{System.Double[],System.Double},System.Int32,System.Double[])">
+            <summary>
+            Initialize Nelder-Mead Algorithm.
+            </summary>
+            <param name="dvar">Number of decision variables.</param>
+            <param name="lb">Lower bounds of variables.</param>
+            <param name="ub">Upper bounds of variables.</param>
+            <param name="evaluationFunction">Evaluation function.</param>
+            <param name="settings">Settings structure.</param>
+            <param name="rndSeed">Seed for Random number generator. Only needed if no x0 is provided. Used as random start within the lower and upper bounds.</param>
+            <param name="x0">Initial start.</param>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.NelderMead.NM_initialSimplex">
+            <summary>
+            returns xTestPopulation and objvalTestPopulation, sorted according to quality
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.Hybrid">
+            <summary>
+             HYBRID OPTIMIZER
+             <para/>Like an empty shell, or framework, which allows all kinds of operators to be used.
+             <para/>Take operators as arguments. because here you create a totally new, super duper hybrid optimizer
+             <para/>Full name:
+             <para/>Paper:
+             <para/>Source code:
+             <para/>Description:
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Hybrid.#ctor(System.Int32,System.Double[],System.Double[],System.Func{System.Double[],System.Double},System.Int32,MetaheuristicRepository.Solvers_SO.Hybrid.settings,System.Double[])">
+            <summary>
+            New Hybrid single objective solver. Composed of operators from other solvers.
+            </summary>
+            <param name="dvar"></param>
+            <param name="lb"></param>
+            <param name="ub"></param>
+            <param name="evaluationFunction"></param>
+            <param name="rndSeed"></param>
+            <param name="algorithm_settings"></param>
+            <param name="x0"></param>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Hybrid.initialize">
+            <summary>
+            Initilize x0.
+            It is always a List, but it could containt only one element
+            X0 is/are also already evaluated.
+            
+            Also includes initializing algorithm specific variables (like Temperature for SA, or particle velocities for PSO)
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Hybrid.move">
+            <summary>
+            Move x(t).
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Hybrid.evaluate">
+            <summary>
+            Evaluate xPopulationTest.
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Hybrid.collect">
+            <summary>
+            Collect solutions into the Archive.
+            E.g. xbest and objvalBest.
+            Or... xworst, or x100iterationsold...
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Hybrid.select">
+            <summary>
+            Choose solutions from xPopulationTest to go into x(t+1)
+            </summary>
+        </member>
+        <member name="M:MetaheuristicRepository.Solvers_SO.Hybrid.terminate">
+            <summary>
+            Terminate optimization. 
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.Solvers_SO.Hybrid.settings">
+            <summary>
+            Structure to set the operators, which will be used in this optimization algorithm.
+            Furthermore, define initial internal parameters for each operator.
+            For a list of possible operators (strings), refer to... some tutorial I still have to write.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._Initialization">
+            <summary>
+            Provide strings for initialization operators, which should be used in the optimization.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._Moving">
+            <summary>
+            Provide strings for move operators, which should be used in the optimization.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._Moving_stepsize">
+            <summary>
+            Provide strings for stepsize oeprators, required for move operators. 
+            Do it in the right order, i.e., the first Moving operator will be assigned the first Moving_stepsize operator.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._Evaluation">
+            <summary>
+            Provide strings for evaluation operators, which should be used in the optimization.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._Collection">
+            <summary>
+            Provide strings for collection operators, which should be used in the optimization.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._Selection">
+            <summary>
+            Provide strings for selection operators, which should be used in the optimization.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._Termination">
+            <summary>
+            Provide strings for termination operators, which should be used in the optimization.
+            </summary>
+        </member>
+        <member name="F:MetaheuristicRepository.Solvers_SO.Hybrid.settings._parameters_t0">
+            <summary>
+            Define internal parameters for all operators. 
+            Each chosen operator will be assigned its own list of double. So be sure, the length of this list matches the list of all chosen operators.
+            </summary>
+        </member>
+        <member name="T:MetaheuristicRepository.TestFunctions.SO">
+            <summary>
+             Repository of benchmark functions for single objective optimization.</summary>
+                <remarks> Types: 
+                <para/>- L: many local minima, 
+                <para/>- B: bowl shaped,
+                <para/>- P: plate shaped,
+                <para/>- V: valley shaped,
+                <para/>- S: steep ridges or drops,
+                <para/>- O: other.
+                <para/>(Web-)Sources:
+                <para/>http://www.sfu.ca/~ssurjano/optimization.html
+                <para/>https://en.wikipedia.org/wiki/Test_functions_for_optimization </remarks>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Ackley(System.Double[])">
+            <summary>
+            ACKLEY Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: The Ackley function is widely used for testing optimization algorithms. In its two-dimensional form, it is characterized by a nearly flat outer region, and a large hole at the centre. The function poses a risk for optimization algorithms, particularly hillclimbing algorithms, to be trapped in one of its many local minima.
+            </summary>
+            <param name="x">Decision variable vector. Usually: xi ∈ [-32.768, 32.768], or [-5, 5], for all i = 1, …, d.</param>
+            <param name="a">(optional) parameter. Default 20.</param>
+            <param name="b">(optional) parameter. Default 0.2.</param>
+            <param name="c">(optional) parameter. Default 2PI.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Bukin6(System.Double[])">
+            <summary>
+            BUKIN 6 Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: The sixth Bukin function has many local minima, all of which lie in a ridge. 
+            </summary>
+            <param name="x">Decision variable vector. Usually: x1 ∈ [-15, -5], x2 ∈ [-3, 3].</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (-10, 1).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_CrossInTray(System.Double[])">
+            <summary>
+            CrossInTray Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable vector. Usually: xi ∈ [-10, 10], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -2.06261, at x* = (1.3491, -1.3491), (1.3491, 1.3491), (-1.3491, 1.3491) and (-1.3491, -1.3491).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_DropWave(System.Double[])">
+            <summary>
+            DROP-WAVE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable vector. Usually: xi ∈ [-5.12, 5.12], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -1, at x* = (0, 0).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Eggholder(System.Double[])">
+            <summary>
+            EGGHOLDER Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable vector. Usually: xi ∈ [-512, 512], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*)= -959.6407, at x* = (512, 404.2319).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_GramacyLee(System.Double)">
+            <summary>
+            GRAMACY-LEE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 1.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: This is a simple one-dimensional test function. 
+            </summary>
+            <param name="x">Decision variable. Usually: x ∈ [0.5, 2.5]</param>
+            <returns>Objective function value f(x). Global minimum f(x*)= ?, at x* = ?</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Griewank(System.Double[])">
+            <summary>
+            GRIEWANK Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: The Griewank function has many widespread local minima, which are regularly distributed.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-600, 600], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_HolderTable(System.Double[])">
+            <summary>
+            HOLDER TABLE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: The Holder Table function has many local minima, with four global minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -19.2085, at x* = (8.05502, 9.66459), (8.05502, -9.66459), (-8.05502, 9.66459), (-8.05502, -9.66459).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Langermann(System.Double[])">
+            <summary>
+            LANGERMANN Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: The Langermann function is multimodal, with many unevenly distributed local minima.
+            <para/> Recommended values of m, c and A, are given by Molga &amp; Smutnicki (2005) for d = 2.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [0, 10], for all i = 1, …, d.</param>
+            <param name="m">(optional) parameter. Default 5 (for d = 2).</param> 
+            <param name="c">(optional) parameter. Default {1, 2, 5, 2, 3} (for d = 2).</param>
+            <param name="A">(optional> parameter. Default A[5][2] = {3,5},{5,2},{2,1},{1,4},{7,9} (for d = 2).</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = ?, at x* = ?</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Levy(System.Double[])">
+            <summary>
+            LEVY Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], for all i = 1, …, d. </param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, ..., 1).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Levy13(System.Double[])">
+            <summary>
+            LEVY 13 Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], for all i = 1, 2. </param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, 1).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Rastrigin(System.Double[])">
+            <summary>
+            RASTRIGIN Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: The Rastrigin function has several local minima. It is highly multimodal, but locations of the minima are regularly distributed.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5.12, 5.12], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Schaffer2(System.Double[])">
+            <summary>
+            SCHAFFER N.2 Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-100, 100], for all i = 1, 2. </param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, 0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Schaffer4(System.Double[])">
+            <summary>
+            SCHAFFER N.4 Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-100, 100], for all i = 1, 2. </param>
+            <returns>Objective function value f(x). Global minimum f(x*) = ?, at x* = ?</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Schwefel(System.Double[])">
+            <summary>
+            SCHWEFEL Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-500, 500], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (420.9687, ..., 420.9687).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.L_Shubert(System.Double[])">
+            <summary>
+            SHUBERT Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Many local minima.
+            <para/> Description: The Shubert function has several local minima and many global minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], or [-5.12, 5.12], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -186.7309, at x* = ?</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_Bohachevsky1(System.Double[])">
+            <summary>
+            BOHACHEVSKY N.1 Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0. 
+            <para/> Type: Bowl-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-100, 100], for all i = 1, 2. </param>
+            <returns>Objective function value f(x). Global minimum f(x*)=0, at x*=(0,0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_Bohachevsky2(System.Double[])">
+            <summary>
+            BOHACHEVSKY N.2 Function.
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0. 
+            <para/> Type: Bowl-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-100, 100], for all i = 1, 2. </param>
+            <returns>Objective function value f(x). Global minimum f(x*)=0, at x*=(0,0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_Bohachevsky3(System.Double[])">
+            <summary>
+            BOHACHEVSKY N.3 Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Type: Bowl-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-100, 100], for all i = 1, 2. </param>
+            <returns>Objective function value f(x). Global minimum f(x*)=0, at x*=(0,0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_Perm0db(System.Double[])">
+            <summary>
+            PERM 0,D,BETA Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Bowl-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-d, d], for all i = 1, …, d.</param>
+            <param name="b">(optional) parameter. Default 10.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, 1/2, ..., 1/d).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_RotHypEll(System.Double[])">
+            <summary>
+            ROTATED HYPER-ELLIPSOID Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Bowl-shaped.
+            <para/> Description: The Rotated Hyper-Ellipsoid function is continuous, convex and unimodal. It is an extension of the Axis Parallel Hyper-Ellipsoid function, also referred to as the Sum Squares function.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-65.536, 65.536], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0)</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_Sphere(System.Double[])">
+            <summary>
+            SPHERE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Bowl-shaped.
+            <para/> Description: The Sphere function has d local minima except for the global one. It is continuous, convex and unimodal.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5.12, 5.12], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0)</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_SphereMod(System.Double[])">
+            <summary>
+            SPHERE Modified Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Bowl-shaped.
+            <para/> Description: The Sphere function has d local minima except for the global one. It is continuous, convex and unimodal.
+            <para/> This modified function has a mean of zero and a variance of one. The authors also add a small Gaussian error term to the output. 
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5.12, 5.12], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0)</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_SumDiffPow(System.Double[])">
+            <summary>
+            SUM OF DIFFERENT POWERS Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Bowl-shaped.
+            <para/> Description: The Sum of Different Powers function is unimodal.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-1, 1], for all i = 1, …, d. </param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0)</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_SumSquares(System.Double[])">
+            <summary>
+            SUM SQUARES Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Bowl-shaped.
+            <para/> Description: The Sum Squares function, also referred to as the Axis Parallel Hyper-Ellipsoid function, has no local minimum except the global one. It is continuous, convex and unimodal.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], or [-5.12, 5.12] for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0)</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.B_Trid(System.Double[])">
+            <summary>
+            TRID Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Bowl-shaped.
+            <para/> Description: The Trid function has no local minimum except the global one.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-d^2, d^2], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum at d = 6: f(x*) = -50; at d = 10: f(x*) = -200.</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.P_Booth(System.Double[])">
+            <summary>
+            BOOTH Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Plate-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, 3).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.P_Matyas(System.Double[])">
+            <summary>
+            MATYAS Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Plate-shaped.
+            <para/> Description: The Matyas function has no local minima except the global one. 
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, 0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.P_McCormick(System.Double[])">
+            <summary>
+            MCCORMICK Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Plate-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: x1 ∈ [-1.5, 4], x2 ∈ [-3, 4].</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -1.9133, at x* = (-0.54719, -1.54719).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.P_PowerSum(System.Double[])">
+            <summary>
+            POWER SUM Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Plate-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [0, d], for all i = 1, …, d.</param>
+            <param name="b">(optional) parameter. Default {8, 18, 44, 114} (for d = 4).</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = ?, at x* = ?</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.P_Zakharov(System.Double[])">
+            <summary>
+            ZAKHAROV Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Plate-shaped.
+            <para/> Description: The Zakharov function has no local minima except the global one.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5, 10], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.V_Camel3Hump(System.Double[])">
+            <summary>
+            THREE HUMP CAMEL Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Valley-shaped.
+            <para/> Description: The function has three local minima. 
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5, 5], for all i = 1, 2. </param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, 0).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.V_Camel6Hump(System.Double[])">
+            <summary>
+            SIX HUMP CAMEL Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Valley-shaped.
+            <para/> Description: The function has six local minima, two of which are global. 
+            </summary>
+            <param name="x">Decision variable. Usually: x1 ∈ [-3, 3], x2 ∈ [-2, 2].</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -1.0316, at x* = (0.0898, -0.7126) and (-0.0898, 0.7126).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.V_DixonPrice(System.Double[])">
+            <summary>
+            DIXON PRICE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Valley-shaped.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = 2^-((2^i - 2) / 2^i ), for i = 1, ..., d.</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.V_Rosenbrock(System.Double[])">
+            <summary>
+            ROSENBROCK Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Valley-shaped.
+            <para/> Description: The Rosenbrock function, also referred to as the Valley or Banana function, is a popular test problem for gradient-based optimization algorithms. The function is unimodal, and the global minimum lies in a narrow, parabolic valley. However, even though this valley is easy to find, convergence to the minimum is difficult (Picheny et al., 2012). 
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5, 10], or [-2.048, 2.048], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, ..., 1).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.V_RosenbrockRescaled(System.Double[])">
+            <summary>
+            ROSENBROCK Rescaled Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Valley-shaped.
+            <para/> Description: The Rosenbrock function, also referred to as the Valley or Banana function, is a popular test problem for gradient-based optimization algorithms. The function is unimodal, and the global minimum lies in a narrow, parabolic valley. However, even though this valley is easy to find, convergence to the minimum is difficult (Picheny et al., 2012). 
+            <para/> Rescaled form of the function, with d = 4, on [0, 1]^2. This rescaled form of the function has a mean of zero and a variance of one. The authors also add a small Gaussian error term to the output
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5, 10], or [-2.048, 2.048], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, ..., 1).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.S_DeJong5(System.Double[])">
+            <summary>
+            DE JONG N.5 Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The fifth function of De Jong is multimodal, with very sharp drops on a mainly flat surface.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-65.536, 65.536], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = ?, at x* = ?.</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.S_Easom(System.Double[])">
+            <summary>
+            EASOM Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Easom function has several local minima. It is unimodal, and the global minimum has a small area relative to the search space.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-100, 100], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -1, at x* = (Pi, Pi).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.S_Michalewicz(System.Double[])">
+            <summary>
+            MICHALEWICZ Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Michalewicz function has d! local minima, and it is multimodal. The parameter m defines the steepness of they valleys and ridges; a larger m leads to a more difficult search.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [0, π], for all i = 1, …, d.</param>
+            <param name="m">(optional) parameter. Default m = 10.</param>
+            <returns>Objective function value f(x). Global minimum at:  
+            <para/>d = 2: f(x*) = -1.8011, at x* = (2.20, 1.57),
+            <para/>d = 5: f(x*) = -4.687658,
+            <para/>d = 10: f(x*)=-9.66015.</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Beale(System.Double[])">
+            <summary>
+            BEALE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Beale function is multimodal, with sharp peaks at the corners of the input domain.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-4.5, 4.5], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (3, 0.5).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Branin(System.Double[])">
+            <summary>
+            BRANIN Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Branin, or Branin-Hoo, function has three global minima.
+            </summary>
+            <param name="x">Decision variable. Usually: x1 ∈ [-5, 10], x2 ∈ [0, 15].</param>
+            <param name="_a">(optional) parameter. Default a = 1</param>
+            <param name="_b">(optional) parameter. Default b = 5.1 ⁄ (4π2)</param>
+            <param name="_c">(optional) parameter. Default c = 5 ⁄ π</param>
+            <param name="_r">(optional) parameter. Default r = 6</param>
+            <param name="_s">(optional) parameter. Default s = 10</param>
+            <param name="_t">(optional) parameter. Default t = 1 ⁄ (8π)</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0.397887, at x* = (-Pi, 12.275), (Pi, 2.275) and (9.42478, 2.475).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_BraninScaled(System.Double[])">
+            <summary>
+            BRANIN Scaled Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Branin, or Branin-Hoo, function has three global minima.
+            <para/> This rescaled form of the function has a mean of zero and a variance of one. The authors also add a small Gaussian error term to the output. 
+            </summary>
+            <param name="x">Decision variable. Usually: x1 ∈ [-5, 10], x2 ∈ [0, 15].</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0.397887, at x* = (-Pi, 12.275), (Pi, 2.275) and (9.42478, 2.475).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_BraninModified(System.Double[])">
+            <summary>
+            BRANIN Modified Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Branin, or Branin-Hoo, function has three global minima.
+            <para/> For the purpose of Kriging prediction, Forrester et al. (2008) use a modified form of the Branin-Hoo function, in which they add a term 5x1 to the response. As a result, there are two local minima and only one global minimum, making it more representative of engineering functions. 
+            </summary>
+            <param name="x">Decision variable. Usually: x1 ∈ [-5, 10], x2 ∈ [0, 15].</param>
+            <param name="_a">(optional) parameter. Default a = 1</param>
+            <param name="_b">(optional) parameter. Default b = 5.1 ⁄ (4π2)</param>
+            <param name="_c">(optional) parameter. Default c = 5 ⁄ π</param>
+            <param name="_r">(optional) parameter. Default r = 6</param>
+            <param name="_s">(optional) parameter. Default s = 10</param>
+            <param name="_t">(optional) parameter. Default t = 1 ⁄ (8π)</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0.397887, at x* = (-Pi, 12.275), (Pi, 2.275) and (9.42478, 2.475).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Colville(System.Double[])">
+            <summary>
+            COLVILLE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 4.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-10, 10], for all i = 1, 2, 3, 4.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, 1, 1, 1).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Forrester(System.Double[])">
+            <summary>
+            FORRESTER Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 1.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: This function is a simple one-dimensional test function. It is multimodal, with one global minimum, one local minimum and a zero-gradient inflection point. 
+            </summary>
+            <param name="x">Decision variable. Usually: x ∈ [0, 1].</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = ?, at x* = ?.</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_ForresterLowFidelity(System.Double[])">
+            <summary>
+            FORRESTER Low Fidelity Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 1.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: This function is a simple one-dimensional test function. It is multimodal, with one global minimum, one local minimum and a zero-gradient inflection point. 
+            <para/> Here, the constants A, B and C can be varied to improve the fidelity of the low-fidelity function.
+            </summary>
+            <param name="x">Decision variable. Usually: x ∈ [0, 1].</param>
+            <param name="A">(optional) parameter. Default A = 0.5.</param>
+            <param name="B">(optional) parameter. Default B = 10.</param>
+            <param name="C">(optional) parameter. Default C = -5.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = ?, at x* = ?.</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_GoldsteinPrice(System.Double[])">
+            <summary>
+            GOLDSTEIN-PRICE Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.        
+            <para/> Description: The Goldstein-Price function has several local minima. 
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-2, 2], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 3, at x* = (0, -1).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_GoldsteinPriceScaled(System.Double[])">
+            <summary>
+            GOLDSTEIN-PRICE Scaled Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Goldstein-Price function has several local minima. 
+            <para/> This rescaled logarithmic form of the function has a mean of zero and a variance of one. The authors also add a small Gaussian error term to the output.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-2, 2], for all i = 1, 2.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 3, at x* = (0, -1).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Hartmann3D(System.Double[])">
+            <summary>
+            HARTMANN 3D Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 3.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The 3-dimensional Hartmann function has 4 local minima. 
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ (0, 1), for all i = 1, 2, 3.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -3.86278, at x* = (0.114614, 0.555649, 0.852547).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Hartmann4D(System.Double[])">
+            <summary>
+            HARTMANN 4D Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 4.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The 4-dimensional Hartmann function is multimodal. It is given here in the form of Picheny et al. (2012), having a mean of zero and a variance of one. The authors also add a small Gaussian error term to the output.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [0, 1], for all i = 1, 2, 3, 4.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = ?, at x* = ?.</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Hartmann6D(System.Double[])">
+            <summary>
+            HARTMANN 6D Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 6.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> The 6-dimensional Hartmann function has 6 local minima. 
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ (0, 1), for all i = 1, …, 6.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -3.32237, at x* = (0.20169, 0.150011, 0.476874, 0.275332, 0.6573).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Hartmann6DScaled(System.Double[])">
+            <summary>
+            HARTMANN 6D Scaled Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 6.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> The 6-dimensional Hartmann function has 6 local minima. 
+            <para/> This rescaled form of the function has a mean of zero and a variance of one. The authors also add a small Gaussian error term to the output.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ (0, 1), for all i = 1, …, 6.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -3.32237, at x* = (0.20169, 0.150011, 0.476874, 0.275332, 0.6573).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_PermDB(System.Double[])">
+            <summary>
+            PERM D BETA Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-d, d], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (1, 2, ..., d).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Powell(System.Double[])">
+            <summary>
+            POWELL Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-4, 5], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = 0, at x* = (0, ..., 0)</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_Shekel(System.Double[])">
+            <summary>
+            SHEKEL Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: 4.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            <para/> Description: The Shekel function has m=10 local minima.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [0, 10], for all i = 1, 2, 3, 4.</param>
+            <returns>Objective function value f(x). Global minimum at
+            <para/>m = 5: f(x*) = -10.1532, at x* = (4, 4, 4, 4),
+            <para/>m = 7: f(x*) = -10.4029, at x* = (4, 4, 4, 4),
+            <para/>m = 10: f(x*) = -10.5364, at x* = (4, 4, 4, 4).</returns> 
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.SO.O_StyblinskiTang(System.Double[])">
+            <summary>
+            STYBLINSKI-TANG Function. 
+            <para/> Objectives: 1.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.        
+            <para/> Type: Steep ridges or drops.
+            </summary>
+            <param name="x">Decision variable. Usually: xi ∈ [-5, 5], for all i = 1, …, d.</param>
+            <returns>Objective function value f(x). Global minimum f(x*) = -39.16599d, at x* = (-2.903534, ..., -2.903534).</returns> 
+        </member>
+        <member name="T:MetaheuristicRepository.TestFunctions.MO">
+            <summary>
+             Repository of benchmark functions for multi objective optimization.</summary>
+                <remarks> Types:
+                <para/>- MO2: 2 objectives,
+                <para/>- MO3: 3 obejctives,
+                <para/>- MOM: arbitrary number of objectives, 
+                <para/>- MOC: functions with constraints.
+                <para/>(Web-)Sources:
+                <para/>http://www.tik.ee.ethz.ch/sop/pisa/?page=selvar.php
+                <para/>https://en.wikipedia.org/wiki/Test_functions_for_optimization 
+                <para/>Zizler, Deb, Thiele (2000). Comparison of Multiobjective Evolutionary Algorithms: Empirical Results.
+                <para/>Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.</remarks>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_FonsecaFleming(System.Double[])">
+            <summary>
+            FONSECA-FLEMING Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: ∞.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [-4, 4], for i = 1, …, n.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_Kursawe(System.Double[])">
+            <summary>
+            KURSAWE Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: ∞ (usually 3).
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> In H. P. Schwefel and R. Männer, editors, Parallel Problem Solving from Nature. 1st Workshop, PPSN I, volume 496 of Lecture Notes in Computer Science, pages 193-197, Berlin, Germany, oct 1991. Springer-Verlag. 
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [-5, 5], for i = 1, …, n.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_Schaffer1(System.Double)">
+            <summary>
+            SCHAFFER N.1 Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: 1.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            </summary>
+            <param name="x">Decision variable vector. x ∈ [-A, A]. Values of A form 10 to 10^{5} have been used successfully. Higher values of A increase the difficulty of the problem</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_Schaffer2(System.Double)">
+            <summary>
+            SCHAFFER N.2 Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: 1.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            </summary>
+            <param name="x">Decision variable vector. x ∈ [-5, 10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_Poloni(System.Double[])">
+            <summary>
+            POLONI Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [-π, π], i = 1, 2.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_ZDT1(System.Double[])">
+            <summary>
+            ZITZLER-DEB-THIELE N.1 Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: ∞ (usually 30).
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Zizler, Deb, Thiele (2000). Comparison of Multiobjective Evolutionary Algorithms: Empirical Results.
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [0, 1], i = 1, ..., n.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_ZDT2(System.Double[])">
+            <summary>
+            ZITZLER-DEB-THIELE N.2 Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: ∞ (usually 30).
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Zizler, Deb, Thiele (2000). Comparison of Multiobjective Evolutionary Algorithms: Empirical Results.
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [0, 1], i = 1, ..., n.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_ZDT3(System.Double[])">
+            <summary>
+            ZITZLER-DEB-THIELE N.3 Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: ∞ (usually 30).
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Zizler, Deb, Thiele (2000). Comparison of Multiobjective Evolutionary Algorithms: Empirical Results.
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [0, 1], i = 1, ..., n.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_ZDT4(System.Double[])">
+            <summary>
+            ZITZLER-DEB-THIELE N.4 Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: ∞ (usually 10).
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Zizler, Deb, Thiele (2000). Comparison of Multiobjective Evolutionary Algorithms: Empirical Results.
+            </summary>
+            <param name="x">Decision variable vector. x1 ∈ [0, 1], xi ∈ [-5, 5], i = 2, ..., n.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2_ZDT6(System.Double[])">
+            <summary>
+            ZITZLER-DEB-THIELE N.6 Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: ∞ (usually 10).
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Zizler, Deb, Thiele (2000). Comparison of Multiobjective Evolutionary Algorithms: Empirical Results.
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [0, 1], i = 1, ..., n.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO3_Viennet(System.Double[])">
+            <summary>
+            VIENNET Function. 
+            <para/> Objectives: 3.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            </summary>
+            <param name="x">Decision variable vector. xi ∈ [-3, 3], i = 1, 2.</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MOM_DTLZ1(System.Double[],System.Int32)">
+            <summary>
+            DEB-THIELE-LAUMANNS-ZITZLER N.1 Function. 
+            <para/> Objectives: M ϵ [2,10].
+            <para/> Real variables: ∞. k = 5 suggested. (k = n - M + 1), where n is number of variables.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.
+            </summary>
+            <param name="x">Decision variable vector. xi, i = 1, ..., n.</param>
+            <param name="M">Number of Objectives. M ϵ [2,10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MOM_DTLZ2(System.Double[],System.Int32)">
+            <summary>
+            DEB-THIELE-LAUMANNS-ZITZLER N.2 Function. 
+            <para/> Objectives: M ϵ [2,10].
+            <para/> Real variables: ∞. k = 10 suggested. (k = n - M + 1), where n is number of variables.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.
+            </summary>
+            <param name="x">Decision variable vector. xi, i = 1, ..., n.</param>
+            <param name="M">Number of Objectives. M ϵ [2,10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MOM_DTLZ3(System.Double[],System.Int32)">
+            <summary>
+            DEB-THIELE-LAUMANNS-ZITZLER N.3 Function. 
+            <para/> Objectives: M ϵ [2,10].
+            <para/> Real variables: ∞. k = 10 suggested. (k = n - M + 1), where n is number of variables.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.
+            </summary>
+            <param name="x">Decision variable vector. xi, i = 1, ..., n.</param>
+            <param name="M">Number of Objectives. M ϵ [2,10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MOM_DTLZ4(System.Double[],System.Int32,System.Double)">
+            <summary>
+            DEB-THIELE-LAUMANNS-ZITZLER N.4 Function. 
+            <para/> Objectives: M ϵ [2,10].
+            <para/> Real variables: ∞. k = 10 suggested. (k = n - M + 1), where n is number of variables.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.
+            </summary>
+            <param name="x">Decision variable vector. xi, i = 1, ..., n.</param>
+            <param name="M">Number of Objectives. M ϵ [2,10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MOM_DTLZ5(System.Double[],System.Int32)">
+            <summary>
+            DEB-THIELE-LAUMANNS-ZITZLER N.5 Function. 
+            <para/> Objectives: M ϵ [2,10].
+            <para/> Real variables: ∞. k = 10 suggested. (k = n - M + 1), where n is number of variables.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.
+            </summary>
+            <param name="x">Decision variable vector. xi, i = 1, ..., n.</param>
+            <param name="M">Number of Objectives. M ϵ [2,10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MOM_DTLZ6(System.Double[],System.Int32)">
+            <summary>
+            DEB-THIELE-LAUMANNS-ZITZLER N.6 Function. 
+            <para/> Objectives: M ϵ [2,10].
+            <para/> Real variables: ∞. k = 10 suggested. (k = n - M + 1), where n is number of variables.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.
+            </summary>
+            <param name="x">Decision variable vector. xi, i = 1, ..., n.</param>
+            <param name="M">Number of Objectives. M ϵ [2,10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MOM_DTLZ7(System.Double[],System.Int32)">
+            <summary>
+            DEB-THIELE-LAUMANNS-ZITZLER N.7 Function. 
+            <para/> Objectives: M ϵ [2,10].
+            <para/> Real variables: ∞. k = 20 suggested. (k = n - M + 1), where n is number of variables.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 0.
+            <para/> Source: Deb, Thiele, Laumanns, Zitzler (2001). Scalable Test Problems for Evolutionary Multi-Objective Optimization.
+            </summary>
+            <param name="x">Decision variable vector. xi, i = 1, ..., n.</param>
+            <param name="M">Number of Objectives. M ϵ [2,10].</param>
+            <returns>Objective function values f(x).</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2C_BinhKorn(System.Double[])">
+            <summary>
+            BINH-KORN Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 2.
+            </summary>
+            <param name="x">Decision variable vector. x1 ϵ [0, 5], x2 ϵ [0, 3].</param>
+            <returns>[0][]: Objective function values f(x).
+            <para/>[1][]: Constraints violation. Negative value means constraint is violated. 0-value accepted, if smaller/greater-equals constraint, otherwise 0 also indicates violation.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2C_OsyczkaKundu(System.Double[])">
+            <summary>
+            OSYCZKA-KUNDU Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: 6.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 6.
+            </summary>
+            <param name="x">Decision variable vector. x1, x2, x6 ϵ [0, 10], x3, x5 ϵ [1, 5], x4 ϵ [0, 6].</param>
+            <returns>[0][]: Objective function values f(x).
+            <para/>[1][]: Constraints violation. Negative value means constraint is violated. 0-value accepted, if smaller/greater-equals constraint, otherwise 0 also indicates violation.</returns>
+        </member>
+        <member name="M:MetaheuristicRepository.TestFunctions.MO.MO2C_ChakongHaimes(System.Double[])">
+            <summary>
+            CHAKONG-HAIMES Function. 
+            <para/> Objectives: 2.
+            <para/> Real variables: 2.
+            <para/> Binary variables: 0.
+            <para/> Constraints: 2.
+            </summary>
+            <param name="x">Decision variable vector. x1, x2 ϵ [-20, 20].</param>
+            <returns>[0][]: Objective function values f(x).
+            <para/>[1][]: Constraints violation. Negative value means constraint is violated. 0-value accepted, if smaller/greater-equals constraint, otherwise 0 also indicates violation.</returns>
+        </member>
+    </members>
+</doc>

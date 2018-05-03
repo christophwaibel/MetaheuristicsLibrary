@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tester</RootNamespace>
     <AssemblyName>Tester</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -55,6 +56,10 @@
     <ProjectReference Include="..\MetaheuristicsLibrary\MetaheuristicsLibrary.csproj">
       <Project>{4d6676c7-cfd5-46b4-9b89-8a8005ca0cb0}</Project>
       <Name>MetaheuristicsLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MetaheuristicsTuner\MetaheuristicsTuner.csproj">
+      <Project>{57a8e0b9-ac73-4e27-b6de-cf86c254e103}</Project>
+      <Name>MetaheuristicsTuner</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
