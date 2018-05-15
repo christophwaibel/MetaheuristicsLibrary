@@ -19,7 +19,7 @@ namespace MetaheuristicsTuner
     {
 
 
-        static void Main(string[] args)
+        static void IdentifyABMain(string[] args)
         {
 
             IdentifyTwoBestParameterSets("FIPS");    //"SGA", "ES", "PSO", "FIPS"
@@ -109,14 +109,23 @@ namespace MetaheuristicsTuner
 
 
 
-
-
-        static void TuningMain(string[] args)
+        /// <summary>
+        /// Tuning hyper-parameters of a solver
+        /// </summary>
+        /// <param name="args"></param>
+        static void Main(string[] args)
         {
-            //TuneSolver("PSO",35,30);
+            TuneSolver("SGA", 20, 100);
+        }
 
 
 
+        /// <summary>
+        /// Testing a hyper-parameter configuration
+        /// </summary>
+        /// <param name="args"></param>
+        static void TestSolverMain(string[] args)
+        {
 
             ////FIPSO PARAMeters
             //double[] hp = new double[5];
@@ -259,14 +268,15 @@ namespace MetaheuristicsTuner
 
 
 
-            Func<double[], double>[] manyhyperfuncs = new Func<double[], double>[20];
+            //Func<double[], double>[] manyhyperfuncs = new Func<double[], double>[1];
             //manyhyperfuncs[0] = hf.HyperFunc_B_Perm0db;
             //manyhyperfuncs[1] = hf.HyperFunc_B_RotHypEll;
             //manyhyperfuncs[2] = hf.HyperFunc_L_Ackley;
             //manyhyperfuncs[3] = hf.HyperFunc_O_PermDB;
             //manyhyperfuncs[4] = hf.HyperFunc_L_Schwefel_Edge;
+            //manyhyperfuncs[0] = hf.HyperFunc_L_Levy_Edge;
 
-
+            Func<double[], double>[] manyhyperfuncs = new Func<double[], double>[20];
             manyhyperfuncs[0] = hf.HyperFunc_B_Perm0db;
             manyhyperfuncs[1] = hf.HyperFunc_B_RotHypEll;
             manyhyperfuncs[2] = hf.HyperFunc_B_Sphere;
@@ -282,22 +292,22 @@ namespace MetaheuristicsTuner
             manyhyperfuncs[12] = hf.HyperFunc_P_Zhakarov;
             manyhyperfuncs[13] = hf.HyperFunc_V_DixonPrice;
             manyhyperfuncs[14] = hf.HyperFunc_V_Rosenbrock;
-            //manyhyperfuncs[15] = hf.HyperFunc_B_RotHypEll_Edge;
-            //manyhyperfuncs[16] = hf.HyperFunc_B_Sphere_Edge;
-            //manyhyperfuncs[17] = hf.HyperFunc_B_SumSquares_Edge;
-            //manyhyperfuncs[18] = hf.HyperFunc_L_Ackley_Edge;
-            //manyhyperfuncs[19] = hf.HyperFunc_L_Griewank_Edge;
             manyhyperfuncs[15] = hf.HyperFunc_L_Levy_Edge;
-            //manyhyperfuncs[21] = hf.HyperFunc_L_Rastrigin_Edge;
             manyhyperfuncs[16] = hf.HyperFunc_L_Schwefel_Edge;
             manyhyperfuncs[17] = hf.HyperFunc_O_StyblinskiTang_Edge;
-            //manyhyperfuncs[24] = hf.HyperFunc_P_Zhakarov_Edge;
             manyhyperfuncs[18] = hf.HyperFunc_V_DixonPrice_Edge;
             manyhyperfuncs[19] = hf.HyperFunc_V_Rosenbrock_Edge;
 
 
 
 
+            //manyhyperfuncs[15] = hf.HyperFunc_B_RotHypEll_Edge;
+            //manyhyperfuncs[16] = hf.HyperFunc_B_Sphere_Edge;
+            //manyhyperfuncs[17] = hf.HyperFunc_B_SumSquares_Edge;
+            //manyhyperfuncs[18] = hf.HyperFunc_L_Ackley_Edge;
+            //manyhyperfuncs[19] = hf.HyperFunc_L_Griewank_Edge;
+            //manyhyperfuncs[21] = hf.HyperFunc_L_Rastrigin_Edge;
+            //manyhyperfuncs[24] = hf.HyperFunc_P_Zhakarov_Edge;
 
 
 
@@ -330,6 +340,7 @@ namespace MetaheuristicsTuner
             settingsES.Add("tauc", 1);              // ∈ [0.01, 50]
 
 
+           
 
             Parallel.For(0, manyhyperfuncs.Length, new ParallelOptions { MaxDegreeOfParallelism = maxthreads }, hh =>
             {
@@ -427,6 +438,9 @@ namespace MetaheuristicsTuner
                 Console.WriteLine("Done hh {0} of {1}", hh, manyhyperfuncs.Length);
             });
             //}
+
+            //hf.printLogs(basepath, 15);
+
             Console.WriteLine();
             Console.WriteLine(@"///////////////////////////////////////");
             Console.WriteLine("Done with everything, tuning the {0}", solver);
@@ -444,6 +458,21 @@ namespace MetaheuristicsTuner
         int runsperTestfunc;
         string solver;
         int evalbudget;
+
+        List<string> logs = new List<string>();
+        public void printLogs(string basepath, int hh)
+        {
+            string fileName = basepath + solver + @"_hf_" + hh + "_AllEvals.txt";
+            using (FileStream fs = new FileStream(fileName, FileMode.Append, FileAccess.Write))
+            using (StreamWriter sw = new StreamWriter(fs))
+            {
+                foreach(string l in logs)
+                {
+                    sw.WriteLine(l);        
+                }
+            }
+        }
+
 
         internal HyperFuncs(int dim, int reruns, string solvername, int evaluationBudgetMultiplier)
         {
@@ -943,6 +972,7 @@ namespace MetaheuristicsTuner
                 lb[i] = -dvar;
                 ub[i] = dvar;
             }
+
             return switchMean(x, testfunc, _maxfuncs, lb, ub);
         }
 
@@ -1019,6 +1049,10 @@ namespace MetaheuristicsTuner
             }
 
             return switchMean(x, testfunc, _maxfuncs, lb, ub);
+            //double m = switchMean(x, testfunc, _maxfuncs, lb, ub);
+            //Console.WriteLine(m);
+            //logs.Add(Convert.ToString(m));
+            //return m;
         }
 
         internal double HyperFunc_L_Griewank_Edge(double[] x)
