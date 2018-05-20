@@ -113,7 +113,7 @@ namespace MetaheuristicsTuner
         /// Tuning hyper-parameters of a solver
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static void TuneMain(string[] args)
         {
             TuneSolver("SGA", 20, 100);
         }
@@ -124,70 +124,105 @@ namespace MetaheuristicsTuner
         /// Testing a hyper-parameter configuration
         /// </summary>
         /// <param name="args"></param>
-        static void TestSolverMain(string[] args)
+        static void Main(string[] args)
         {
-
-            ////FIPSO PARAMeters
-            //double[] hp = new double[5];
-            //// cluster a
-            //hp[0] = 4;
-            //hp[1] = 0.25452;
-            //hp[2] = 12.42113;
-            //hp[3] = 0.30566;
-            //hp[4] = 1;
-
-
-
-
-            //PSO PARAmeters
-            double[] hp = new double[7];
-            // cluster  
-            hp[0] = 19.57891;
-            hp[1] = 0.10542;
-            hp[2] = 18.76201;
-            hp[3] = 0;
-            hp[4] = 1;
-            hp[5] = 1.42516;
-            hp[6] = 2.03202;
 
 
 
 
             ////SGA PARAMETERS
             //double[] hp = new double[7];
-            //hp[0] = 15.95295;
-            //hp[1] = 1;
-            //hp[2] = 1;
-            //hp[3] = 0.87128;
-            //hp[4] = 0.01;
-            //hp[5] = 0.04092;
-            //hp[6] = 0.29608;
+            //hp[0] = 5;
+            //hp[1] = 94.49682;
+            //hp[2] = 0.9042;
+            //hp[3] = 0.85203;
+            //hp[4] = 1.96168;
+            //hp[5] = 2;
+            //hp[6] = 0.4825;
 
 
-
-
-            ////ES PARAMETERS
+            ////ES parameters
             //double[] hp = new double[8];
-            //// cluster A
-            //hp[0] = 13.15896;
-            //hp[1] = 7.46201;
-            //hp[2] = 0.95273;
-            //hp[3] = 0.06579;
-            //hp[4] = 9.78386;
-            //hp[5] = 0.13504;
-            //hp[6] = 1.81098;
-            //hp[7] = 1;
+            //// cluster a
+            //hp[0] = 2;
+            //hp[1] = 1;
+            //hp[2] = 0.16085;
+            //hp[3] = 0.07627;
+            //hp[4] = 0.01;
+            //hp[5] = 0.2288;
+            //hp[6] = 0.01136;
+            //hp[7] = 0.92639;
+
+
+            ////PSO PARAmeters
+            //double[] hp = new double[7];
+            //// cluster  
+            //hp[0] = 9.03316;
+            //hp[1] = 0.001;
+            //hp[2] = 18.24318;
+            //hp[3] = 0;
+            //hp[4] = 1;
+            //hp[5] = 0;
+            //hp[6] = 3.22193;
 
 
 
+            //FIPSO PARAMeters
+            double[] hp = new double[5];
+            // cluster a
+            hp[0] = 12.16184;
+            hp[1] = 0.55492;
+            hp[2] = 9.31087;
+            hp[3] = 0.59655;
+            hp[4] = 1;
 
 
-            TestHyperParam("PSO", hp, 10, 100, 30);
+
+            //TestHyperParam("ES", hp, 10, 100, 30);
+            TestHyperParamOneFuncOnly("FIPSO", hp, 19, 35, 30, 30);
         }
 
 
 
+        static void TestHyperParamOneFuncOnly(string solver, double[] hp, int testfuncIndex, int testfuncdim, int evalbudgetmultipl, int rerunsTestFunc)
+        {
+            //int evalbudgetmultiplier = 100;
+            //int testfuncdim = 20;                //tuned to this n
+            //int rerunsTestFuncs = 30;            // 30
+            HyperFuncs hf = new HyperFuncs(testfuncdim, rerunsTestFunc, solver, evalbudgetmultipl);   //problem dim; reruns of testfuncs; solver to be tuned
+            Func<double[], double[]>[] manyhyperfuncs = new Func<double[], double[]>[20];
+            manyhyperfuncs[0] = hf.HyperFunc_B_Perm0db_dist;
+            manyhyperfuncs[1] = hf.HyperFunc_B_RotHypEll_dist;
+            manyhyperfuncs[2] = hf.HyperFunc_B_Sphere_dist;
+            manyhyperfuncs[3] = hf.HyperFunc_B_SumSquares_dist;
+            manyhyperfuncs[4] = hf.HyperFunc_B_Trid_dist;
+            manyhyperfuncs[5] = hf.HyperFunc_L_Ackley_dist;
+            manyhyperfuncs[6] = hf.HyperFunc_L_Griewank_dist;
+            manyhyperfuncs[7] = hf.HyperFunc_L_Levy_dist;
+            manyhyperfuncs[8] = hf.HyperFunc_L_Rastrigin_dist;
+            manyhyperfuncs[9] = hf.HyperFunc_L_Schwefel_dist;
+            manyhyperfuncs[10] = hf.HyperFunc_O_PermDB_dist;
+            manyhyperfuncs[11] = hf.HyperFunc_O_StyblinskiTang_dist;
+            manyhyperfuncs[12] = hf.HyperFunc_P_Zhakarov_dist;
+            manyhyperfuncs[13] = hf.HyperFunc_V_DixonPrice_dist;
+            manyhyperfuncs[14] = hf.HyperFunc_V_Rosenbrock_dist;
+            manyhyperfuncs[15] = hf.HyperFunc_L_Levy_Edge_dist;
+            manyhyperfuncs[16] = hf.HyperFunc_L_Schwefel_Edge_dist;
+            manyhyperfuncs[17] = hf.HyperFunc_O_StyblinskiTang_Edge_dist;
+            manyhyperfuncs[18] = hf.HyperFunc_V_DixonPrice_Edge_dist;
+            manyhyperfuncs[19] = hf.HyperFunc_V_Rosenbrock_Edge_dist;
 
+            double [] dist = manyhyperfuncs[testfuncIndex](hp);
+            foreach (double fx in dist)
+            {
+                Console.WriteLine(fx);
+            }
+            Console.WriteLine();
+            Console.WriteLine("expected value: {0}", dist.Average());
+            Console.ReadKey();
+
+
+        }
 
         static void TestHyperParam(string solver, double[] hp, int testfuncdim, int evalbudgetmultipl, int rerunsTestFuncs)
         {
@@ -753,7 +788,146 @@ namespace MetaheuristicsTuner
         }
 
 
+        //ES has 8 parameters
+        private double []distES(double[] hpo_x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
+        {
+            int dvar = testfuncDim;
+            int runs = runsperTestfunc;
 
+            bool[] xint = new bool[dvar];
+            Dictionary<string, object> settingsES = new Dictionary<string, object>();
+            int simpleESpop = Convert.ToInt16(hpo_x[0]);
+            int simpleESLambda = Convert.ToInt16(hpo_x[1]);
+            int simpleESroh = Convert.ToInt16(hpo_x[2] * simpleESLambda) + 1; //from percentage to integer
+            settingsES.Add("popsize", simpleESpop);          // ∈ {2,...,200}
+            settingsES.Add("lambda", simpleESLambda);            // ∈ {1,...,200}
+            settingsES.Add("roh", simpleESroh);               // ∈ {1,...,popsize}  . in hyperoptimization, express as percentage of lambda
+            settingsES.Add("x0sampling", Convert.ToInt16(hpo_x[3]));        // ∈ {0,1}  0=uniform, 1=gaussian
+            settingsES.Add("stepsize0", hpo_x[4]);       // ∈ [0.01, 10]
+            settingsES.Add("stepsize", hpo_x[5]);        // ∈ [0.01, 10]
+            settingsES.Add("tauc", hpo_x[6]);              // ∈ [0.01, 10]
+            settingsES.Add("selmode", hpo_x[7]);        // 0 = random, 1=roulette wheel
+            MetaheuristicsLibrary.SolversSO.SO_Solver[] simpleES = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+
+            double[] mins = new double[runs];
+            for (int i = 0; i < runs; i++)
+            {
+                simpleES[i] = new MetaheuristicsLibrary.SolversSO.SimpleES(lb, ub, xint, _maxfuncs, testfunc, i, settingsES);
+                simpleES[i].solve();
+                mins[i] = simpleES[i].get_fxoptimum();
+            }
+            return mins;
+        }
+
+        //SGA has 7 parameters
+        private double []distSGA(double[] hpo_x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
+        {
+            int dvar = testfuncDim;
+            int runs = runsperTestfunc;
+
+            bool[] xint = new bool[dvar];
+            Dictionary<string, object> simpleGAsettings = new Dictionary<string, object>();
+            MetaheuristicsLibrary.SolversSO.SO_Solver[] simpleGAs = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            int simplegapop = Convert.ToInt32(hpo_x[0]);
+            simplegapop += simplegapop % 2;
+            simpleGAsettings.Add("popsize", simplegapop);            //x[0]  50
+            simpleGAsettings.Add("maxgen", Convert.ToInt32(Math.Floor(_maxfuncs / Convert.ToDouble(simplegapop))));            //no x. its a function of popsize and max evals.  50
+            simpleGAsettings.Add("k", hpo_x[1]);                //x[1]  6
+            simpleGAsettings.Add("pcross", hpo_x[2]);           //x[2]  0.7
+            simpleGAsettings.Add("pmut", hpo_x[3]);             //x[3]  0.3
+            simpleGAsettings.Add("d", hpo_x[4]);                //x[4]  0.1
+            simpleGAsettings.Add("r", hpo_x[5]);                //x[5]  0.1
+            int SGAelite = Convert.ToInt16(hpo_x[6] * (int)Math.Round((double)simplegapop / 2, 0)); //from percentage to integer
+            simpleGAsettings.Add("elite", SGAelite);                //x[6]  0 - (popsize/2). 
+
+            double[] mins = new double[runs];
+            for (int i = 0; i < runs; i++)
+            {
+                simpleGAs[i] = new MetaheuristicsLibrary.SolversSO.SimpleGA(lb, ub, xint, _maxfuncs, testfunc, i, simpleGAsettings);
+                simpleGAs[i].solve();
+                mins[i] = simpleGAs[i].get_fxoptimum();
+            }
+
+            return mins;
+        }
+
+        private double []distFIPSO(double[] hpo_x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
+        {
+            int dvar = testfuncDim;
+            int runs = runsperTestfunc;
+
+            bool[] xint = new bool[dvar];
+            Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
+            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            int fipsopop = Convert.ToInt16(hpo_x[0]);
+            PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
+            PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
+            PSOsettings.Add("phi", hpo_x[2]);                 //x[2] ∈ [0, 50], attraction to best particle
+            PSOsettings.Add("v0max", hpo_x[3]);               //x[3] ∈ [0, 10], initial velocity
+            PSOsettings.Add("pxupdatemode", Convert.ToInt16(hpo_x[4])); //x[4] 0 = update after population. 1 = update after each evaluation 
+            PSOsettings.Add("psomode", 0);
+            //PSOsettings.Add("psomode", Convert.ToInt16(hpo_x[5])); //x[5] 0 = fipso, 1 = inertia, 2 = constriction 
+            //PSOsettings.Add("phi1", hpo_x[6]);                //x[6] ∈ [0,5], attraction own best 
+            //PSOsettings.Add("phi2", hpo_x[7]);                //x[7] ∈ [0,5], attraction global best 
+            double[] mins = new double[runs];
+            for (int i = 0; i < runs; i++)
+            {
+                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i].solve();
+                mins[i] = PSO[i].get_fxoptimum();
+            }
+
+            return mins;
+        }
+        private double []distPSO(double[] hpo_x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
+        {
+            int dvar = testfuncDim;
+            int runs = runsperTestfunc;
+
+            bool[] xint = new bool[dvar];
+            Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
+            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            int fipsopop = Convert.ToInt16(hpo_x[0]);
+            PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
+            PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
+            //PSOsettings.Add("phi", hpo_x[2]);                 //x[2] ∈ [0, 50], attraction to best particle
+            PSOsettings.Add("v0max", hpo_x[2]);               //x[3] ∈ [0, 10], initial velocity
+            PSOsettings.Add("pxupdatemode", Convert.ToInt16(hpo_x[3])); //x[4] 0 = update after population. 1 = update after each evaluation 
+            PSOsettings.Add("psomode", Convert.ToInt16(hpo_x[4])); //x[5] 0 = fipso, 1 = inertia, 2 = constriction 
+            PSOsettings.Add("phi1", hpo_x[5]);                //x[6] ∈ [0,5], attraction own best 
+            PSOsettings.Add("phi2", hpo_x[6]);                //x[7] ∈ [0,5], attraction global best 
+            double[] mins = new double[runs];
+            for (int i = 0; i < runs; i++)
+            {
+                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i].solve();
+                mins[i] = PSO[i].get_fxoptimum();
+            }
+
+            return mins;
+        }
+
+        private double [] switchDist(double[] x, Func<double[], double> testfunc, int _maxfuncs, double[] lb, double[] ub)
+        {
+            switch (solver)
+            {
+                case "ES":
+                    return distES(x, testfunc, _maxfuncs, lb, ub);
+                case "SGA":
+                    return distSGA(x, testfunc, _maxfuncs, lb, ub);
+                case "FIPSO":
+                    return distFIPSO(x, testfunc, _maxfuncs, lb, ub);
+                case "PSO":
+                    return distPSO(x, testfunc, _maxfuncs, lb, ub);
+                default:
+                    return new double [lb.Length];
+            }
+        }
+
+
+
+
+        
 
 
 
@@ -1223,6 +1397,486 @@ namespace MetaheuristicsTuner
             }
 
             return switchMean(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        internal double [] HyperFunc_L_Rastrigin_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Rastrigin;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -5.12;
+                ub[i] = 5.12;
+            }
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_L_Levy_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Levy;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -10;
+                ub[i] = 10;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_L_Griewank_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Griewank;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -600;
+                ub[i] = 600;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_L_Ackley_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Ackley;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -32.768;
+                ub[i] = 32.768;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_L_Schwefel_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Schwefel;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -500.0;
+                ub[i] = 500.0;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_P_Zhakarov_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.P_Zakharov;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -5.0;
+                ub[i] = 10.0;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_V_Rosenbrock_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.V_Rosenbrock;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -5.0;
+                ub[i] = 10.0;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_V_DixonPrice_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.V_DixonPrice;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -10.0;
+                ub[i] = 10.0;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_B_Sphere_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_Sphere;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -5.12;
+                ub[i] = 5.12;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double [] HyperFunc_B_SumSquares_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_SumSquares;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -10.0;
+                ub[i] = 10.0;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_B_Trid_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_Trid;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = Math.Pow(dvar, 2) * -1;
+                ub[i] = Math.Pow(dvar, 2);
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_B_RotHypEll_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_RotHypEll;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -65.536;
+                ub[i] = 65.536;
+            }
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_B_Perm0db_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_Perm0db;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -dvar;
+                ub[i] = dvar;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double []HyperFunc_O_PermDB_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.O_PermDB;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -dvar;
+                ub[i] = dvar;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double []HyperFunc_O_StyblinskiTang_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.O_StyblinskiTang;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -5;
+                ub[i] = 5;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+
+
+
+
+
+
+
+        internal double []HyperFunc_L_Rastrigin_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Rastrigin;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 5.12 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double []HyperFunc_L_Levy_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Levy;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 10 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+            //double m = switchMean(x, testfunc, _maxfuncs, lb, ub);
+            //Console.WriteLine(m);
+            //logs.Add(Convert.ToString(m));
+            //return m;
+        }
+
+        internal double[] HyperFunc_L_Griewank_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Griewank;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 600 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_L_Ackley_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Ackley;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 32.768 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_L_Schwefel_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.L_Schwefel;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 500.0 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_P_Zhakarov_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.P_Zakharov;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 15.0;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_V_Rosenbrock_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.V_Rosenbrock;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 15.0;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_V_DixonPrice_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.V_DixonPrice;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 10.0 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_B_Sphere_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_Sphere;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 5.12 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_B_SumSquares_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_SumSquares;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 10.0 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_B_RotHypEll_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.B_RotHypEll;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = 0;
+                ub[i] = 65.536 * 2;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
+        }
+
+        internal double[] HyperFunc_O_StyblinskiTang_Edge_dist(double[] x)
+        {
+            int dvar = testfuncDim;
+
+            Func<double[], double> testfunc = SO.O_StyblinskiTang;
+            int _maxfuncs = (dvar + 1) * evalbudget;   //max func evals
+            double[] lb = new double[dvar];
+            double[] ub = new double[dvar];
+            for (int i = 0; i < dvar; i++)
+            {
+                lb[i] = -3;
+                ub[i] = 8;
+            }
+
+            return switchDist(x, testfunc, _maxfuncs, lb, ub);
         }
     }
 }
