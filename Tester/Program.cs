@@ -15,6 +15,133 @@ namespace Tester
 {
     class Program
     {
+        /// <summary>
+        /// save only mins from Rhino Grasshopper runs.
+        /// </summary>
+        /// <param name="args"></param>
+        static void Main(string[] args)
+        {
+
+
+            //string func = "f16_LevyEdge";
+            //string func = "f17_SchwefelEdge";
+            //string func = "f18_StyblinskiEdge";
+            //string func = "f19_DixonEdge";
+            string func = "f20_RosenbrockEdge";
+            int intN = 35;
+            string n = "n" + intN;
+
+
+            string[][] allPaths = new string[18][];
+            allPaths[0] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\CRS2\", "*.txt", SearchOption.AllDirectories);
+            allPaths[1] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\Direct\", "*.txt", SearchOption.AllDirectories);
+            allPaths[2] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\ES_A\", "*.txt", SearchOption.AllDirectories);
+            allPaths[3] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\ES_B\", "*.txt", SearchOption.AllDirectories);
+            allPaths[4] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\ES_unt\", "*.txt", SearchOption.AllDirectories);
+            allPaths[5] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\FIPS_A\", "*.txt", SearchOption.AllDirectories);
+            allPaths[6] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\FIPS_B\", "*.txt", SearchOption.AllDirectories);
+            allPaths[7] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\FIPS_unt\", "*.txt", SearchOption.AllDirectories);
+            allPaths[8] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\GA\", "*.txt", SearchOption.AllDirectories);
+            allPaths[9] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\PSO_A\", "*.txt", SearchOption.AllDirectories);
+            allPaths[10] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\PSO_B\", "*.txt", SearchOption.AllDirectories);
+            allPaths[11] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\PSO_unt\", "*.txt", SearchOption.AllDirectories);
+            allPaths[12] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SA\", "*.txt", SearchOption.AllDirectories);
+            allPaths[13] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SBplx\", "*.txt", SearchOption.AllDirectories);
+            allPaths[14] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\Seye\", "*.txt", SearchOption.AllDirectories);
+            allPaths[15] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SGA_A\", "*.txt", SearchOption.AllDirectories);
+            allPaths[16] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SGA_B\", "*.txt", SearchOption.AllDirectories);
+            allPaths[17] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SGA_unt\", "*.txt", SearchOption.AllDirectories);
+            //allPaths[18] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\CMA_ES\", "*.txt", SearchOption.AllDirectories);
+            //allPaths[19] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\RBFOpt\", "*.txt", SearchOption.AllDirectories);
+
+            string[] solvernames = new string[19];
+            solvernames[0] = "CRS2";
+            solvernames[1] = "Direct";
+            solvernames[2] = "ES_A";
+            solvernames[3] = "ES_B";
+            solvernames[4] = "ES_unt";
+            solvernames[5] = "FIPS_A";
+            solvernames[6] = "FIPS_B";
+            solvernames[7] = "FIPS_unt";
+            solvernames[8] = "GA";
+            solvernames[9] = "PSO_A";
+            solvernames[10] = "PSO_B";
+            solvernames[11] = "PSO_unt";
+            solvernames[12] = "SA";
+            solvernames[13] = "SBplx";
+            solvernames[14] = "Seye";
+            solvernames[15] = "SGA_A";
+            solvernames[16] = "SGA_B";
+            solvernames[17] = "SGA_unt";
+
+            List<double> f_CRS2 = new List<double>();
+            List<double> f_Direct = new List<double>();
+            List<double> f_ESn10A = new List<double>();
+            List<double> f_ESn10B = new List<double>();
+            List<double> f_ESunt = new List<double>();
+            List<double> f_FIPSn10A = new List<double>();
+            List<double> f_FIPSn10B = new List<double>();
+            List<double> f_FIPSunt = new List<double>();
+            List<double> f_GA = new List<double>();
+            List<double> f_PSOn10A = new List<double>();
+            List<double> f_PSOn10B = new List<double>();
+            List<double> f_PSOunt = new List<double>();
+            List<double> f_SA = new List<double>();
+            List<double> f_SBplx = new List<double>();
+            List<double> f_Seye = new List<double>();
+            List<double> f_SGAn10A = new List<double>();
+            List<double> f_SGAn10B = new List<double>();
+            List<double> f_SGAunt = new List<double>();
+            //List<double> f_RBFopt = new List<double>();
+            //List<double> f_CMAES = new List<double>();
+
+
+            List<string> writelines = new List<string>();
+            int counter = 0;
+            List<List<double>> all_fs = new List<List<double>>();
+            foreach (string[] fileps in allPaths)
+            {
+                writelines.Add(solvernames[counter]);
+                Console.WriteLine(solvernames[counter]);
+                all_fs.Add(new List<double>());
+                foreach (string filep in fileps)
+                {
+                    System.IO.StreamReader file = new System.IO.StreamReader(filep);
+                    string line;
+                    List<double> objs = new List<double>();
+
+                    string[] text = new string[]{};
+                    int linecount = 0;
+                    while ((line = file.ReadLine()) != null && linecount < (intN+1)*100)
+                    {
+                        text = line.Split(' ');
+                        objs.Add(Convert.ToDouble(text[text.Length - 1]));
+                        linecount++;
+                    }
+                    file.Close();
+
+                    double min = objs.Min();
+                    all_fs[counter].Add(min);
+                    Console.WriteLine(min);
+                    //string [] strleng = text[3].Split(',');
+                    //Console.WriteLine(strleng.Length);
+                    writelines.Add(min.ToString());
+                }
+                counter++;
+                Console.WriteLine();
+                writelines.Add("");
+
+
+            }
+            Console.WriteLine("DONE");
+            Console.ReadKey();
+
+            //write into text file
+            System.IO.File.WriteAllLines(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\AllMins.txt", writelines.ToArray());
+        }
+
+
+
         #region Multi-Objective Tests
         /// <summary>
         /// Test function
@@ -212,7 +339,7 @@ namespace Tester
         /// Testing a SO solver from MetaheuristicsLibrary.SovlersSO
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static void soMain(string[] args)
         {
            
             int seeds = 1;
