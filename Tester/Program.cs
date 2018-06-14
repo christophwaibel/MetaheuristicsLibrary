@@ -11,10 +11,170 @@ using MetaheuristicsLibrary.SolversSO;
 using MetaheuristicsLibrary.Misc;
 using System.IO;
 
+using System.Runtime.InteropServices;
+using Excel = Microsoft.Office.Interop.Excel; 
+
 namespace Tester
 {
     class Program
     {
+
+        /// <summary>
+        /// Normalize cost values of BEO benchmarking
+        /// </summary>
+        /// <param name="args"></param>
+        static void hhhMain(string[] args)
+        {
+
+
+            // load excel file and read tabs
+
+            string Myfile = @"C:\_CHRIS\Test\Problem_15_180503.xlsx";
+            //int n = 500; //p1 - 3
+            //int n = 1400; // p 4- 7
+            //int n = 1200; // p 8
+            //int n = 1400; // p9-10
+            //int n = 1900; // p 11
+            //int n = 1800;   // p12
+            //int n = 1100; // p13
+            //int n = 2100; // p14
+            int n = 1080; //p15
+            int simgrad = 30; //simplex gradients , 30 for prob 15 only
+            int runs = 20;
+            string writenorm = @"C:\_CHRIS\Test\prob15.txt";
+
+            Excel.Application xlApp ;
+            Excel.Workbook xlWorkBook ;
+            //Excel.Worksheet xlWorkSheet ;
+            Excel.Range range ;
+
+
+
+            xlApp = new Excel.Application();
+            xlWorkBook = xlApp.Workbooks.Open(Myfile, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+
+            List<Excel.Worksheet> allsheets = new List<Excel.Worksheet>();
+            allsheets.Add(xlWorkBook.Sheets["SA"]);
+            allsheets.Add(xlWorkBook.Sheets["CMA_ES"]);
+            allsheets.Add(xlWorkBook.Sheets["CRS2"]);
+            allsheets.Add(xlWorkBook.Sheets["Direct"]);
+            allsheets.Add(xlWorkBook.Sheets["ES_A"]);
+            allsheets.Add(xlWorkBook.Sheets["ES_B"]);
+            allsheets.Add(xlWorkBook.Sheets["ES"]);
+            allsheets.Add(xlWorkBook.Sheets["FIPS_A"]);
+            allsheets.Add(xlWorkBook.Sheets["FIPS_B"]);
+            allsheets.Add(xlWorkBook.Sheets["FIPS"]);
+            allsheets.Add(xlWorkBook.Sheets["GA"]);
+            allsheets.Add(xlWorkBook.Sheets["PSO_A"]);
+            allsheets.Add(xlWorkBook.Sheets["PSO_B"]);
+            allsheets.Add(xlWorkBook.Sheets["PSO"]);
+            allsheets.Add(xlWorkBook.Sheets["RBFOpt"]);
+            allsheets.Add(xlWorkBook.Sheets["Sbplex"]);
+            allsheets.Add(xlWorkBook.Sheets["SGA_WW"]);
+            allsheets.Add(xlWorkBook.Sheets["SGA_A"]);
+            allsheets.Add(xlWorkBook.Sheets["SGA_B"]);
+            //allsheets.Add(xlWorkBook.Sheets["SilEye"]); 
+            
+
+
+            List<double[][]> allcost = new List<double[][]>();
+            List<double[][]> costK = new List<double[][]>();
+            allcost.Add(new double[runs][]); //SA
+            allcost.Add(new double[runs][]); //CMA_ES
+            allcost.Add(new double[runs][]); //CRS2
+            allcost.Add(new double[runs][]); //Direct
+            allcost.Add(new double[runs][]); //ES_A
+            allcost.Add(new double[runs][]); //ES_B
+            allcost.Add(new double[runs][]); //ES
+            allcost.Add(new double[runs][]); //FIPS_A
+            allcost.Add(new double[runs][]); //FIPS_B
+            allcost.Add(new double[runs][]); //FIPS
+            allcost.Add(new double[runs][]); //GA
+            allcost.Add(new double[runs][]); //PSO_A
+            allcost.Add(new double[runs][]); //PSO_B
+            allcost.Add(new double[runs][]); //PSO
+            allcost.Add(new double[runs][]); //RBFOpt
+            allcost.Add(new double[runs][]); //Sbplex
+            allcost.Add(new double[runs][]); //SGA_WW
+            allcost.Add(new double[runs][]); //SGA_A
+            allcost.Add(new double[runs][]); //SGA_B
+            //allcost.Add(new double[runs][]); //SilEye
+            for (int i = 0; i < allcost.Count; i++)
+            {
+                costK.Add(new double[runs][]);
+                for (int c = 0; c < runs; c++)
+                {
+                    allcost[i][c] = new double[n];
+                    costK[i][c] = new double[simgrad]; //100 simplex gradients only
+                }
+            }
+            //get min and max of all
+            double min = double.MaxValue;
+            double max = double.MinValue;
+            
+            for (int i = 0; i < allsheets.Count; i++)
+            {
+                range = allsheets[i].UsedRange;
+                for (int r = 0; r < n; r++) 
+                {
+                    for (int c = 0; c < runs; c++) 
+                    {
+                        allcost[i][c][r] = Convert.ToDouble((range.Cells[r+2, 7+(4*c)] as Excel.Range).Value2);      //+4
+                        if (i == 3 && c > 0) allcost[i][c][r] = allcost[i][0][r];
+                        if (r == n - 1)
+                        {
+                            if (allcost[i][c][r] < min) min = allcost[i][c][r];
+                            if (allcost[i][c][r] > max) max = allcost[i][c][r];
+                        }
+                    }
+                }
+            }
+
+
+            //reduce size to 100 simplex gradients
+            // and normalize
+
+            double k = n / simgrad;
+            for (int i = 0; i < costK.Count; i++) //each solver
+            {
+                for (int c = 0; c < runs; c++) //each column (rerun)
+                {
+                    for (int s = 0; s < simgrad; s++) //each row (simplex gradient)
+                    {
+                        costK[i][c][s] = (allcost[i][c][Convert.ToInt32((s + 1) * k) - 1] - min) / (max - min);
+                    }
+                }
+            }
+
+
+            // write to text file
+
+            string[] strsolver = new string[]{"SA","CMA-ES","CRS","Direct","ES_A","ES_B","ES","FIPS_A","FIPS_B","FIPS","GA","PSO_A","PSO_B","PSO","RBFOpt","Sbplex","SGA_WW","SGA_A","SGA_B","SilEye"};
+
+            using (var writer = new StreamWriter(writenorm))
+            {
+                // Loop through ten numbers.
+                for (int i = 0; i < costK.Count; i++)
+                {
+                    writer.WriteLine(strsolver[i]);
+                    for (int r = 0; r < simgrad; r++) //rows, i.e. simplex gradients
+                    {
+                        string line = "";
+                        for (int c = 0; c < runs; c++) //columns, i.e. reruns
+                        {
+                            line += Convert.ToString(costK[i][c][r]) + @";";
+                            // Write format string to file.
+                            //writer.Write("{0:0.0} ", i);
+                        }
+                        writer.WriteLine(line);
+                    }
+                }
+            }
+
+            xlWorkBook.Close(0);
+            xlApp.Quit();
+        }
+
         /// <summary>
         /// save only mins from Rhino Grasshopper runs.
         /// </summary>
@@ -30,9 +190,10 @@ namespace Tester
             string func = "f20_RosenbrockEdge";
             int intN = 35;
             string n = "n" + intN;
+            int k = 30; // simplex gradients. for n=35, make 30
 
 
-            string[][] allPaths = new string[18][];
+            string[][] allPaths = new string[20][];
             allPaths[0] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\CRS2\", "*.txt", SearchOption.AllDirectories);
             allPaths[1] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\Direct\", "*.txt", SearchOption.AllDirectories);
             allPaths[2] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\ES_A\", "*.txt", SearchOption.AllDirectories);
@@ -51,10 +212,10 @@ namespace Tester
             allPaths[15] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SGA_A\", "*.txt", SearchOption.AllDirectories);
             allPaths[16] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SGA_B\", "*.txt", SearchOption.AllDirectories);
             allPaths[17] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\SGA_unt\", "*.txt", SearchOption.AllDirectories);
-            //allPaths[18] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\CMA_ES\", "*.txt", SearchOption.AllDirectories);
-            //allPaths[19] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\RBFOpt\", "*.txt", SearchOption.AllDirectories);
+            allPaths[18] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\CMA_ES\", "*.txt", SearchOption.AllDirectories);
+            allPaths[19] = Directory.GetFiles(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\RBFOpt\", "*.txt", SearchOption.AllDirectories);
 
-            string[] solvernames = new string[19];
+            string[] solvernames = new string[20];
             solvernames[0] = "CRS2";
             solvernames[1] = "Direct";
             solvernames[2] = "ES_A";
@@ -73,6 +234,8 @@ namespace Tester
             solvernames[15] = "SGA_A";
             solvernames[16] = "SGA_B";
             solvernames[17] = "SGA_unt";
+            solvernames[18] = "CMA_ES";
+            solvernames[19] = "RBFOpt";
 
             List<double> f_CRS2 = new List<double>();
             List<double> f_Direct = new List<double>();
@@ -92,15 +255,17 @@ namespace Tester
             List<double> f_SGAn10A = new List<double>();
             List<double> f_SGAn10B = new List<double>();
             List<double> f_SGAunt = new List<double>();
-            //List<double> f_RBFopt = new List<double>();
-            //List<double> f_CMAES = new List<double>();
+            List<double> f_RBFopt = new List<double>();
+            List<double> f_CMAES = new List<double>();
+
+            List<List<string>> persolver = new List<List<string>>();
 
 
-            List<string> writelines = new List<string>();
             int counter = 0;
             List<List<double>> all_fs = new List<List<double>>();
             foreach (string[] fileps in allPaths)
             {
+                List<string> writelines = new List<string>();
                 writelines.Add(solvernames[counter]);
                 Console.WriteLine(solvernames[counter]);
                 all_fs.Add(new List<double>());
@@ -112,7 +277,7 @@ namespace Tester
 
                     string[] text = new string[]{};
                     int linecount = 0;
-                    while ((line = file.ReadLine()) != null && linecount < (intN+1)*100)
+                    while ((line = file.ReadLine()) != null && linecount < (intN + 1) * k)
                     {
                         text = line.Split(' ');
                         objs.Add(Convert.ToDouble(text[text.Length - 1]));
@@ -127,17 +292,28 @@ namespace Tester
                     //Console.WriteLine(strleng.Length);
                     writelines.Add(min.ToString());
                 }
+                persolver.Add(writelines);
                 counter++;
                 Console.WriteLine();
-                writelines.Add("");
-
-
+                //writelines.Add("");
             }
             Console.WriteLine("DONE");
             Console.ReadKey();
 
+            List<string> writeall = new List<string>();
+            for (int i = 0; i < persolver[0].Count; i++ )
+            {
+                string line = "";
+                for (int u = 0; u < persolver.Count; u++)
+                {
+                    line += persolver[u][i].ToString();
+                    line += @";";
+                }
+                writeall.Add(line);
+            }
+
             //write into text file
-            System.IO.File.WriteAllLines(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\AllMins.txt", writelines.ToArray());
+            System.IO.File.WriteAllLines(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\AllMins.txt", writeall.ToArray());
         }
 
 
