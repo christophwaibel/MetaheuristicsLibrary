@@ -179,7 +179,7 @@ namespace Tester
         /// save only mins from Rhino Grasshopper runs.
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static void grasshopperMain(string[] args)
         {
 
 
@@ -314,6 +314,127 @@ namespace Tester
 
             //write into text file
             System.IO.File.WriteAllLines(@"H:\PROJEKTE\16_OptimizerBenchmarking\4_CASESTUDY\Journal_Benchmarking\TEST_FUNCS\" + func + @"\" + n + @"\AllMins.txt", writeall.ToArray());
+        }
+
+
+        /// <summary>
+        /// Running Sobol sequence (loaded from textfile) for mathematical test functions and saving output as textfile
+        /// </summary>
+        /// <param name="args"></param>
+        static void Main(string[] args)
+        {
+            int n = 20;
+            string PathInput = @"H:\PROJEKTE\18_FitnessLandscapeAnalysis\04_CASESTUDY\TestFunctions\Sensitivity\N20_input.csv";
+
+            List<Func<double[], double>> tf = new List<Func<double[], double>>();
+
+
+            //n = 10 and n = 13
+            tf.Add(MetaheuristicsTuner.Testfunctions.SO.B_Sphere);     // [-1, 1] for all x
+            tf.Add(MetaheuristicsTuner.Testfunctions.SO.L_Ackley);     // [-32.768, 32.768] for all x
+            tf.Add(MetaheuristicsTuner.Testfunctions.SO.L_Rastrigin);    // [-5.12, 5.12] for all x
+            tf.Add(MetaheuristicsTuner.Testfunctions.SO.V_Rosenbrock); // [-2.048, 2.048] for all x
+            double[] lb = new double[tf.Count];
+            double[] ub = new double[tf.Count];
+            lb[0] = -1;
+            lb[1] = -32.768;
+            lb[2] = -5.12;
+            lb[3] = -2.048;
+            ub[0] = 1;
+            ub[1] = 32.768;
+            ub[2] = 5.12;
+            ub[3] = 2.048;
+
+
+            //tf.Add(MetaheuristicsTuner.Testfunctions.SO.C_MichalewiczSchoenauer); // only for n=13. domain: [0,1] for i=0-8 and 12; [0,100] for i=9-11
+            //double[] lb = new double[13];
+            //double[] ub = new double[13];
+            //for (int i = 0; i < 9; i++)
+            //{
+            //    lb[i] = 0;
+            //    ub[i] = 1;
+            //}
+            //lb[12] = 0;
+            //ub[12] = 1;
+            //for (int i = 9; i < 12; i++)
+            //{
+            //    lb[i] = 0;
+            //    ub[i] = 100;
+            //}
+
+
+
+
+            //load input sequence for sampling
+            List<double[]> x = new List<double[]>();
+            System.IO.StreamReader file = new System.IO.StreamReader(PathInput);
+            string line;
+            string[] text = new string[] { };
+            int linecount = 0;
+            while ((line = file.ReadLine()) != null)
+            {
+                x.Add(new double[n]);
+                text = line.Split(';');
+                int counter = 0;
+                foreach(string t in text)
+                {
+                    x[linecount][counter] = Convert.ToDouble(t);
+                    counter++;
+                }
+                linecount++;
+            }
+            file.Close();
+
+            //compute outputs for x for every test function.
+            List<double[]> ytf = new List<double[]>();
+            int counterr = 0;
+            foreach (Func<double[], double> f in tf)
+            {
+                ytf.Add(new double[x.Count]);
+                for (int i = 0; i < x.Count; i++)
+                {
+                    double[] xin = new double[n];
+                    for (int nn = 0; nn < n; nn++)
+                    {
+                        // NOT FOR MICHALEWICZ FUNCTION
+                        xin[nn] = (x[i][nn] * (ub[counterr] - lb[counterr])) + lb[counterr];
+
+                        //// ONLY MICHALEWICZ
+                        //xin[nn] = (x[i][nn] * (ub[nn] - lb[nn])) + lb[nn];
+                    }
+                    
+                    ytf[counterr][i] = f(xin);
+                }
+                counterr++;
+            }
+
+
+            //write outputs
+            string PathOutput = @"H:\PROJEKTE\18_FitnessLandscapeAnalysis\04_CASESTUDY\TestFunctions\Sensitivity\";
+            for (int fn = 0; fn < tf.Count; fn++)
+            {
+                List<string> writeall = new List<string>();
+                for (int i = 0; i < ytf[fn].Length; i++)
+                {
+                    writeall.Add(ytf[fn][i].ToString());
+                }
+                
+                
+                //write into text file
+
+                //ALL OTHER FUNCTIONS
+                System.IO.File.WriteAllLines(PathOutput + "y" + fn + "_n" + n + ".txt", writeall.ToArray());
+
+                ////MICHALEWICZ FUNCTION
+                //System.IO.File.WriteAllLines(PathOutput + "y" + 4 + "_n" + n + ".txt", writeall.ToArray());
+
+            }
+
+
+
+
+
+            
         }
 
 
@@ -515,7 +636,7 @@ namespace Tester
         /// Testing a SO solver from MetaheuristicsLibrary.SovlersSO
         /// </summary>
         /// <param name="args"></param>
-        static void soMain(string[] args)
+        static void hhMain(string[] args)
         {
            
             int seeds = 1;
