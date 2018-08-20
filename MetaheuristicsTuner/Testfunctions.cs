@@ -1873,6 +1873,62 @@ namespace MetaheuristicsTuner.Testfunctions
 
         #endregion
 
+
+        #region Constrained
+        /// <summary>
+        /// MICHALEWICZ Function. 
+        /// <para/> Objectives: 1.
+        /// <para/> Real variables: 13.
+        /// <para/> Binary variables: 0.
+        /// <para/> Constraints: 9.        
+        /// <para/> Type: Constrained.
+        /// <para/> Description: The objective function is quadratic and the problem has 13 variables and 9 linear constraints.
+        /// <para/> Source: Michalewicz and Schoenauer 1996. Evolutionary Algorithms for Constrained Parameter Optimization Problems. In: Evolutionary Computation, 4:1, 1-32 
+        /// </summary>
+        /// <param name="x">Decision variable. Usually: xi ∈ [0, π], for all i = 1, …, d.</param>
+        /// <returns>Objective function value f(x). Global minimum at:  
+        /// <para/>f(x*) = -15, at x* = (1,1,1,1,1,1,1,1,1,3,3,3,1)</returns>
+        public static double C_MichalewiczSchoenauer(double[] x)
+        {
+            int d = 13;
+            if (d != x.Length) return double.MaxValue;
+            double sum = 5 * x[0] + 5 * x[1] + 5 * x[2] + 5 * x[3];
+
+            double firstsum = 0;
+            for (int i = 0; i < 4; i++)
+                firstsum += Math.Pow(x[i], 2);
+            firstsum *= 5;
+
+            double secondsum = 0;
+            for (int i = 4; i < d; i++)
+                secondsum += x[i];
+
+            sum = sum - firstsum - secondsum;
+
+            double g1, g2, g3, g4, g5, g6, g7, g8, g9;
+            g1 = 2 * x[0] + 2 * x[1] + x[9] + x[10];
+            g2 = -8 * x[0] + x[9];
+            g3 = -2 * x[3] - x[4] + x[9];
+            g4 = 2 * x[0] + 2 * x[2] + x[9] + x[10];
+            g5 = -8 * x[1] + x[10];
+            g6 = -2 * x[5] - x[6] + x[10];
+            g7 = 2 * x[0] + 2 * x[2] + x[10] + x[11];
+            g8 = -8 * x[2] + x[11];
+            g9 = -2 * x[7] - x[8] + x[11];
+            if (g1 <= 10) sum = double.MaxValue;
+            if (g2 <= 0) sum = double.MaxValue;
+            if (g3 <= 0) sum = double.MaxValue;
+            if (g4 <= 10) sum = double.MaxValue;
+            if (g5 <= 0) sum = double.MaxValue;
+            if (g6 <= 0) sum = double.MaxValue;
+            if (g7 <= 10) sum = double.MaxValue;
+            if (g8 <= 0) sum = double.MaxValue;
+            if (g9 <= 0) sum = double.MaxValue;
+            return sum;
+        }
+
+        #endregion
+
     }
 
 
