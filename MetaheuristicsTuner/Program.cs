@@ -18,12 +18,95 @@ namespace MetaheuristicsTuner
     class Program
     {
 
-
-        static void IdentifyABMain(string[] args)
+        static void Main(string[] args)
         {
+            //______________________________________________________________________________________
+            ////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////
 
-            IdentifyTwoBestParameterSets("FIPS");    //"SGA", "ES", "PSO", "FIPS"
+            //SGA PARAMETERS
+            double[] hp = new double[7];
+            hp[0] = 15.20115;   // popsize
+            hp[1] = 90.24627;   // k
+            hp[2] = 1;  // pcross
+            hp[3] = 0.80054;    // pmut
+            hp[4] = 1.80471;    // d
+            hp[5] = 0.01;   // r
+            hp[6] = 0.26437;	// elites
+
+
+            ////ES parameters
+            //double[] hp = new double[8];
+            //// cluster a
+            //hp[0] = 2;
+            //hp[1] = 1;
+            //hp[2] = 0.16085;
+            //hp[3] = 0.07627;
+            //hp[4] = 0.01;
+            //hp[5] = 0.2288;
+            //hp[6] = 0.01136;
+            //hp[7] = 0.92639;
+
+
+            ////PSO PARAmeters
+            //double[] hp = new double[7];
+            //// cluster  
+            //hp[0] = 9.03316;
+            //hp[1] = 0.001;
+            //hp[2] = 18.24318;
+            //hp[3] = 0;
+            //hp[4] = 1;
+            //hp[5] = 0;
+            //hp[6] = 3.22193;
+
+
+
+            ////FIPSO PARAMeters
+            //double[] hp = new double[5];
+            //// cluster a
+            //hp[0] = 12.16184;
+            //hp[1] = 0.55492;
+            //hp[2] = 9.31087;
+            //hp[3] = 0.59655;
+            //hp[4] = 1;
+
+            TestHyperParam("SGA", hp, 13, 100, 30);
+
+            ////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+            //______________________________________________________________________________________
+            ////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////
+
+            //IdentifyTwoBestParameterSets("FIPS");    //"SGA", "ES", "PSO", "FIPS"
+
+            ////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+            //______________________________________________________________________________________
+            ////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////
+
+            //TuneSolver("SGA", 20, 100);
+
+            ////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////
         }
+
+
+
 
         /// <summary>
         /// Getting maximum congruency for naming parameter sets A or B. Linear Programming optimization model.
@@ -107,38 +190,29 @@ namespace MetaheuristicsTuner
 
         }
 
-
-
+        
         /// <summary>
-        /// Tuning hyper-parameters of a solver
+        /// Testing a hyper-parameter configuration for one test function
         /// </summary>
         /// <param name="args"></param>
-        static void TuneMain(string[] args)
+        static void TestHyperParamOneFuncOnly()
         {
-            TuneSolver("SGA", 20, 100);
-        }
+            string solver = "SGA";
+            //double[] hp;
+            int testfuncIndex = 19;
+            int testfuncdim = 35;
+            int evalbudgetmultipl = 35;
+            int rerunsTestFunc = 35;
 
-
-
-        /// <summary>
-        /// Testing a hyper-parameter configuration
-        /// </summary>
-        /// <param name="args"></param>
-        static void Main(string[] args)
-        {
-
-
-
-
-            ////SGA PARAMETERS
-            //double[] hp = new double[7];
-            //hp[0] = 5;
-            //hp[1] = 94.49682;
-            //hp[2] = 0.9042;
-            //hp[3] = 0.85203;
-            //hp[4] = 1.96168;
-            //hp[5] = 2;
-            //hp[6] = 0.4825;
+            //SGA PARAMETERS
+            double[] hp = new double[7];
+            hp[0] = 15.20115;   // popsize
+            hp[1] = 90.24627;   // k
+            hp[2] = 1;  // pcross
+            hp[3] = 0.80054;    // pmut
+            hp[4] = 1.80471;    // d
+            hp[5] = 0.01;   // r
+            hp[6] = 0.26437;	// elites
 
 
             ////ES parameters
@@ -167,25 +241,22 @@ namespace MetaheuristicsTuner
 
 
 
-            //FIPSO PARAMeters
-            double[] hp = new double[5];
-            // cluster a
-            hp[0] = 12.16184;
-            hp[1] = 0.55492;
-            hp[2] = 9.31087;
-            hp[3] = 0.59655;
-            hp[4] = 1;
+            ////FIPSO PARAMeters
+            //double[] hp = new double[5];
+            //// cluster a
+            //hp[0] = 12.16184;
+            //hp[1] = 0.55492;
+            //hp[2] = 9.31087;
+            //hp[3] = 0.59655;
+            //hp[4] = 1;
+
+
+            //TestHyperParamOneFuncOnly("FIPSO", hp, 19, 35, 30, 30);
 
 
 
-            //TestHyperParam("ES", hp, 10, 100, 30);
-            TestHyperParamOneFuncOnly("FIPSO", hp, 19, 35, 30, 30);
-        }
 
 
-
-        static void TestHyperParamOneFuncOnly(string solver, double[] hp, int testfuncIndex, int testfuncdim, int evalbudgetmultipl, int rerunsTestFunc)
-        {
             //int evalbudgetmultiplier = 100;
             //int testfuncdim = 20;                //tuned to this n
             //int rerunsTestFuncs = 30;            // 30
@@ -224,8 +295,73 @@ namespace MetaheuristicsTuner
 
         }
 
-        static void TestHyperParam(string solver, double[] hp, int testfuncdim, int evalbudgetmultipl, int rerunsTestFuncs)
+        /// <summary>
+        /// Testing a hyper-parameter configuration for all test functions
+        /// </summary>
+        /// <param name="args"></param>
+        static void TestHyperParam(string solver, double [] hp, int testfuncdim, int evalbudgetmultipl, int rerunsTestFuncs)
         {
+            // solver = "SGA";
+            ////double[] hp;
+            // testfuncdim = 13;
+            //int evalbudgetmultipl = 100;
+            //int rerunsTestFuncs = 30;
+
+
+            ////SGA PARAMETERS
+            //double[] hp = new double[7];
+            //hp[0] = 15.20115;   // popsize
+            //hp[1] = 90.24627;   // k
+            //hp[2] = 1;  // pcross
+            //hp[3] = 0.80054;    // pmut
+            //hp[4] = 1.80471;    // d
+            //hp[5] = 0.01;   // r
+            //hp[6] = 0.26437;	// elites
+
+
+            ////ES parameters
+            //double[] hp = new double[8];
+            //// cluster a
+            //hp[0] = 2;
+            //hp[1] = 1;
+            //hp[2] = 0.16085;
+            //hp[3] = 0.07627;
+            //hp[4] = 0.01;
+            //hp[5] = 0.2288;
+            //hp[6] = 0.01136;
+            //hp[7] = 0.92639;
+
+
+            ////PSO PARAmeters
+            //double[] hp = new double[7];
+            //// cluster  
+            //hp[0] = 9.03316;
+            //hp[1] = 0.001;
+            //hp[2] = 18.24318;
+            //hp[3] = 0;
+            //hp[4] = 1;
+            //hp[5] = 0;
+            //hp[6] = 3.22193;
+
+
+
+            ////FIPSO PARAMeters
+            //double[] hp = new double[5];
+            //// cluster a
+            //hp[0] = 12.16184;
+            //hp[1] = 0.55492;
+            //hp[2] = 9.31087;
+            //hp[3] = 0.59655;
+            //hp[4] = 1;
+
+
+
+            //TestHyperParam("SGA", hp, 13, 100, 30);
+
+
+
+
+
             //int evalbudgetmultiplier = 100;
             //int testfuncdim = 20;                //tuned to this n
             //int rerunsTestFuncs = 30;            // 30
@@ -264,7 +400,10 @@ namespace MetaheuristicsTuner
         }
 
 
-
+        /// <summary>
+        /// Tuning hyper-parameters of a solver
+        /// </summary>
+        /// <param name="args"></param>
         static void TuneSolver(string solver, int testfuncdim, int evalbudgetmultilp)
         {
             //string solver = "PSO";               //choosing solver to be tuned. string: "SGA", "ES", "FIPSO", "SA"
