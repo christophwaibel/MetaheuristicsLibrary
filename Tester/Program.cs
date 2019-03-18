@@ -321,7 +321,7 @@ namespace Tester
         /// Running Sobol sequence (loaded from textfile) for mathematical test functions and saving output as textfile
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static void sobolMain(string[] args)
         {
             int n = 20;
             string PathInput = @"H:\PROJEKTE\18_FitnessLandscapeAnalysis\04_CASESTUDY\TestFunctions\Sensitivity\N20_input.csv";
@@ -629,6 +629,75 @@ namespace Tester
 
         }
         #endregion
+
+
+        /// <summary>
+        /// runtime analysis for test functions
+        /// </summary>
+        /// <param name="args"></param>
+        static void Main(string[] args)
+        {
+            int n = 20;
+
+            double[] x = new double[n];
+            for (int i = 0; i < n; i++) x[i] = 0;
+
+
+            Func<double[], double>[] funcs = new Func<double[], double>[20];
+            funcs[0] = SO.B_Perm0db;
+            funcs[1] = SO.B_RotHypEll;
+            funcs[2] = SO.B_Sphere;
+            funcs[3] = SO.B_SumSquares;
+            funcs[4] = SO.B_Trid;
+            funcs[5] = SO.L_Ackley;
+            funcs[6] = SO.L_Griewank;
+            funcs[7] = SO.L_Levy;
+            funcs[8] = SO.L_Rastrigin;
+            funcs[9] = SO.L_Schwefel;
+            funcs[10] = SO.O_PermDB;
+            funcs[11] = SO.O_StyblinskiTang;
+            funcs[12] = SO.P_Zakharov;
+            funcs[13] = SO.V_DixonPrice;
+            funcs[14] = SO.V_Rosenbrock;
+            funcs[15] = SO.L_Levy;
+            funcs[16] = SO.L_Schwefel;
+            funcs[17] = SO.O_StyblinskiTang;
+            funcs[18] = SO.V_DixonPrice;
+            funcs[19] = SO.V_Rosenbrock;
+
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            // the code that you want to measure comes here
+
+            //for (int u = 0; u < 5000; u++)
+            //{
+                for (int k = 0; k < 30; k++)
+                {
+                    for (int i = 0; i < (n + 1) * 100; i++)
+                    {
+                        foreach (Func<double[], double> fun in funcs)
+                        {
+                            double a = fun(x);
+                        }
+                    }
+                }
+            //}
+            watch.Stop();
+            Console.WriteLine(watch.ElapsedMilliseconds);
+            Console.ReadKey();
+
+
+            //around 85 ms for n=4
+            //around 3670 ms for n=4
+
+            //each times 5000 
+            // times 20
+
+            //n4 -> 7.08333 minutes x 20
+            //n20 -> 305.83333 minutes x 20
+
+            //for each solver PSO, FIPS, SGA, ES. ignoring overhead of each algorithm implementation (our ES implementaion is slower than the SGA)
+        }
 
 
         #region Single-Objective Tests
