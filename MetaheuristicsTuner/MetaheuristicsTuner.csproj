@@ -51,9 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HybridAlgorithms.cs" />
+    <Compile Include="HyperParameterClassifier.cs" />
+    <Compile Include="HyperParameterFunctions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="HyperParameterOptimization.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

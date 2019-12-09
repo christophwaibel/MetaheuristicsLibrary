@@ -30,7 +30,6 @@ C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\Teste
 C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\Tester.pdb
 C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\MetaheuristicsLibrary.dll
 C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\MetaheuristicsTuner.exe
-C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\MetaheuristicsRepository.dll
 C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\ILOG.CPLEX.dll
 C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\ILOG.Concert.dll
 C:\Users\Christoph\Documents\GitHub\MetaheuristicsLibrary\Tester\bin\Debug\MetaheuristicsLibrary.pdb
