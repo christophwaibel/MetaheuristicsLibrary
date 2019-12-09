@@ -1,24 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using MetaheuristicsLibrary;
-using MetaheuristicsTuner.Testfunctions;
-using MetaheuristicsLibrary.SolversMO;
-using MetaheuristicsLibrary.SolversSO;
+using MetaheuristicsLibrary.TestFunctions;
+using MetaheuristicsLibrary.MultiObjective;
+using MetaheuristicsLibrary.SingleObjective;
 using MetaheuristicsLibrary.Misc;
 using System.IO;
-
-using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel; 
+
 
 namespace Tester
 {
     class Program
     {
-
         /// <summary>
         /// Normalize cost values of BEO benchmarking
         /// </summary>
@@ -330,10 +324,10 @@ namespace Tester
 
 
             //n = 10 and n = 13
-            tf.Add(MetaheuristicsTuner.Testfunctions.SO.B_Sphere);     // [-1, 1] for all x
-            tf.Add(MetaheuristicsTuner.Testfunctions.SO.L_Ackley);     // [-32.768, 32.768] for all x
-            tf.Add(MetaheuristicsTuner.Testfunctions.SO.L_Rastrigin);    // [-5.12, 5.12] for all x
-            tf.Add(MetaheuristicsTuner.Testfunctions.SO.V_Rosenbrock); // [-2.048, 2.048] for all x
+            tf.Add(MetaheuristicsLibrary.TestFunctions.SO.B_Sphere);     // [-1, 1] for all x
+            tf.Add(MetaheuristicsLibrary.TestFunctions.SO.L_Ackley);     // [-32.768, 32.768] for all x
+            tf.Add(MetaheuristicsLibrary.TestFunctions.SO.L_Rastrigin);    // [-5.12, 5.12] for all x
+            tf.Add(MetaheuristicsLibrary.TestFunctions.SO.V_Rosenbrock); // [-2.048, 2.048] for all x
             double[] lb = new double[tf.Count];
             double[] ub = new double[tf.Count];
             lb[0] = -1;
@@ -635,7 +629,7 @@ namespace Tester
         /// runtime analysis for test functions
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static void tfMain(string[] args)
         {
             int n = 20;
 
@@ -705,7 +699,7 @@ namespace Tester
         /// Testing a SO solver from MetaheuristicsLibrary.SovlersSO
         /// </summary>
         /// <param name="args"></param>
-        static void hhMain(string[] args)
+        static void Main(string[] args)
         {
            
             int seeds = 1;
@@ -897,50 +891,6 @@ namespace Tester
             Direct dr = new Direct(lb,ub, xint, evalcount, testfunc, 0);
             dr.solve();
             Console.WriteLine("direct min: {0}", dr.get_fxoptimum());
-            Console.ReadKey();
-
-        }
-
-        /// <summary>
-        /// example for FrOG Single Objective. Not working? Check project: FrOG.vs
-        /// </summary>
-        /// <param name="args"></param>
-        static void mmMain(string[] args)
-        {
-            int dvar = 5;
-            double[] lb = new double[dvar];
-            double[] ub = new double[dvar];
-            for (int i = 0; i < dvar; i++)
-            {
-                lb[i] = -5;
-                ub[i] = 5;
-            }
-
-            Func<List<decimal>, double> evalFunc = x =>
-            {
-                double[] dbl = new double[dvar];
-                for (int i = 0; i < dvar; i++)
-                {
-                    dbl[i] = Convert.ToDouble(x[i]);
-                }
-                return SO.L_Ackley(dbl);
-            };
-
-
-            List<Variable> thomasVariable = new List<Variable>();
-            for (int i = 0; i < dvar; i++)
-            {
-                Variable var = new Variable(Convert.ToDecimal(lb[i]), Convert.ToDecimal(ub[i]), false);
-                thomasVariable.Add(var);
-            }
-
-            HillclimberFROG hcFROG = new HillclimberFROG();
-            bool run = hcFROG.RunSolver(thomasVariable, evalFunc, "don't know", "don't know");
-            Console.WriteLine(hcFROG.GetErrorMessage());
-            if (run)
-            {
-                Console.WriteLine("cost: {0}", hcFROG.get_fxoptimum());
-            }
             Console.ReadKey();
 
         }

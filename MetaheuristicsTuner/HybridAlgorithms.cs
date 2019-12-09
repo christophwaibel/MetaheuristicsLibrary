@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MetaheuristicRepository.Solvers_SO;
 
-namespace MetaheuristicsTuner
+namespace MetaheuristicsLibrary
 {
     public static class HybridAlgorithms
     {

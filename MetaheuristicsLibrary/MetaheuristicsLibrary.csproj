@@ -40,10 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Direct.cs" />
+    <Compile Include="EvolutionStrategy.cs" />
+    <Compile Include="GeneticAlgorithm.cs" />
+    <Compile Include="HillClimber.cs" />
     <Compile Include="Misc.cs" />
-    <Compile Include="SolversMO.cs" />
+    <Compile Include="MultiObjective.cs" />
+    <Compile Include="NelderMead.cs" />
+    <Compile Include="ParticleSwarmOptimization.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolversSO.cs" />
+    <Compile Include="Rosenbrock.cs" />
+    <Compile Include="SingleObjective.cs" />
+    <Compile Include="SPEA2.cs" />
     <Compile Include="TestFunctions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MetaheuristicsTuner.Testfunctions;
-using MetaheuristicsLibrary.SolversSO;
-using MetaheuristicRepository.Solvers_SO;
-using MetaheuristicRepository;
+using MetaheuristicsLibrary.TestFunctions;
+using MetaheuristicsLibrary.SingleObjective;
 using System.IO;
-
 using ILOG.CPLEX;
 using ILOG.Concert;
 
 
-namespace MetaheuristicsTuner
+namespace MetaheuristicsLibrary
 {
     class Program
     {
@@ -497,8 +494,6 @@ namespace MetaheuristicsTuner
             settingsSGA.Add("r", 0.1);
             settingsSGA.Add("k", 6);
 
-            //meta optimizer SA
-            Hybrid.settings settingsSA = HybridAlgorithms.SA(maxfunc);
 
             //meta optimizer FIPSO
             Dictionary<string, object> settingsPSO = new Dictionary<string, object>();
@@ -529,7 +524,7 @@ namespace MetaheuristicsTuner
                 {
                     /////////////////////////////////////////            SGA          /////////////////////////////////////////
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    SimpleGA ga = new SimpleGA(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsSGA);
+                    GeneticAlgorithm ga = new GeneticAlgorithm(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsSGA);
                     ga.solve();
                     ga.get_fxoptimum();
                     str = "Last call;" + Math.Round(ga.get_fxoptimum(), 4);
@@ -544,7 +539,7 @@ namespace MetaheuristicsTuner
 
                     /////////////////////////////////////////            ES           /////////////////////////////////////////
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    SimpleES es = new SimpleES(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsSGA);
+                    EvolutionStrategy es = new EvolutionStrategy(lb, ub, xint, maxfunc, manyhyperfuncs[hh], iseeds, settingsSGA);
                     es.solve();
                     es.get_fxoptimum();
                     str = "Last call;" + Math.Round(es.get_fxoptimum(), 4);
@@ -572,22 +567,6 @@ namespace MetaheuristicsTuner
                     //str += ";PSO";
                     //log_PSO.Add(str);
                     //Console.WriteLine("Metaoptimizer PSO DONE, seed {0} and hh {1}", iseeds, hh);
-
-
-
-                    ///////////////////////////////////////////            Hybrid.SA          ///////////////////////////////////
-                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //ISingleObjOpti hyperopti = new Hybrid(dvar, lb, ub, manyhyperfuncs[hh], iseeds, settingsSA);
-                    //hyperopti.initialize();
-                    //hyperopti.Solve();
-                    //str = "Last call;" + Math.Round(hyperopti.fxBest, 4);
-                    //for (int xx = 0; xx < dvar; xx++)
-                    //{
-                    //    str += ";" + Math.Round(hyperopti.xBest[xx], 5);
-                    //}
-                    //str += ";SA";
-                    //log_SA.Add(str);
-                    //Console.WriteLine("Metaoptimizer SA DONE, seed {0} and hh {1}", iseeds, hh);
                 }
 
 
@@ -809,12 +788,12 @@ namespace MetaheuristicsTuner
             settingsES.Add("stepsize", hpo_x[5]);        // ∈ [0.01, 10]
             settingsES.Add("tauc", hpo_x[6]);              // ∈ [0.01, 10]
             settingsES.Add("selmode", hpo_x[7]);        // 0 = random, 1=roulette wheel
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] simpleES = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] simpleES = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
 
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                simpleES[i] = new MetaheuristicsLibrary.SolversSO.SimpleES(lb, ub, xint, _maxfuncs, testfunc, i, settingsES);
+                simpleES[i] = new MetaheuristicsLibrary.SingleObjective.EvolutionStrategy(lb, ub, xint, _maxfuncs, testfunc, i, settingsES);
                 simpleES[i].solve();
                 mins[i] = simpleES[i].get_fxoptimum();
             }
@@ -829,7 +808,7 @@ namespace MetaheuristicsTuner
 
             bool[] xint = new bool[dvar];
             Dictionary<string, object> simpleGAsettings = new Dictionary<string, object>();
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] simpleGAs = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] simpleGAs = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
             int simplegapop = Convert.ToInt32(hpo_x[0]);
             simplegapop += simplegapop % 2;
             simpleGAsettings.Add("popsize", simplegapop);            //x[0]  50
@@ -845,7 +824,7 @@ namespace MetaheuristicsTuner
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                simpleGAs[i] = new MetaheuristicsLibrary.SolversSO.SimpleGA(lb, ub, xint, _maxfuncs, testfunc, i, simpleGAsettings);
+                simpleGAs[i] = new MetaheuristicsLibrary.SingleObjective.GeneticAlgorithm(lb, ub, xint, _maxfuncs, testfunc, i, simpleGAsettings);
                 simpleGAs[i].solve();
                 mins[i] = simpleGAs[i].get_fxoptimum();
             }
@@ -860,7 +839,7 @@ namespace MetaheuristicsTuner
 
             bool[] xint = new bool[dvar];
             Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] PSO = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
             int fipsopop = Convert.ToInt16(hpo_x[0]);
             PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
             PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
@@ -874,7 +853,7 @@ namespace MetaheuristicsTuner
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i] = new MetaheuristicsLibrary.SingleObjective.ParticleSwarmOptimization(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
                 PSO[i].solve();
                 mins[i] = PSO[i].get_fxoptimum();
             }
@@ -888,7 +867,7 @@ namespace MetaheuristicsTuner
 
             bool[] xint = new bool[dvar];
             Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] PSO = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
             int fipsopop = Convert.ToInt16(hpo_x[0]);
             PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
             PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
@@ -901,7 +880,7 @@ namespace MetaheuristicsTuner
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i] = new MetaheuristicsLibrary.SingleObjective.ParticleSwarmOptimization(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
                 PSO[i].solve();
                 mins[i] = PSO[i].get_fxoptimum();
             }
@@ -946,12 +925,12 @@ namespace MetaheuristicsTuner
             settingsES.Add("stepsize", hpo_x[5]);        // ∈ [0.01, 10]
             settingsES.Add("tauc", hpo_x[6]);              // ∈ [0.01, 10]
             settingsES.Add("selmode", hpo_x[7]);        // 0 = random, 1=roulette wheel
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] simpleES = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] simpleES = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
 
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                simpleES[i] = new MetaheuristicsLibrary.SolversSO.SimpleES(lb, ub, xint, _maxfuncs, testfunc, i, settingsES);
+                simpleES[i] = new MetaheuristicsLibrary.SingleObjective.EvolutionStrategy(lb, ub, xint, _maxfuncs, testfunc, i, settingsES);
                 simpleES[i].solve();
                 mins[i] = simpleES[i].get_fxoptimum();
             }
@@ -966,7 +945,7 @@ namespace MetaheuristicsTuner
 
             bool[] xint = new bool[dvar];
             Dictionary<string, object> simpleGAsettings = new Dictionary<string, object>();
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] simpleGAs = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] simpleGAs = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
             int simplegapop = Convert.ToInt32(hpo_x[0]);
             simplegapop += simplegapop % 2;
             simpleGAsettings.Add("popsize", simplegapop);            //x[0]  50
@@ -982,7 +961,7 @@ namespace MetaheuristicsTuner
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                simpleGAs[i] = new MetaheuristicsLibrary.SolversSO.SimpleGA(lb, ub, xint, _maxfuncs, testfunc, i, simpleGAsettings);
+                simpleGAs[i] = new MetaheuristicsLibrary.SingleObjective.GeneticAlgorithm(lb, ub, xint, _maxfuncs, testfunc, i, simpleGAsettings);
                 simpleGAs[i].solve();
                 mins[i] = simpleGAs[i].get_fxoptimum();
             }
@@ -997,7 +976,7 @@ namespace MetaheuristicsTuner
 
             bool[] xint = new bool[dvar];
             Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] PSO = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
             int fipsopop = Convert.ToInt16(hpo_x[0]);
             PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
             PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
@@ -1011,7 +990,7 @@ namespace MetaheuristicsTuner
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i] = new MetaheuristicsLibrary.SingleObjective.ParticleSwarmOptimization(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
                 PSO[i].solve();
                 mins[i] = PSO[i].get_fxoptimum();
             }
@@ -1025,7 +1004,7 @@ namespace MetaheuristicsTuner
 
             bool[] xint = new bool[dvar];
             Dictionary<string, object> PSOsettings = new Dictionary<string, object>();
-            MetaheuristicsLibrary.SolversSO.SO_Solver[] PSO = new MetaheuristicsLibrary.SolversSO.SO_Solver[runs];
+            MetaheuristicsLibrary.SingleObjective.SingleObjective[] PSO = new MetaheuristicsLibrary.SingleObjective.SingleObjective[runs];
             int fipsopop = Convert.ToInt16(hpo_x[0]);
             PSOsettings.Add("popsize", fipsopop);             //x[0] ∈ {4,..., 100}
             PSOsettings.Add("chi", hpo_x[1]);                 //x[1] ∈ [0.001, 1], constriction coefficient
@@ -1038,7 +1017,7 @@ namespace MetaheuristicsTuner
             double[] mins = new double[runs];
             for (int i = 0; i < runs; i++)
             {
-                PSO[i] = new MetaheuristicsLibrary.SolversSO.PSO(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
+                PSO[i] = new MetaheuristicsLibrary.SingleObjective.ParticleSwarmOptimization(lb, ub, xint, _maxfuncs, testfunc, i, PSOsettings);
                 PSO[i].solve();
                 mins[i] = PSO[i].get_fxoptimum();
             }
